@@ -7,4 +7,8 @@
   <ItemGroup>
     <ProjectReference Include="..\ZeroPlus.Comms.Models\ZeroPlus.Comms.Models.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ZeroPlus.Models\ZeroPlus.Models.csproj" />
+  </ItemGroup>
 </Project>
