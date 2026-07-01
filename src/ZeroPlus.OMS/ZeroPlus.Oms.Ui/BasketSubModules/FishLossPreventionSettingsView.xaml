@@ -1,0 +1,616 @@
+<UserControl x:Class="ZeroPlus.Oms.Ui.Views.FishLossPreventionSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+             xmlns:behavior="clr-namespace:ZeroPlus.Oms.Ui.Behaviors"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             d:DataContext="{d:DesignInstance Type=ViewModels:FishLossPreventionSettingsViewModel}"
+             d:Height="auto"
+             d:Width="auto"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <helper:CamelCaseFormatter x:Key="DisplayTextCamelCaseConverter" />
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <dxmvvm:BooleanToObjectConverter x:Key="BooleanToColorConverterRed">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>
+                #F88F8F
+            </dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>
+                #2D2D30
+            </dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+    </UserControl.Resources>
+
+    <dxlc:GroupBox Name="FishLossPreventionSettingsSubModule"
+                   Margin="5,0,0,0"
+                   Padding="10,5">
+
+        <dxlc:GroupBox.Header>
+            <Grid Height="22">
+                <Label Padding="0"
+                       VerticalAlignment="Center"
+                       Content="Fish Loss Prevention"
+                       FontWeight="Bold"
+                       Foreground="#AFAFB0"
+                       IsHitTestVisible="False" />
+            </Grid>
+        </dxlc:GroupBox.Header>
+
+        <Grid Margin="0,5,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="110" />
+                <ColumnDefinition Width="90" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0"
+                        Background="{DXBinding '@e(CancelWithWidthCheckEdit).IsChecked',
+                                               Converter={StaticResource BooleanToColorConverterRed}}">
+
+
+                <dxe:CheckEdit x:Name="CancelWithWidthCheckEdit"
+                               IsChecked="{Binding FishLossConfig.CancelWithWidthEnabled}"
+                               Visibility="Collapsed" />
+
+
+                <dx:SimpleButton Width="65"
+                                 Margin="5,5,5,2"
+                                 Padding="0,4"
+                                 Background="{DXBinding '@e(CancelWithWidthCheckEdit).IsChecked',
+                                                        Converter={StaticResource BooleanToColorConverterRed}}"
+                                 Command="{DXCommand '@e(CancelWithWidthCheckEdit).IsChecked = !@e(CancelWithWidthCheckEdit).IsChecked'}"
+                                 Content="Min Width"
+                                 FontSize="10"
+                                 Style="{StaticResource CancelButtonStyle}" />
+
+
+                <dxe:SpinEdit Width="65"
+                              Margin="5,0,5,5"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="{DXBinding '@e(CancelWithWidthCheckEdit).IsChecked',
+                                                     Converter={StaticResource BooleanToColorConverterRed}}"
+                              EditValue="{Binding FishLossConfig.CancelWithWidthThreshold, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="0.01"
+                              Mask="####0.00#"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="0"
+                        Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        Background="{DXBinding '@e(MaxWidthCheckEdit).IsChecked',
+                                               Converter={StaticResource BooleanToColorConverterRed}}">
+
+
+                <dxe:CheckEdit x:Name="MaxWidthCheckEdit"
+                               IsChecked="{Binding FishLossConfig.MaxWidthCheckEnabled}"
+                               Visibility="Collapsed" />
+
+
+                <dx:SimpleButton Width="65"
+                                 Margin="5,5,5,2"
+                                 Padding="0,4"
+                                 Background="{DXBinding '@e(MaxWidthCheckEdit).IsChecked',
+                                                        Converter={StaticResource BooleanToColorConverterRed}}"
+                                 Command="{DXCommand '@e(MaxWidthCheckEdit).IsChecked = !@e(MaxWidthCheckEdit).IsChecked'}"
+                                 Content="Max Width"
+                                 FontSize="10"
+                                 Style="{StaticResource CancelButtonStyle}" />
+
+
+                <dxe:SpinEdit Width="65"
+                              Margin="5,0,5,5"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="{DXBinding '@e(MaxWidthCheckEdit).IsChecked',
+                                                     Converter={StaticResource BooleanToColorConverterRed}}"
+                              EditValue="{Binding FishLossConfig.MaxWidthCheckPx, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="0.01"
+                              Mask="####0.00#"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="0"
+                        Grid.Column="2"
+                        HorizontalAlignment="Center"
+                        Background="{DXBinding '@e(MinTheoEdgeCheckEdit).IsChecked',
+                                               Converter={StaticResource BooleanToColorConverterRed}}">
+
+
+                <dxe:CheckEdit x:Name="MinTheoEdgeCheckEdit"
+                               IsChecked="{Binding FishLossConfig.MinTheoEdgeCheckEnabled}"
+                               Visibility="Collapsed" />
+
+
+                <dx:SimpleButton Width="65"
+                                 Margin="5,5,5,2"
+                                 Padding="0,4"
+                                 Background="{DXBinding '@e(MinTheoEdgeCheckEdit).IsChecked',
+                                                        Converter={StaticResource BooleanToColorConverterRed}}"
+                                 Command="{DXCommand '@e(MinTheoEdgeCheckEdit).IsChecked = !@e(MinTheoEdgeCheckEdit).IsChecked'}"
+                                 Content="Theo Edge"
+                                 FontSize="10"
+                                 Style="{StaticResource CancelButtonStyle}" />
+
+
+                <dxe:SpinEdit Width="65"
+                              Margin="5,0,5,5"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="{DXBinding '@e(MinTheoEdgeCheckEdit).IsChecked',
+                                                     Converter={StaticResource BooleanToColorConverterRed}}"
+                              EditValue="{Binding FishLossConfig.MinTheoEdgeCheckEdge, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="0.01"
+                              Mask="####0.00#"
+                              MaskUseAsDisplayFormat="True"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="0"
+                        Grid.Column="3"
+                        HorizontalAlignment="Center"
+                        Background="{DXBinding '@e(MinMidEdgeCheckEdit).IsChecked',
+                                               Converter={StaticResource BooleanToColorConverterRed}}">
+
+                <dxe:CheckEdit x:Name="MinMidEdgeCheckEdit"
+                               IsChecked="{Binding FishLossConfig.MinMidEdgeCheckEnabled}"
+                               Visibility="Collapsed" />
+
+                <dx:SimpleButton Width="65"
+                                 Margin="5,5,5,2"
+                                 Padding="0,4"
+                                 Background="{DXBinding '@e(MinMidEdgeCheckEdit).IsChecked',
+                                                        Converter={StaticResource BooleanToColorConverterRed}}"
+                                 Command="{DXCommand '@e(MinMidEdgeCheckEdit).IsChecked = !@e(MinMidEdgeCheckEdit).IsChecked'}"
+                                 Content="Mid Edge"
+                                 FontSize="10"
+                                 Style="{StaticResource CancelButtonStyle}" />
+
+                <dxe:SpinEdit Width="65"
+                              Margin="5,0,5,5"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="{DXBinding '@e(MinMidEdgeCheckEdit).IsChecked',
+                                                     Converter={StaticResource BooleanToColorConverterRed}}"
+                              EditValue="{Binding FishLossConfig.MinMidEdgeCheckEdge, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="0.01"
+                              Mask="####0.00#"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="0"
+                        Grid.Column="4"
+                        HorizontalAlignment="Center"
+                        Background="{DXBinding '@e(MinEmaEdgeCheckEdit).IsChecked',
+                                               Converter={StaticResource BooleanToColorConverterRed}}">
+
+                <dxe:CheckEdit x:Name="MinEmaEdgeCheckEdit"
+                               IsChecked="{Binding FishLossConfig.MinEmaEdgeCheckEnabled}"
+                               Visibility="Collapsed" />
+
+                <dx:SimpleButton Width="65"
+                                 Margin="5,5,5,2"
+                                 Padding="0,4"
+                                 Background="{DXBinding '@e(MinEmaEdgeCheckEdit).IsChecked',
+                                                        Converter={StaticResource BooleanToColorConverterRed}}"
+                                 Command="{DXCommand '@e(MinEmaEdgeCheckEdit).IsChecked = !@e(MinEmaEdgeCheckEdit).IsChecked'}"
+                                 Content="Ema Edge"
+                                 FontSize="10"
+                                 Style="{StaticResource CancelButtonStyle}" />
+
+                <dxe:SpinEdit Width="65"
+                              Margin="5,0,5,5"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="{DXBinding '@e(MinEmaEdgeCheckEdit).IsChecked',
+                                                     Converter={StaticResource BooleanToColorConverterRed}}"
+                              EditValue="{Binding FishLossConfig.MinEmaEdgeCheckEdge, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="0.01"
+                              Mask="####0.00#"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="0"
+                        Grid.Column="5"
+                        HorizontalAlignment="Center"
+                        Background="{DXBinding '@e(MinEdgeToMarketCheckEdit).IsChecked',
+                                               Converter={StaticResource BooleanToColorConverterRed}}">
+
+                <dxe:CheckEdit x:Name="MinEdgeToMarketCheckEdit"
+                               IsChecked="{Binding FishLossConfig.MinEdgeToMarketCheckEnabled}"
+                               Visibility="Collapsed" />
+
+                <dx:SimpleButton Width="65"
+                                 Margin="5,5,5,2"
+                                 Padding="0,4"
+                                 Background="{DXBinding '@e(MinEdgeToMarketCheckEdit).IsChecked',
+                                                        Converter={StaticResource BooleanToColorConverterRed}}"
+                                 Command="{DXCommand '@e(MinEdgeToMarketCheckEdit).IsChecked = !@e(MinEdgeToMarketCheckEdit).IsChecked'}"
+                                 Content="Mkt Edge"
+                                 FontSize="10"
+                                 Style="{StaticResource CancelButtonStyle}" />
+
+                <dxe:SpinEdit Width="65"
+                              Margin="5,0,5,5"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="{DXBinding '@e(MinEdgeToMarketCheckEdit).IsChecked',
+                                                     Converter={StaticResource BooleanToColorConverterRed}}"
+                              EditValue="{Binding FishLossConfig.MinEdgeToMarketCheckEdge, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="0.01"
+                              Mask="####0.00#"
+                              MaskUseAsDisplayFormat="True"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="0"
+                        Grid.Column="6"
+                        HorizontalAlignment="Center"
+                        Background="{DXBinding '@e(MaxPercentBidCheckEdit).IsChecked',
+                                               Converter={StaticResource BooleanToColorConverterRed}}">
+
+                <dxe:CheckEdit x:Name="MaxPercentBidCheckEdit"
+                               IsChecked="{Binding FishLossConfig.MaxPercentBidCheckEnabled}"
+                               Visibility="Collapsed" />
+
+                <dx:SimpleButton Width="65"
+                                 Margin="5,5,5,2"
+                                 Padding="0,4"
+                                 Background="{DXBinding '@e(MaxPercentBidCheckEdit).IsChecked',
+                                                        Converter={StaticResource BooleanToColorConverterRed}}"
+                                 Command="{DXCommand '@e(MaxPercentBidCheckEdit).IsChecked = !@e(MaxPercentBidCheckEdit).IsChecked'}"
+                                 Content="Max % Bid"
+                                 FontSize="10"
+                                 Style="{StaticResource CancelButtonStyle}" />
+
+                <dxe:SpinEdit Width="65"
+                              Margin="5,0,5,5"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="{DXBinding '@e(MaxPercentBidCheckEdit).IsChecked',
+                                                     Converter={StaticResource BooleanToColorConverterRed}}"
+                              EditValue="{Binding FishLossConfig.MaxPercentBidCheckEdge, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="0.01"
+                              Mask="####0.00#"
+                              MaskUseAsDisplayFormat="True"
+                              MaxValue="1"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="0"
+                        Grid.Column="7"
+                        HorizontalAlignment="Center"
+                        Background="{DXBinding '@e(MinBidCheckEdit).IsChecked',
+                                               Converter={StaticResource BooleanToColorConverterRed}}">
+
+                <dxe:CheckEdit x:Name="MinBidCheckEdit"
+                               IsChecked="{Binding FishLossConfig.MinBidCheckEnabled}"
+                               Visibility="Collapsed" />
+
+                <dx:SimpleButton Width="65"
+                                 Margin="5,5,5,2"
+                                 Padding="0,4"
+                                 Background="{DXBinding '@e(MinBidCheckEdit).IsChecked',
+                                                        Converter={StaticResource BooleanToColorConverterRed}}"
+                                 Command="{DXCommand '@e(MinBidCheckEdit).IsChecked = !@e(MinBidCheckEdit).IsChecked'}"
+                                 Content="Min Bid"
+                                 FontSize="10"
+                                 Style="{StaticResource CancelButtonStyle}" />
+
+                <dxe:SpinEdit Width="65"
+                              Margin="5,0,5,5"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="{DXBinding '@e(MinBidCheckEdit).IsChecked',
+                                                     Converter={StaticResource BooleanToColorConverterRed}}"
+                              EditValue="{Binding FishLossConfig.MinBidCheckBidValue, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="0.01"
+                              Mask="####0.00#"
+                              MaskUseAsDisplayFormat="True"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="0"
+                        Grid.Column="8"
+                        HorizontalAlignment="Center"
+                        Background="{DXBinding '@e(MinBidAskSizeCheckEdit).IsChecked',
+                                               Converter={StaticResource BooleanToColorConverterRed}}">
+
+                <dxe:CheckEdit x:Name="MinBidAskSizeCheckEdit"
+                               IsChecked="{Binding FishLossConfig.MinBidAskSizeCheckEnabled}"
+                               Visibility="Collapsed" />
+
+                <dx:SimpleButton Width="65"
+                                 Margin="5,5,5,2"
+                                 Padding="0,4"
+                                 Background="{DXBinding '@e(MinBidAskSizeCheckEdit).IsChecked',
+                                                        Converter={StaticResource BooleanToColorConverterRed}}"
+                                 Command="{DXCommand '@e(MinBidAskSizeCheckEdit).IsChecked = !@e(MinBidAskSizeCheckEdit).IsChecked'}"
+                                 Content="Min B/A Size"
+                                 FontSize="10"
+                                 Style="{StaticResource CancelButtonStyle}" />
+
+                <dxe:SpinEdit Width="65"
+                              Margin="5,0,5,5"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="{DXBinding '@e(MinBidAskSizeCheckEdit).IsChecked',
+                                                     Converter={StaticResource BooleanToColorConverterRed}}"
+                              EditValue="{Binding FishLossConfig.MinBidAskSize, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="0"
+                        Grid.Column="9"
+                        HorizontalAlignment="Center"
+                        Background="{DXBinding '@e(MinEmaWidthPercentEdgeToTheoCheckEdit).IsChecked',
+                                               Converter={StaticResource BooleanToColorConverterRed}}">
+
+                <dxe:CheckEdit x:Name="MinEmaWidthPercentEdgeToTheoCheckEdit"
+                               IsChecked="{Binding FishLossConfig.MinEmaWidthPercentEdgeToTheoCheckEnabled}"
+                               Visibility="Collapsed" />
+
+                <dx:SimpleButton Width="65"
+                                 Margin="5,5,5,2"
+                                 Padding="0,4"
+                                 Background="{DXBinding '@e(MinEmaWidthPercentEdgeToTheoCheckEdit).IsChecked',
+                                                        Converter={StaticResource BooleanToColorConverterRed}}"
+                                 Command="{DXCommand '@e(MinEmaWidthPercentEdgeToTheoCheckEdit).IsChecked = !@e(MinEmaWidthPercentEdgeToTheoCheckEdit).IsChecked'}"
+                                 Content="Width % E2T"
+                                 FontSize="10"
+                                 Style="{StaticResource CancelButtonStyle}"
+                                 ToolTip="Ema Width %, Edge To Theo" />
+
+                <dxe:SpinEdit Width="65"
+                              Margin="5,0,5,5"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="{DXBinding '@e(MinEmaWidthPercentEdgeToTheoCheckEdit).IsChecked',
+                                                     Converter={StaticResource BooleanToColorConverterRed}}"
+                              EditValue="{Binding FishLossConfig.MinEmaWidthPercentEdgeToTheoCheckEdge, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="0.01"
+                              Mask="####0.00#"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="0"
+                        Grid.Column="10"
+                        HorizontalAlignment="Center"
+                        Background="{DXBinding '@e(MinTimeToPreviousAttemptCheckEdit).IsChecked',
+                                               Converter={StaticResource BooleanToColorConverterRed}}"
+                        Visibility="{Binding IsEdgeScanFeedAutoTrader, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                <dxe:CheckEdit x:Name="MinTimeToPreviousAttemptCheckEdit"
+                               IsChecked="{Binding FishLossConfig.MinTimeToPreviousAttemptCheckEnabled}"
+                               Visibility="Collapsed" />
+
+                <dx:SimpleButton Width="65"
+                                 Margin="5,5,5,2"
+                                 Padding="0,4"
+                                 Background="{DXBinding '@e(MinTimeToPreviousAttemptCheckEdit).IsChecked',
+                                                        Converter={StaticResource BooleanToColorConverterRed}}"
+                                 Command="{DXCommand '@e(MinTimeToPreviousAttemptCheckEdit).IsChecked = !@e(MinTimeToPreviousAttemptCheckEdit).IsChecked'}"
+                                 Content="Perm Time"
+                                 FontSize="10"
+                                 Style="{StaticResource CancelButtonStyle}" />
+
+                <dxe:SpinEdit Width="65"
+                              Margin="5,0,5,5"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="{DXBinding '@e(MinTimeToPreviousAttemptCheckEdit).IsChecked',
+                                                     Converter={StaticResource BooleanToColorConverterRed}}"
+                              DisplayFormatString="N0"
+                              EditValue="{Binding FishLossConfig.MinTimeToPreviousAttemptIntervalSeconds, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="0"
+                        Grid.Column="11"
+                        HorizontalAlignment="Center"
+                        Background="{DXBinding '@e(MinTimeToPermLoserCheckEdit).IsChecked',
+                                               Converter={StaticResource BooleanToColorConverterRed}}"
+                        Visibility="{Binding IsEdgeScanFeedAutoTrader, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                <dxe:CheckEdit x:Name="MinTimeToPermLoserCheckEdit"
+                               IsChecked="{Binding FishLossConfig.MinTimeToPermLoserCheckEnabled}"
+                               Visibility="Collapsed" />
+
+                <dx:SimpleButton Width="65"
+                                 Margin="5,5,5,2"
+                                 Padding="0,4"
+                                 Background="{DXBinding '@e(MinTimeToPermLoserCheckEdit).IsChecked',
+                                                        Converter={StaticResource BooleanToColorConverterRed}}"
+                                 Command="{DXCommand '@e(MinTimeToPermLoserCheckEdit).IsChecked = !@e(MinTimeToPermLoserCheckEdit).IsChecked'}"
+                                 Content="Perm Loser"
+                                 FontSize="10"
+                                 Style="{StaticResource CancelButtonStyle}" />
+
+                <dxe:SpinEdit Width="65"
+                              Margin="5,0,5,5"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="{DXBinding '@e(MinTimeToPermLoserCheckEdit).IsChecked',
+                                                     Converter={StaticResource BooleanToColorConverterRed}}"
+                              DisplayFormatString="N0"
+                              EditValue="{Binding FishLossConfig.MinTimeToPermLoserIntervalSeconds, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="0"
+                        Grid.Column="12"
+                        MinWidth="110"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Visibility="{Binding IsEdgeScanFeedAutoTrader, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                <dxe:CheckEdit x:Name="MinEdgeToPreviousAttemptCheckEdit"
+                               IsChecked="{Binding FishLossConfig.MinEdgeToPreviousAttemptCheckEnabled}"
+                               Visibility="Collapsed" />
+
+                <dx:SimpleButton Width="100"
+                                 Margin="5,5,5,2"
+                                 Padding="0,4"
+                                 VerticalAlignment="Top"
+                                 Background="{DXBinding '@e(MinEdgeToPreviousAttemptCheckEdit).IsChecked',
+                                                        Converter={StaticResource BooleanToColorConverterRed}}"
+                                 Command="{DXCommand '@e(MinEdgeToPreviousAttemptCheckEdit).IsChecked = !@e(MinEdgeToPreviousAttemptCheckEdit).IsChecked'}"
+                                 Content="Recent Attempt Edge"
+                                 FontSize="10"
+                                 Style="{StaticResource CancelButtonStyle}" />
+
+                <dxe:CheckEdit x:Name="PreviousAttemptCrossCheckEdit"
+                               IsChecked="{Binding FishLossConfig.PreviousAttemptCrossCheckEnabled}"
+                               Visibility="Collapsed" />
+
+                <dx:SimpleButton Width="100"
+                                 Margin="5,0,5,2"
+                                 Padding="0,3"
+                                 VerticalAlignment="Top"
+                                 Background="{DXBinding '@e(PreviousAttemptCrossCheckEdit).IsChecked',
+                                                        Converter={StaticResource BooleanToColorConverterRed}}"
+                                 Command="{DXCommand '@e(PreviousAttemptCrossCheckEdit).IsChecked = !@e(PreviousAttemptCrossCheckEdit).IsChecked'}"
+                                 Content="Recent Attempt Cross"
+                                 FontSize="10"
+                                 Style="{StaticResource CancelButtonStyle}" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="0"
+                        Grid.Column="13"
+                        Width="90"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Orientation="Vertical">
+
+                <Label Height="22"
+                       Margin="5,5,5,2"
+                       Padding="0,4"
+                       VerticalAlignment="Top"
+                       HorizontalContentAlignment="Center"
+                       Content="Px Cross Mkt"
+                       FontSize="10" />
+
+                <dxe:ComboBoxEdit Height="22"
+                                  Margin="5,2,5,2"
+                                  Padding="0"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Top"
+                                  HorizontalContentAlignment="Right"
+                                  ApplyItemTemplateToSelectedItem="True"
+                                  EditValue="{Binding FishLossConfig.PxCrossOption}"
+                                  IsTextEditable="False"
+                                  ItemsSource="{Binding PxCrossOptions}">
+                    <dxe:ComboBoxEdit.ItemTemplate>
+                        <DataTemplate>
+                            <Label Padding="0,0.5"
+                                   Content="{Binding Converter={StaticResource DisplayTextCamelCaseConverter}}"
+                                   FontSize="11" />
+                        </DataTemplate>
+                    </dxe:ComboBoxEdit.ItemTemplate>
+                </dxe:ComboBoxEdit>
+            </StackPanel>
+
+            <dxe:CheckEdit Grid.Row="1"
+                           Grid.Column="6"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Content="Use Best"
+                           IsChecked="{Binding FishLossConfig.MaxPercentBidCheckUseBestQuote}" />
+
+            <dxe:CheckEdit Grid.Row="1"
+                           Grid.Column="7"
+                           Grid.ColumnSpan="2"
+                           Margin="5,0,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Content="Block 0.00 Price"
+                           IsChecked="{Binding FishLossConfig.BlockZeroPrice}" />
+        </Grid>
+    </dxlc:GroupBox>
+</UserControl>

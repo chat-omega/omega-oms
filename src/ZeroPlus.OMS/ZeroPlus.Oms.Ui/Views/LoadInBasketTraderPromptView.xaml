@@ -1,0 +1,149 @@
+﻿<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.LoadInBasketTraderPromptView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 xmlns:views="clr-namespace:ZeroPlus.Oms.Ui.Views"
+                 Title="{Binding ModuleTitle}"
+                 Width="400"
+                 Height="200"
+                 d:DataContext="{d:DesignInstance Type=ViewModels:LoadInBasketTraderPromptViewModel}"
+                 DataContext="{startuphelpers:DISource Type=ViewModels:LoadInBasketTraderPromptViewModel}"
+                 Topmost="True"
+                 WindowStartupLocation="CenterScreen"
+                 WindowStyle="ToolWindow"
+                 mc:Ignorable="d">
+
+    <dx:ThemedWindow.Resources>
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+    </dx:ThemedWindow.Resources>
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:CurrentWindowService />
+        <dxmvvm:DispatcherService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Grid>
+        <Grid IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="5" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5" />
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="1"
+                   Grid.Column="1"
+                   Margin="5,0,0,0"
+                   Content="Basket Config" />
+
+            <dxe:ComboBoxEdit Grid.Row="1"
+                              Grid.Column="2"
+                              Grid.ColumnSpan="3"
+                              Margin="5,2,0,0"
+                              DisplayMember="Title"
+                              IsTextEditable="False"
+                              ItemsSource="{Binding BasketConfigs}"
+                              SelectedItem="{Binding BasketConfig}" />
+
+            <Label Grid.Row="2"
+                   Grid.Column="1"
+                   Margin="5,0,0,0"
+                   Content="Opening Side" />
+
+            <dxe:ComboBoxEdit Grid.Row="2"
+                              Grid.Column="2"
+                              Margin="5,2,0,0"
+                              IsTextEditable="False"
+                              ItemsSource="{Binding Sides}"
+                              SelectedItem="{Binding OpeningSide}" />
+
+            <Label Grid.Row="2"
+                   Grid.Column="3"
+                   Margin="5,0,0,0"
+                   Content="Perm Count" />
+
+            <dxe:SpinEdit Grid.Row="2"
+                          Grid.Column="4"
+                          Margin="5,2,0,0"
+                          AllowSpinOnMouseWheel="True"
+                          EditValue="{Binding PermCount}"
+                          EditValueType="{x:Type sys:Int32}"
+                          Increment="1"
+                          Mask="N0"
+                          MaskUseAsDisplayFormat="True"
+                          MinValue="0"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+
+            <Label Grid.Row="4"
+                   Grid.Column="1"
+                   Margin="5,0,0,0"
+                   Content="Target Edge" />
+
+            <dxe:SpinEdit Grid.Row="4"
+                          Grid.Column="2"
+                          Margin="5,2,0,0"
+                          AllowSpinOnMouseWheel="True"
+                          EditValue="{Binding TargetEdge, Converter={StaticResource DoubleFormatter}}"
+                          EditValueType="{x:Type sys:Double}"
+                          Increment=".01"
+                          Mask="N2"
+                          MaskUseAsDisplayFormat="True"
+                          MinValue="0"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+
+            <Label Grid.Row="4"
+                   Grid.Column="3"
+                   Margin="5,0,0,0"
+                   Content="Backup Edge" />
+
+            <dxe:SpinEdit Grid.Row="4"
+                          Grid.Column="4"
+                          Margin="5,2,0,0"
+                          AllowSpinOnMouseWheel="True"
+                          EditValue="{Binding BackupEdge, Converter={StaticResource DoubleFormatter}}"
+                          EditValueType="{x:Type sys:Double}"
+                          Increment=".01"
+                          Mask="N2"
+                          MaskUseAsDisplayFormat="True"
+                          MinValue="0"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+
+            <dx:SimpleButton Grid.Row="6"
+                             Grid.Column="1"
+                             Grid.ColumnSpan="5"
+                             HorizontalAlignment="Center"
+                             Command="{Binding LoadCommand}"
+                             Content="Load" />
+        </Grid>
+
+        <views:BusyIndicatorView HorizontalAlignment="Center"
+                                 VerticalAlignment="Center" />
+    </Grid>
+</dx:ThemedWindow>

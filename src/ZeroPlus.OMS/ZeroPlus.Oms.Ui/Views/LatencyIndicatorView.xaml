@@ -1,0 +1,65 @@
+<UserControl x:Class="ZeroPlus.Oms.Ui.Views.LatencyIndicatorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+             d:DataContext="{d:DesignInstance Type=ViewModels:LatencyIndicatorViewModel}"
+             DataContext="{startuphelpers:DISource Type=ViewModels:LatencyIndicatorViewModel}"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <dxmvvm:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <helper:SignToBrushConverter x:Key="LatencyToBrushConverter"
+                                     Limit="100"
+                                     NegativeBrush="Transparent"
+                                     PositiveBrush="#a11120"
+                                     ZeroBrush="#a11120" />
+    </UserControl.Resources>
+    <StackPanel Orientation="Horizontal">
+        <Border Margin="2,0"
+                Background="{Binding ServerCreepMs, Converter={StaticResource LatencyToBrushConverter}}"
+                BorderBrush="#777"
+                BorderThickness="1"
+                CornerRadius="2"
+                Visibility="{Binding Config.QuoteClientEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel Orientation="Horizontal">
+                <Label Padding="3,2"
+                       HorizontalContentAlignment="Center"
+                       Content="MD LAT"
+                       FontSize="9"
+                       Foreground="#C0C0C0" />
+                <Label MinWidth="45"
+                       Padding="5,0"
+                       HorizontalContentAlignment="Right"
+                       d:Content="888.88"
+                       Content="{Binding ServerCreepMs, StringFormat='{}{0:N1} ms'}"
+                       FontWeight="DemiBold"
+                       Foreground="#EEEEEE" />
+            </StackPanel>
+        </Border>
+        <Border Margin="2,0"
+                Background="{Binding DatabentoServerLatencyMs, Converter={StaticResource LatencyToBrushConverter}}"
+                BorderBrush="#777"
+                BorderThickness="1"
+                CornerRadius="2"
+                Visibility="{Binding Config.DatabentoClientEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel Orientation="Horizontal">
+                <Label Padding="3,2"
+                       HorizontalContentAlignment="Center"
+                       Content="DB LAT"
+                       FontSize="9"
+                       Foreground="#C0C0C0" />
+                <Label MinWidth="45"
+                       Padding="5,0"
+                       HorizontalContentAlignment="Right"
+                       d:Content="888.88"
+                       Content="{Binding DatabentoServerLatencyMs, StringFormat='{}{0:N1} ms'}"
+                       FontWeight="DemiBold"
+                       Foreground="#EEEEEE" />
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

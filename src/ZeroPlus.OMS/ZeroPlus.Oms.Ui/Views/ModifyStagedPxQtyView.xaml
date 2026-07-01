@@ -1,0 +1,93 @@
+﻿<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.ModifyStagedPxQtyView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 Title="Modify Staged Px and Qty"
+                 Width="290"
+                 Height="170"
+                 Topmost="True"
+                 WindowStartupLocation="CenterScreen"
+                 WindowStyle="ToolWindow">
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:CurrentWindowService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="10" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="10" />
+        </Grid.RowDefinitions>
+
+        <dxe:CheckEdit Grid.Row="1"
+                       Grid.Column="1"
+                       Margin="0,5,0,0"
+                       Content="Qty:"
+                       EditValue="{Binding UpdateQty}" />
+
+        <dxe:SpinEdit Grid.Row="1"
+                      Grid.Column="2"
+                      Margin="5,5,0,0"
+                      AllowSpinOnMouseWheel="True"
+                      EditValue="{Binding Qty, UpdateSourceTrigger=PropertyChanged}"
+                      EditValueType="{x:Type sys:Int32}"
+                      IsEnabled="{Binding UpdateQty}"
+                      Mask="d"
+                      MinValue="0"
+                      PreviewMouseUp="PriceSpinEdit_MouseUp"
+                      SelectAllOnGotFocus="True"
+                      SelectAllOnMouseUp="True" />
+
+        <dxe:CheckEdit Grid.Row="2"
+                       Grid.Column="1"
+                       Margin="0,5,0,0"
+                       Content="Px:"
+                       EditValue="{Binding UpdatePrice}" />
+
+        <dxe:SpinEdit Grid.Row="2"
+                      Grid.Column="2"
+                      Margin="5,5,0,0"
+                      AllowSpinOnMouseWheel="True"
+                      DisplayFormatString="N2"
+                      EditValue="{Binding Price, UpdateSourceTrigger=PropertyChanged}"
+                      EditValueType="{x:Type sys:Double}"
+                      Increment="0.01"
+                      IsEnabled="{Binding UpdatePrice}"
+                      Mask="N2"
+                      PreviewMouseUp="PriceSpinEdit_MouseUp"
+                      SelectAllOnGotFocus="True"
+                      SelectAllOnMouseUp="True" />
+        <StackPanel Grid.Row="4"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
+            <dx:SimpleButton Width="150"
+                             Margin="5,0"
+                             Command="{Binding ModifyQtyPxCommand}"
+                             Content="Modify Staged Orders"
+                             IsDefault="True" />
+            <dx:SimpleButton Width="70"
+                             Margin="5,0"
+                             Command="{Binding CancelCommand}"
+                             Content="Cancel"
+                             IsCancel="True" />
+        </StackPanel>
+
+    </Grid>
+</dx:ThemedWindow>

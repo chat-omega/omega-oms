@@ -1,0 +1,134 @@
+﻿<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.ReportBugView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 Title="{Binding ModuleTitle}"
+                 Width="700"
+                 Height="450"
+                 DataContext="{startuphelpers:DISource Type=ViewModels:ReportBugViewModel}"
+                 Topmost="True"
+                 WindowStartupLocation="CenterScreen"
+                 WindowStyle="ToolWindow">
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:CurrentWindowService />
+        <services:OmsMessageBoxService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="5" />
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="1"
+               Grid.Column="1"
+               Margin="5"
+               Content="Module" />
+
+        <dxe:ComboBoxEdit Grid.Row="1"
+                          Grid.Column="2"
+                          Width="200"
+                          Margin="5"
+                          HorizontalAlignment="Left"
+                          IsTextEditable="False"
+                          ItemsSource="{Binding Modules}"
+                          SelectedItem="{Binding SelectedModule}" />
+
+        <Label Grid.Row="3"
+               Grid.Column="1"
+               Margin="5"
+               Content="Type" />
+        <dxe:ListBoxEdit Grid.Row="3"
+                         Grid.Column="2"
+                         Width="200"
+                         Margin="5"
+                         HorizontalAlignment="Left"
+                         ItemsSource="{Binding Types}"
+                         SelectedItem="{Binding SelectedType}"
+                         StyleSettings="{dxe:RadioListBoxEditStyleSettings}" />
+        <Label Grid.Row="5"
+               Grid.Column="1"
+               Margin="5"
+               Content="Severity" />
+        <dxe:ListBoxEdit Grid.Row="5"
+                         Grid.Column="2"
+                         Width="200"
+                         Margin="5"
+                         HorizontalAlignment="Left"
+                         ItemsSource="{Binding Severities}"
+                         SelectedItem="{Binding SelectedSeverity}"
+                         StyleSettings="{dxe:RadioListBoxEditStyleSettings}" />
+        <Label Grid.Row="6"
+               Grid.Column="1"
+               Margin="5"
+               Content="Subject" />
+        <dxe:TextEdit Grid.Row="6"
+                      Grid.Column="2"
+                      Width="200"
+                      Margin="5"
+                      HorizontalAlignment="Left"
+                      EditValue="{Binding Subject}" />
+
+        <Label Grid.Row="7"
+               Grid.Column="1"
+               Margin="5"
+               Content="Details" />
+
+        <dxe:TextEdit Grid.Row="7"
+                      Grid.Column="2"
+                      Margin="5"
+                      VerticalContentAlignment="Top"
+                      AcceptsReturn="True"
+                      NullText="Description of your feedback..."
+                      Text="{Binding Details}"
+                      TextWrapping="Wrap"
+                      VerticalScrollBarVisibility="Auto" />
+
+        <StackPanel Grid.Row="9"
+                    Grid.Column="1"
+                    Orientation="Vertical">
+            <Label Margin="5"
+                   Content="Screenshot" />
+
+            <dx:SimpleButton HorizontalAlignment="Center"
+                             Command="{Binding TakeScreenshotCommand}"
+                             Content="Take"
+                             Glyph="{dx:DXImage SvgImages/Icon Builder/Electronics_Photo.svg}"
+                             GlyphHeight="15" />
+        </StackPanel>
+
+        <dx:SimpleButton Grid.Row="11"
+                         Grid.Column="1"
+                         Grid.ColumnSpan="2"
+                         Margin="5"
+                         HorizontalAlignment="Center"
+                         Command="{Binding SubmitCommand}"
+                         Content="Submit"
+                         Glyph="{dx:DXImage 'SvgImages/Icon Builder/Security_Bug.svg'}"
+                         GlyphHeight="15" />
+    </Grid>
+</dx:ThemedWindow>

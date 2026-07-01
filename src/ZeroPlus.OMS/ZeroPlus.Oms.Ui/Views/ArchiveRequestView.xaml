@@ -1,0 +1,217 @@
+﻿<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.ArchiveRequestView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 xmlns:views="clr-namespace:ZeroPlus.Oms.Ui.Views"
+                 Title="{Binding ModuleTitle}"
+                 Width="530"
+                 Height="280"
+                 d:DataContext="{d:DesignInstance Type=ViewModels:ArchiveRequestViewModel}"
+                 DataContext="{startuphelpers:DISource Type=ViewModels:ArchiveRequestViewModel}"
+                 WindowStartupLocation="CenterScreen"
+                 WindowStyle="ToolWindow"
+                 mc:Ignorable="d">
+
+    <dxmvvm:Interaction.Behaviors>
+        <services:OmsMessageBoxService />
+        <dxmvvm:CurrentWindowService />
+        <dxmvvm:SaveFileDialogService />
+    </dxmvvm:Interaction.Behaviors>
+    <Grid>
+        <Grid IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="5" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5" />
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="1"
+                   Grid.Column="1"
+                   Content="Date Range" />
+            <StackPanel Grid.Row="1"
+                        Grid.Column="2"
+                        Margin="5,0,0,0"
+                        Orientation="Horizontal">
+
+                <dxe:TextEdit Width="130"
+                              HorizontalContentAlignment="Center"
+                              EditValue="{Binding StartDateTime}"
+                              IsEnabled="{Binding UseDaysBackForRange, Converter={StaticResource BooleanNegationConverter}}"
+                              Mask="G"
+                              MaskType="DateTimeAdvancingCaret"
+                              MaskUseAsDisplayFormat="True" />
+
+                <Label Margin="5,0"
+                       VerticalAlignment="Center"
+                       Content="-" />
+
+                <dxe:TextEdit Width="130"
+                              HorizontalContentAlignment="Center"
+                              EditValue="{Binding EndDateTime}"
+                              IsEnabled="{Binding UseDaysBackForRange, Converter={StaticResource BooleanNegationConverter}}"
+                              Mask="G"
+                              MaskType="DateTimeAdvancingCaret"
+                              MaskUseAsDisplayFormat="True" />
+
+                <dxe:CheckEdit Margin="5,0,0,0"
+                               Content="Days"
+                               EditValue="{Binding UseDaysBackForRange}" />
+
+                <dxe:SpinEdit Width="60"
+                              Margin="5,0,0,0"
+                              HorizontalAlignment="Left"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding DaysBack}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              IsEnabled="{Binding UseDaysBackForRange}"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+            </StackPanel>
+
+            <Label Grid.Row="3"
+                   Grid.Column="1"
+                   Margin="0,5,0,0"
+                   Content="API Usernames" />
+
+            <dxe:TextEdit Grid.Row="3"
+                          Grid.Column="2"
+                          Width="388"
+                          Margin="5,5,0,0"
+                          HorizontalAlignment="Left"
+                          EditValue="{Binding ApiUsernames}" />
+
+            <Label Grid.Row="4"
+                   Grid.Column="1"
+                   Margin="0,5,0,0"
+                   Content="Tags" />
+
+            <dxe:TextEdit Grid.Row="4"
+                          Grid.Column="2"
+                          Width="388"
+                          Margin="5,5,0,0"
+                          HorizontalAlignment="Left"
+                          EditValue="{Binding Tags}" />
+
+            <Label Grid.Row="5"
+                   Grid.Column="1"
+                   Margin="0,5,0,0"
+                   Content="Symbols" />
+
+            <dxe:TextEdit Grid.Row="5"
+                          Grid.Column="2"
+                          Width="388"
+                          Margin="5,5,0,0"
+                          HorizontalAlignment="Left"
+                          EditValue="{Binding Symbols}" />
+
+            <Label Grid.Row="6"
+                   Grid.Column="1"
+                   Margin="0,5,0,0"
+                   Content="Underlyings" />
+
+            <dxe:TextEdit Grid.Row="6"
+                          Grid.Column="2"
+                          Width="388"
+                          Margin="5,5,0,0"
+                          HorizontalAlignment="Left"
+                          EditValue="{Binding Underlyings}" />
+
+            <dxe:CheckEdit Grid.Row="7"
+                           Grid.Column="1"
+                           Margin="0,5,0,0"
+                           Content="Min First Edge"
+                           EditValue="{Binding MinFirstEdgeEnabled}" />
+
+            <dxe:SpinEdit Grid.Row="7"
+                          Grid.Column="2"
+                          Width="75"
+                          Margin="5,5,0,0"
+                          HorizontalAlignment="Left"
+                          HorizontalContentAlignment="Right"
+                          AllowSpinOnMouseWheel="True"
+                          EditValue="{Binding MinFirstEdge}"
+                          EditValueType="{x:Type sys:Double}"
+                          Increment="0.01"
+                          IsEnabled="{Binding MinFirstEdgeEnabled}"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+
+            <dxe:CheckEdit Grid.Row="8"
+                           Grid.Column="1"
+                           Margin="0,5,0,0"
+                           Content="Min Edge to Theo"
+                           EditValue="{Binding MinEdgeToTheoEnabled}" />
+
+            <dxe:SpinEdit Grid.Row="8"
+                          Grid.Column="2"
+                          Width="75"
+                          Margin="5,5,0,0"
+                          HorizontalAlignment="Left"
+                          HorizontalContentAlignment="Right"
+                          AllowSpinOnMouseWheel="True"
+                          EditValue="{Binding MinEdgeToTheo}"
+                          EditValueType="{x:Type sys:Double}"
+                          Increment="0.01"
+                          IsEnabled="{Binding MinEdgeToTheoEnabled}"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+
+            <StackPanel Grid.Row="10"
+                        Grid.Column="2"
+                        Grid.ColumnSpan="2"
+                        Margin="5,5,0,0"
+                        Orientation="Horizontal">
+                <dxe:CheckEdit Width="75"
+                               Content="Fills Only"
+                               EditValue="{Binding FillsOnly}" />
+                <dxe:CheckEdit Margin="5,0,0,0"
+                               Content="Opening Only"
+                               EditValue="{Binding OpeningOnly}" />
+            </StackPanel>
+
+            <dx:SimpleButton Grid.Row="12"
+                             Grid.Column="1"
+                             Grid.ColumnSpan="2"
+                             HorizontalAlignment="Center"
+                             Command="{Binding LoadCommand}"
+                             Content="Load" />
+        </Grid>
+
+        <views:BusyIndicatorView HorizontalAlignment="Center"
+                                 VerticalAlignment="Center" />
+
+    </Grid>
+</dx:ThemedWindow>

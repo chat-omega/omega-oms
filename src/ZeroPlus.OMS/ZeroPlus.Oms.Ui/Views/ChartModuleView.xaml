@@ -1,0 +1,765 @@
+﻿<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.ChartModuleView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                 xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 xmlns:viewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 Title="{Binding ModuleTitle}"
+                 Width="1200"
+                 Height="800"
+                 MinWidth="400"
+                 MinHeight="300"
+                 d:DataContext="{d:DesignInstance Type=viewModels:ChartModuleViewModel}"
+                 DataContext="{startuphelpers:DISource Type=viewModels:ChartModuleViewModel}"
+                 WindowStartupLocation="CenterScreen"
+                 mc:Ignorable="d">
+    <Window.Resources>
+        <dxc:LineStyle x:Key="LineStyle"
+                       Thickness="5" />
+        <dxc:LineStyle x:Key="PermLineStyle"
+                       Thickness="1" />
+        <dxc:LineStyle x:Key="PriceLineStyle"
+                       Thickness="3" />
+        <dx:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+        <helper:ChartConstantLineModeToColorConverter x:Key="ChartConstantLineModeToColorConverter" />
+        <helper:ChartConstantLineModeToAlignmentConverter x:Key="ChartConstantLineModeToAlignmentConverter" />
+        <helper:ChartFieldToDisplayTextConverter x:Key="ChartFieldToDisplayTextConverter" />
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <helper:HeatmapColorConverter x:Key="HeatmapColorConverter" />
+        <DataTemplate x:Key="expirationTemplate">
+            <TextBlock HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Text="{Binding Value, StringFormat='{}{0}'}"
+                       TextAlignment="Center" />
+        </DataTemplate>
+    </Window.Resources>
+
+    <dxmvvm:Interaction.Behaviors>
+        <services:OmsMessageBoxService />
+        <dxmvvm:DispatcherService />
+        <dxmvvm:KeyToCommand Command="{Binding SearchCommand}"
+                             KeyGesture="Enter" />
+    </dxmvvm:Interaction.Behaviors>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="5" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="1"
+              Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Width="465.4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0"
+                       Padding="3"
+                       Background="#171718"
+                       Content="Symbol - " />
+
+                <dxe:TextEdit Grid.Column="1"
+                              Background="#171718"
+                              BorderBrush="#171718"
+                              CharacterCasing="Upper"
+                              EditValue="{Binding Symbol, UpdateSourceTrigger=PropertyChanged}"
+                              EditValuePostDelay="0"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True"
+                              TabIndex="1" />
+
+                <DockPanel Grid.Column="2"
+                           Width="120"
+                           Margin="5,0,0,0"
+                           HorizontalAlignment="Left"
+                           Background="#171718"
+                           Visibility="{Binding SnapshotMode, Converter={StaticResource BooleanToVisibilityInverseConverter}}">
+                    <Label Margin="3,0"
+                           Content="Type - " />
+                    <dxe:ComboBoxEdit Background="#171718"
+                                      BorderBrush="#171718"
+                                      BorderThickness="0"
+                                      IsTextEditable="False"
+                                      ItemsSource="{Binding OptionTypes}"
+                                      SelectedItem="{Binding OptionType}">
+
+                        <dxmvvm:Interaction.Behaviors>
+                            <dxmvvm:EventToCommand Command="{Binding ModeChangedCommand}"
+                                                   EventName="EditValueChanged" />
+                        </dxmvvm:Interaction.Behaviors>
+                    </dxe:ComboBoxEdit>
+                </DockPanel>
+
+                <DockPanel Grid.Column="3"
+                           Width="120"
+                           Margin="5,0,0,0"
+                           HorizontalAlignment="Left"
+                           Background="#171718"
+                           LastChildFill="True"
+                           Visibility="{Binding SnapshotMode, Converter={StaticResource BooleanToVisibilityInverseConverter}}">
+                    <Label Margin="3,0"
+                           Content="Interval - "
+                           DockPanel.Dock="Left" />
+                    <dxe:SpinEdit AllowSpinOnMouseWheel="True"
+                                  Background="#171718"
+                                  BorderBrush="#171718"
+                                  EditValue="{Binding Interval, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  Mask="D"
+                                  MinValue="500"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True">
+                        <dxmvvm:Interaction.Behaviors>
+                            <dxmvvm:EventToCommand Command="{Binding UpdateIntervalCommand}"
+                                                   EventName="EditValueChanged" />
+                        </dxmvvm:Interaction.Behaviors>
+                    </dxe:SpinEdit>
+                </DockPanel>
+
+            </Grid>
+
+            <DockPanel Grid.Row="0"
+                       Grid.Column="3"
+                       Width="250"
+                       Margin="5,0,0,0"
+                       HorizontalAlignment="Left"
+                       Background="#171718"
+                       LastChildFill="True">
+                <Label Margin="3,0"
+                       Content="Field - "
+                       DockPanel.Dock="Left" />
+                <dxe:ComboBoxEdit ApplyItemTemplateToSelectedItem="True"
+                                  Background="#171718"
+                                  BorderBrush="#171718"
+                                  BorderThickness="0"
+                                  DisplayFormatString="Field - {0}"
+                                  IsTextEditable="False"
+                                  ItemsSource="{Binding ChartFields}"
+                                  SelectedItem="{Binding SelectedChartField}">
+                    <dxe:ComboBoxEdit.ItemTemplate>
+                        <DataTemplate>
+                            <Label Padding="0,0.5"
+                                   Content="{Binding Converter={StaticResource ChartFieldToDisplayTextConverter}}"
+                                   FontSize="11" />
+                        </DataTemplate>
+                    </dxe:ComboBoxEdit.ItemTemplate>
+
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:EventToCommand Command="{Binding ModeChangedCommand}"
+                                               EventName="EditValueChanged" />
+                    </dxmvvm:Interaction.Behaviors>
+                </dxe:ComboBoxEdit>
+            </DockPanel>
+
+            <DockPanel Grid.Row="0"
+                       Grid.Column="4"
+                       Width="190"
+                       Margin="5,0,0,0"
+                       HorizontalAlignment="Left"
+                       Background="#171718">
+                <Label Margin="3,0"
+                       Content="Aggregate - " />
+                <dxe:ComboBoxEdit Background="#171718"
+                                  BorderBrush="#171718"
+                                  BorderThickness="0"
+                                  IsTextEditable="False"
+                                  ItemsSource="{Binding SeriesAggregateFunctions}"
+                                  SelectedItem="{Binding AggregateFunction}" />
+            </DockPanel>
+
+            <dx:SimpleButton Grid.Row="0"
+                             Grid.Column="5"
+                             Width="160"
+                             Margin="5,0,0,0"
+                             HorizontalAlignment="Left"
+                             Background="#171718"
+                             Command="{Binding SearchCommand}"
+                             Content="Refresh"
+                             Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Refresh.svg}"
+                             GlyphHeight="15"
+                             IsDefault="True" />
+
+            <dx:SimpleButton Grid.Row="0"
+                             Grid.Column="6"
+                             Width="22"
+                             Height="22"
+                             Margin="5,0,0,0"
+                             HorizontalAlignment="Right"
+                             dxb:BarManager.MenuShowMouseButton="LeftButton"
+                             Glyph="{dx:DXImage SvgImages/DiagramIcons/Orientation/ListOrientationVertical.svg}"
+                             GlyphHeight="15">
+                <dxb:BarManager.DXContextMenu>
+                    <dxb:PopupControlContainer>
+                        <StackPanel>
+                            <MenuItem Height="25"
+                                      Command="{Binding CloneCommand}"
+                                      Header="Clone">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage SvgImages/XAF/Action_CloneMerge_Merge_Object.svg}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Click="ShareLayout"
+                                      Header="Share Layout">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage SvgImages/Icon Builder/Actions_Send.svg}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Click="SaveLayout"
+                                      Header="Save Layout">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage SvgImages/Save/Save.svg}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding BrowseLayoutsCommand}"
+                                      Header="Browse Layout">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage SvgImages/Dashboards/ServerMode.svg}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Click="LoadLayout"
+                                      Header="Load Layout">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage SvgImages/Dashboards/LoadMap.svg}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <dx:SuperTipItemControlSeparator />
+                        </StackPanel>
+                    </dxb:PopupControlContainer>
+                </dxb:BarManager.DXContextMenu>
+            </dx:SimpleButton>
+
+            <StackPanel Grid.Row="1"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="6"
+                        Margin="0,2,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Visibility="{Binding SnapshotMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <StackPanel HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Background="#171718"
+                            Orientation="Horizontal">
+                    <Label Margin="8,0"
+                           HorizontalAlignment="Left"
+                           Content="Days" />
+                    <dxe:SpinEdit Width="55"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="#171718"
+                                  BorderBrush="#171718"
+                                  BorderThickness="0"
+                                  DisplayFormatString="N0"
+                                  EditValue="{Binding RequestDays, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  Mask="N0"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </StackPanel>
+
+                <StackPanel Margin="5,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Background="#171718"
+                            Orientation="Horizontal">
+
+                    <dxe:CheckEdit Margin="3,0"
+                                   HorizontalAlignment="Left"
+                                   EditValue="{Binding UseLivePriceEnabled, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <dxe:ComboBoxEdit Width="160"
+                                      Margin="2,0"
+                                      HorizontalAlignment="Left"
+                                      Background="#171718"
+                                      BorderBrush="#171718"
+                                      BorderThickness="0"
+                                      DisplayFormatString="Under Price - {0}"
+                                      IsEnabled="{Binding UseLivePriceEnabled}"
+                                      IsTextEditable="False"
+                                      ItemsSource="{Binding UnderPriceSources}"
+                                      SelectedItem="{Binding UnderPriceSource}" />
+
+                    <dxe:TextEdit Width="55"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="#171718"
+                                  BorderBrush="#171718"
+                                  BorderThickness="0"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding UnderLastPrice, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  IsReadOnly="{Binding UseLivePriceEnabled}"
+                                  Mask="N2"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </StackPanel>
+
+                <DockPanel Width="120"
+                           Margin="5,0,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Background="#171718">
+                    <Label Margin="3,0"
+                           HorizontalAlignment="Left"
+                           Content="Price Offset" />
+                    <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="#171718"
+                                  BorderBrush="#171718"
+                                  BorderThickness="0"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding UnderPriceOffset, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Mask="N2"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </DockPanel>
+
+                <DockPanel Width="120"
+                           Margin="5,0,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Background="#171718">
+                    <Label Margin="3,0"
+                           HorizontalAlignment="Left"
+                           Content="Delta Offset" />
+                    <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="#171718"
+                                  BorderBrush="#171718"
+                                  BorderThickness="0"
+                                  EditValue="{Binding DeltaOffset, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="{Binding DeltaOffsetIncrement}"
+                                  Mask="{Binding DeltaOffsetMask}"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </DockPanel>
+
+                <DockPanel Width="320"
+                           Margin="5,0,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Background="#171718">
+
+                    <dxe:CheckEdit Margin="3,0"
+                                   HorizontalAlignment="Left"
+                                   Content="EMA"
+                                   EditValue="{Binding SmoothByEma, UpdateSourceTrigger=PropertyChanged}" />
+                    <dxe:SpinEdit Width="55"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="#171718"
+                                  BorderBrush="#171718"
+                                  EditValue="{Binding SmoothByEmaPeriod, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  IsEnabled="{Binding SmoothByEma}"
+                                  Mask="D"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                    <dxe:CheckEdit Margin="3,0"
+                                   HorizontalAlignment="Left"
+                                   Content="Under"
+                                   EditValue="{Binding ShowFittedUnderlying, UpdateSourceTrigger=PropertyChanged}" />
+                    <dxe:CheckEdit Margin="3,0"
+                                   HorizontalAlignment="Left"
+                                   Content="Greeks"
+                                   EditValue="{Binding ShowGreeks, UpdateSourceTrigger=PropertyChanged}" />
+                    <dxe:CheckEdit Margin="3,0"
+                                   HorizontalAlignment="Left"
+                                   Content="Hi Bid/Lo Ask"
+                                   EditValue="{Binding ShowHighestBidLowestAsk, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+
+                <DockPanel Width="160"
+                           Margin="5,0,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Background="#171718">
+                    <dxe:CheckEdit Margin="3,0"
+                                   HorizontalAlignment="Left"
+                                   Content="Near Strikes"
+                                   EditValue="{Binding ShowNearStrikes, UpdateSourceTrigger=PropertyChanged}" />
+                    <dxe:SpinEdit AllowSpinOnMouseWheel="True"
+                                  Background="#171718"
+                                  BorderBrush="#171718"
+                                  EditValue="{Binding NearStrikes, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  IsEnabled="{Binding ShowNearStrikes}"
+                                  Mask="D"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </DockPanel>
+            </StackPanel>
+        </Grid>
+
+        <dxc:ChartControl Name="Chart"
+                          Grid.Row="2"
+                          Grid.Column="1"
+                          Margin="0,2,0,0"
+                          Visibility="{Binding SnapshotMode, Converter={StaticResource BooleanToVisibilityInverseConverter}}">
+            <dxc:ChartControl.Legend>
+                <dxc:Legend MarkerMode="CheckBox" />
+            </dxc:ChartControl.Legend>
+            <dxc:ChartControl.Diagram>
+                <dxc:XYDiagram2D Name="Diagram"
+                                 EnableAxisXNavigation="True"
+                                 EnableAxisYNavigation="True"
+                                 SeriesItemsSource="{Binding ChartSeries}">
+                    <dxc:XYDiagram2D.AxisX>
+                        <dxc:AxisX2D>
+                            <dxc:AxisX2D.Title>
+                                <dxc:AxisTitle Content="Strike" />
+                            </dxc:AxisX2D.Title>
+                        </dxc:AxisX2D>
+                    </dxc:XYDiagram2D.AxisX>
+                    <dxc:XYDiagram2D.AxisY>
+                        <dxc:AxisY2D>
+                            <dxc:AxisY2D.Title>
+                                <dxc:AxisTitle Content="{Binding SelectedChartField, Converter={StaticResource ChartFieldToDisplayTextConverter}}" />
+                            </dxc:AxisY2D.Title>
+                        </dxc:AxisY2D>
+                    </dxc:XYDiagram2D.AxisY>
+
+                    <dxc:XYDiagram2D.NavigationOptions>
+                        <dxc:NavigationOptions UseKeyboard="True"
+                                               UseMouse="True"
+                                               UseScrollBars="True"
+                                               UseTouchDevice="True" />
+                    </dxc:XYDiagram2D.NavigationOptions>
+                    <dxc:XYDiagram2D.SeriesItemTemplate>
+                        <DataTemplate>
+                            <dxc:LineSeries2D AggregateFunction="{Binding ChartModule.AggregateFunction}"
+                                              ArgumentDataMember="Title"
+                                              DataSource="{Binding ChartValues}"
+                                              DisplayName="{Binding Title}"
+                                              MarkerSize="3"
+                                              ValueDataMember="Value" />
+                        </DataTemplate>
+                    </dxc:XYDiagram2D.SeriesItemTemplate>
+                </dxc:XYDiagram2D>
+            </dxc:ChartControl.Diagram>
+        </dxc:ChartControl>
+
+        <dxc:ChartControl Name="ChartControl"
+                          Grid.Row="2"
+                          Grid.Column="1"
+                          Margin="0,2,0,0"
+                          Visibility="{Binding SnapshotMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <dxc:ChartControl.Legend>
+                <dxc:Legend MarkerMode="CheckBox" />
+            </dxc:ChartControl.Legend>
+            <dxc:ChartControl.Diagram>
+                <dxc:XYDiagram2D Name="ChartDiagram"
+                                 EnableAxisXNavigation="True"
+                                 EnableAxisYNavigation="True">
+                    <dxc:XYDiagram2D.AxisX>
+                        <dxc:AxisX2D Name="axisX"
+                                     ConstantLineInFrontItemsSource="{Binding ZpTradePoints}">
+
+                            <dxc:AxisX2D.ConstantLineInFrontItemTemplate>
+                                <DataTemplate>
+                                    <dxc:ConstantLine Brush="{Binding LineMode, Converter={StaticResource ChartConstantLineModeToColorConverter}}"
+                                                      Value="{Binding Value}">
+                                        <dxc:ConstantLine.Title>
+                                            <dxc:ConstantLineTitle Alignment="{Binding LineMode, Converter={StaticResource ChartConstantLineModeToAlignmentConverter}}"
+                                                                   Content="{Binding Title}"
+                                                                   Foreground="{Binding LineMode, Converter={StaticResource ChartConstantLineModeToColorConverter}}" />
+                                        </dxc:ConstantLine.Title>
+                                    </dxc:ConstantLine>
+                                </DataTemplate>
+                            </dxc:AxisX2D.ConstantLineInFrontItemTemplate>
+
+                            <dxc:AxisX2D.DateTimeScaleOptions>
+                                <dxc:ManualDateTimeScaleOptions AggregateFunction="None"
+                                                                AutoGrid="False"
+                                                                GridAlignment="Minute"
+                                                                MeasureUnit="Minute"
+                                                                WorkTimeOnly="True"
+                                                                WorkdaysOnly="True">
+                                    <dxc:ManualDateTimeScaleOptions.WorkdaysOptions>
+                                        <dxc:WorkdaysOptions Workdays="Monday,Tuesday,Wednesday,Thursday,Friday" />
+                                    </dxc:ManualDateTimeScaleOptions.WorkdaysOptions>
+                                    <dxc:ManualDateTimeScaleOptions.WorkTimeRules>
+                                        <dxc:WorkTimeRule>
+                                            <dxc:WorkTimeRule.WorkIntervals>
+                                                <dxc:TimeInterval EndHour="15"
+                                                                  EndMinute="15"
+                                                                  EndSecond="00"
+                                                                  StartHour="08"
+                                                                  StartMinute="30"
+                                                                  StartSecond="00" />
+                                            </dxc:WorkTimeRule.WorkIntervals>
+                                        </dxc:WorkTimeRule>
+                                    </dxc:ManualDateTimeScaleOptions.WorkTimeRules>
+                                </dxc:ManualDateTimeScaleOptions>
+                            </dxc:AxisX2D.DateTimeScaleOptions>
+                            <dxc:AxisX2D.Label>
+                                <dxc:AxisLabel TextPattern="{}{A:dd hh:mm:ss}" />
+                            </dxc:AxisX2D.Label>
+                        </dxc:AxisX2D>
+                    </dxc:XYDiagram2D.AxisX>
+
+                    <dxc:XYDiagram2D.SecondaryAxesY>
+                        <dxc:SecondaryAxisY2D Name="UnderAxisY"
+                                              GridLinesVisible="False"
+                                              Visible="{Binding ShowFittedUnderlying}">
+                            <dxc:AxisY2D.Title>
+                                <dxc:AxisTitle Content="Under" />
+                            </dxc:AxisY2D.Title>
+                            <dxc:AxisY2D.WholeRange>
+                                <dxc:Range dxc:AxisY2D.AlwaysShowZeroLevel="False" />
+                            </dxc:AxisY2D.WholeRange>
+                        </dxc:SecondaryAxisY2D>
+                        <dxc:SecondaryAxisY2D Name="GreeksAxisY"
+                                              GridLinesVisible="False"
+                                              Visible="{Binding ShowGreeks}">
+                            <dxc:AxisY2D.Title>
+                                <dxc:AxisTitle Content="Greeks" />
+                            </dxc:AxisY2D.Title>
+                            <dxc:AxisY2D.WholeRange>
+                                <dxc:Range dxc:AxisY2D.AlwaysShowZeroLevel="False" />
+                            </dxc:AxisY2D.WholeRange>
+                        </dxc:SecondaryAxisY2D>
+                    </dxc:XYDiagram2D.SecondaryAxesY>
+
+                    <dxc:XYDiagram2D.NavigationOptions>
+                        <dxc:NavigationOptions UseKeyboard="True"
+                                               UseMouse="True"
+                                               UseScrollBars="True"
+                                               UseTouchDevice="True" />
+                    </dxc:XYDiagram2D.NavigationOptions>
+                    <dxc:XYDiagram2D.Series>
+                        <dxc:PointSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                           ArgumentDataMember="Timestamp"
+                                           CrosshairLabelPattern="{}{S} {V:c2}"
+                                           DataSource="{Binding ZpTradePriceDataPoints}"
+                                           DisplayName="ZP Trade Px"
+                                           MarkerSize="10"
+                                           ValueDataMember="TradePx">
+                            <dxc:PointSeries2D.MarkerModel>
+                                <dxc:RingMarker2DModel />
+                            </dxc:PointSeries2D.MarkerModel>
+                            <dxc:PointSeries2D.Label>
+                                <dxc:SeriesLabel dxc:MarkerSeries2D.Angle="90"
+                                                 ConnectorVisible="False"
+                                                 TextPattern="{}{V:c2}" />
+                            </dxc:PointSeries2D.Label>
+                        </dxc:PointSeries2D>
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          CrosshairLabelPattern="{}{S} {V:n5}"
+                                          DataSource="{Binding ChartDataPoints}"
+                                          DisplayName="Ask"
+                                          LineStyle="{StaticResource PriceLineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="AskIv" />
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          CrosshairLabelPattern="{}{S} {V:n5}"
+                                          DataSource="{Binding ChartDataPoints}"
+                                          DisplayName="Theo"
+                                          LineStyle="{StaticResource PriceLineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="Iv" />
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          CrosshairLabelPattern="{}{S} {V:n5}"
+                                          DataSource="{Binding ChartDataPoints}"
+                                          DisplayName="Bid"
+                                          LineStyle="{StaticResource PriceLineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="BidIv" />
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          CrosshairLabelPattern="{}{S} {V:n5}"
+                                          DataSource="{Binding StrikeUpChartDataPoints}"
+                                          DisplayName="Upper Strike Ask"
+                                          LineStyle="{StaticResource PermLineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="AskIv"
+                                          Visible="{Binding ShowNearStrikes}" />
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          CrosshairLabelPattern="{}{S} {V:n5}"
+                                          DataSource="{Binding StrikeUpChartDataPoints}"
+                                          DisplayName="Upper Strike Theo"
+                                          LineStyle="{StaticResource PermLineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="Iv"
+                                          Visible="{Binding ShowNearStrikes}" />
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          CrosshairLabelPattern="{}{S} {V:n5}"
+                                          DataSource="{Binding StrikeUpChartDataPoints}"
+                                          DisplayName="Upper Strike Bid"
+                                          LineStyle="{StaticResource PermLineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="BidIv"
+                                          Visible="{Binding ShowNearStrikes}" />
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          CrosshairLabelPattern="{}{S} {V:n5}"
+                                          DataSource="{Binding StrikeDownChartDataPoints}"
+                                          DisplayName="Lower Strike Ask"
+                                          LineStyle="{StaticResource PermLineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="AskIv"
+                                          Visible="{Binding ShowNearStrikes}" />
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          CrosshairLabelPattern="{}{S} {V:n5}"
+                                          DataSource="{Binding StrikeDownChartDataPoints}"
+                                          DisplayName="Lower Strike Theo"
+                                          LineStyle="{StaticResource PermLineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="Iv"
+                                          Visible="{Binding ShowNearStrikes}" />
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          CrosshairLabelPattern="{}{S} {V:n5}"
+                                          DataSource="{Binding StrikeDownChartDataPoints}"
+                                          DisplayName="Lower Strike Bid"
+                                          LineStyle="{StaticResource PermLineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="BidIv"
+                                          Visible="{Binding ShowNearStrikes}" />
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          CrosshairLabelPattern="{}{S} {V:n2}"
+                                          DataSource="{Binding HighestBidLowestAskChartDataPoints}"
+                                          DisplayName="Lowest Ask"
+                                          LineStyle="{StaticResource PriceLineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="AskIv"
+                                          Visible="{Binding ShowHighestBidLowestAsk}" />
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          CrosshairLabelPattern="{}{S} {V:n2}"
+                                          DataSource="{Binding HighestBidLowestAskChartDataPoints}"
+                                          DisplayName="Highest Bid"
+                                          LineStyle="{StaticResource PriceLineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="BidIv"
+                                          Visible="{Binding ShowHighestBidLowestAsk}" />
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          AxisY="{Binding ElementName=GreeksAxisY}"
+                                          CrosshairLabelPattern="{}{S} {V:n5}"
+                                          DataSource="{Binding ChartDataPoints}"
+                                          DisplayName="Delta"
+                                          LineStyle="{StaticResource PriceLineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="Delta"
+                                          Visible="{Binding ShowGreeks}" />
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          AxisY="{Binding ElementName=GreeksAxisY}"
+                                          CrosshairLabelPattern="{}{S} {V:n5}"
+                                          DataSource="{Binding ChartDataPoints}"
+                                          DisplayName="Theta"
+                                          LineStyle="{StaticResource PriceLineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="Theta"
+                                          Visible="{Binding ShowGreeks}" />
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          AxisY="{Binding ElementName=GreeksAxisY}"
+                                          CrosshairLabelPattern="{}{S} {V:n5}"
+                                          DataSource="{Binding ChartDataPoints}"
+                                          DisplayName="Gamma"
+                                          LineStyle="{StaticResource PriceLineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="Gamma"
+                                          Visible="{Binding ShowGreeks}" />
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          AxisY="{Binding ElementName=GreeksAxisY}"
+                                          CrosshairLabelPattern="{}{S} {V:n5}"
+                                          DataSource="{Binding ChartDataPoints}"
+                                          DisplayName="Implied"
+                                          LineStyle="{StaticResource PriceLineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="Implied"
+                                          Visible="{Binding ShowGreeks}" />
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          AxisY="{Binding ElementName=GreeksAxisY}"
+                                          CrosshairLabelPattern="{}{S} {V:n5}"
+                                          DataSource="{Binding ChartDataPoints}"
+                                          DisplayName="Vega"
+                                          LineStyle="{StaticResource PriceLineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="Vega"
+                                          Visible="{Binding ShowGreeks}" />
+                        <dxc:LineSeries2D AggregateFunction="{Binding AggregateFunction}"
+                                          ArgumentDataMember="Timestamp"
+                                          AxisY="{Binding ElementName=UnderAxisY}"
+                                          Brush="#FF0000"
+                                          CrosshairLabelPattern="{}{S} {V:n2}"
+                                          DataSource="{Binding ChartDataPoints}"
+                                          DisplayName="Under"
+                                          LineStyle="{StaticResource LineStyle}"
+                                          MarkerSize="3"
+                                          ValueDataMember="UnderPx"
+                                          Visible="{Binding ShowFittedUnderlying}" />
+                    </dxc:XYDiagram2D.Series>
+                </dxc:XYDiagram2D>
+            </dxc:ChartControl.Diagram>
+        </dxc:ChartControl>
+    </Grid>
+</dx:ThemedWindow>

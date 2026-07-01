@@ -1,0 +1,302 @@
+<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.AddHedgePositionView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                 xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:helpers="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 xmlns:viewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 Title="{Binding UnderlyingPositionModel.Symbol, StringFormat='{}{0} - Position Manager'}"
+                 Width="450"
+                 Height="600"
+                 d:DataContext="{d:DesignInstance Type=viewModels:AddHedgePositionViewModel}"
+                 DataContext="{startuphelpers:DISource Type=viewModels:AddHedgePositionViewModel}"
+                 Topmost="True"
+                 WindowStartupLocation="CenterScreen"
+                 WindowStyle="ToolWindow"
+                 mc:Ignorable="d">
+    <dx:ThemedWindow.Resources>
+        <helpers:DoubleFormatter x:Key="DoubleFormatter" />
+        <helpers:SignToBrushConverter x:Key="SignToBrushConverter"
+                                      NegativeBrush="#B73535"
+                                      PositiveBrush="#10e411"
+                                      ZeroBrush="#10e411" />
+    </dx:ThemedWindow.Resources>
+    <dxmvvm:Interaction.Behaviors>
+        <services:OmsMessageBoxService />
+        <dxmvvm:CurrentWindowService />
+    </dxmvvm:Interaction.Behaviors>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="5" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+        </Grid.ColumnDefinitions>
+
+        <dxlc:GroupBox Grid.Row="1"
+                       Grid.Column="1"
+                       Margin="0,0,0,5">
+            <dxlc:GroupBox.Header>
+                <Grid Height="22">
+                    <dxe:ToggleSwitch HorizontalAlignment="Center"
+                                      CheckedStateContent="From Portfolio"
+                                      ContentPlacement="Inside"
+                                      IsChecked="{Binding FromPortfolio}"
+                                      ToggleSwitchWidth="150"
+                                      UncheckedStateContent="From Option Chain" />
+                </Grid>
+            </dxlc:GroupBox.Header>
+            <StackPanel IsEnabled="{Binding FromPortfolio, Converter={StaticResource BooleanNegationConverter}}"
+                        Orientation="Horizontal">
+                <Label Content="Symbol - " />
+                <dxe:ComboBoxEdit Width="150"
+                                  Margin="0,0,2,0"
+                                  AutoComplete="True"
+                                  CharacterCasing="Upper"
+                                  InvalidValueBehavior="WaitForValidValue"
+                                  ItemsSource="{Binding Symbols}"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True"
+                                  SelectedItem="{Binding Symbol}" />
+            </StackPanel>
+        </dxlc:GroupBox>
+
+        <dxlc:GroupBox Grid.Row="2"
+                       Grid.Column="1"
+                       Padding="0"
+                       Header="Portfolio">
+
+            <Grid IsEnabled="{Binding FromPortfolio}">
+                <Slider x:Name="PositionsGridScale"
+                        Grid.Row="2"
+                        Maximum="4"
+                        Minimum="0.1"
+                        Visibility="Hidden"
+                        Value="1" />
+
+                <dxg:GridControl Name="PositionsGrid"
+                                 Grid.Row="2"
+                                 Grid.Column="1"
+                                 dx:DXSerializer.StoreLayoutMode="All"
+                                 dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                 AutoGenerateColumns="AddNew"
+                                 EnableSmartColumnsGeneration="True"
+                                 IsEnabled="{Binding IsBusy, Converter={StaticResource BooleanNegationConverter}}"
+                                 ItemsSource="{Binding Positions}"
+                                 PreviewMouseWheel="OnPositionZoomMouseWheel"
+                                 SelectedItem="{Binding Position}"
+                                 SelectionMode="Row"
+                                 ShowBorder="False">
+                    <dxg:GridControl.LayoutTransform>
+                        <ScaleTransform CenterX="0" CenterY="0" ScaleX="{Binding ElementName=PositionsGridScale, Path=Value}" ScaleY="{Binding ElementName=PositionsGridScale, Path=Value}" />
+                    </dxg:GridControl.LayoutTransform>
+                    <dxg:GridControl.Resources>
+                        <Style TargetType="dxg:GridColumn">
+                            <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                            <Setter Property="Visible" Value="False" />
+                        </Style>
+                        <Style x:Key="GridStyle"
+                               TargetType="dxg:RowControl">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=IsSelected}"
+                                             Value="True">
+                                    <Setter Property="Background" Value="#1d3c52" />
+                                </DataTrigger>
+                                <Trigger Property="dxg:GridViewBase.IsFocusedRow" Value="True">
+                                    <Setter Property="Background" Value="#1d3c52" />
+                                </Trigger>
+                                <Trigger Property="dxg:GridViewBase.IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#39393A" />
+                                </Trigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Path=IsSelected}" Value="True" />
+                                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Background" Value="#3E596B" />
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </dxg:GridControl.Resources>
+                    <dxg:GridControl.View>
+                        <dxg:TableView Name="PositionsTableView"
+                                       AllowEditing="False"
+                                       AutoWidth="True"
+                                       EditorShowMode="MouseUp"
+                                       EnableSelectedRowAppearance="True"
+                                       NavigationStyle="Row"
+                                       RowStyle="{StaticResource GridStyle}"
+                                       ShowGroupPanel="False"
+                                       ShowIndicator="True"
+                                       VerticalScrollbarVisibility="Auto">
+                            <dxg:TableView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Height="25"
+                                              Command="{Binding ShowColumnChooserCommand}"
+                                              CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                              Header="Show Column Chooser">
+                                        <MenuItem.Icon>
+                                            <Image Width="15"
+                                                   Height="15"
+                                                   Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Height="25"
+                                              Command="{Binding ClearColumnsCommand}"
+                                              CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                              Header="Hide All Columns">
+                                        <MenuItem.Icon>
+                                            <Image Width="15"
+                                                   Height="15"
+                                                   Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Height="25"
+                                              Command="{Binding ShowAllColumnsCommand}"
+                                              CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                              Header="Show All Columns">
+                                        <MenuItem.Icon>
+                                            <Image Width="15"
+                                                   Height="15"
+                                                   Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Height="25"
+                                              Command="{Binding ShowDefaultColumnsCommand}"
+                                              CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                              Header="Show Default Columns">
+                                        <MenuItem.Icon>
+                                            <Image Width="15"
+                                                   Height="15"
+                                                   Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </dxg:TableView.ContextMenu>
+                        </dxg:TableView>
+                    </dxg:GridControl.View>
+                    <dxg:GridColumn Width="270"
+                                    Binding="{Binding RowData.Row.Symbol}"
+                                    FieldName="Symbol"
+                                    IsSmart="True"
+                                    Visible="True" />
+                    <dxg:GridColumn FieldName="NetQty"
+                                    Header="Qty"
+                                    IsSmart="True"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:TextEdit Name="PART_Editor"
+                                              HorizontalContentAlignment="Right"
+                                              DisplayFormatString="+#0;-#0;-"
+                                              Foreground="{Binding RowData.Row.NetQty, Converter={StaticResource SignToBrushConverter}}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="TradingSellAvePrice"
+                                    Header="Sell Avg Px"
+                                    IsSmart="True"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:TextEdit Name="PART_Editor"
+                                              HorizontalContentAlignment="Right"
+                                              DisplayFormatString="#.00"
+                                              Foreground="#FF0000" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="TradingBuyAvePrice"
+                                    Header="Buy Avg Px"
+                                    IsSmart="True"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:TextEdit Name="PART_Editor"
+                                              HorizontalContentAlignment="Right"
+                                              DisplayFormatString="#.00" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="TradingSellQty"
+                                    Header="Sell Qty"
+                                    IsSmart="True"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:TextEdit Name="PART_Editor"
+                                              HorizontalContentAlignment="Right"
+                                              DisplayFormatString="+#0;-#0;-"
+                                              Foreground="#FF0000" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="TradingBuyQty"
+                                    Header="Buy Qty"
+                                    IsSmart="True"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:TextEdit Name="PART_Editor"
+                                              HorizontalContentAlignment="Right"
+                                              DisplayFormatString="+#0;-#0;-"
+                                              Foreground="#00FF00" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="RealizedPL"
+                                    Header="R PnL"
+                                    IsSmart="True"
+                                    Visible="False">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="0,0,2,0"
+                                           Padding="2"
+                                           Foreground="{Binding RowData.Row.RealizedPL, Converter={StaticResource SignToBrushConverter}}"
+                                           Text="{Binding RowData.Row.RealizedPL, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helpers:DoubleFormat.C2}}"
+                                           TextAlignment="Right" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                </dxg:GridControl>
+            </Grid>
+        </dxlc:GroupBox>
+        <dx:WaitIndicator Grid.Row="2"
+                          Grid.Column="1"
+                          Content="{Binding Message}"
+                          DeferedVisibility="{Binding IsBusy}"
+                          IsTabStop="False" />
+
+        <StackPanel Grid.Row="3"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="7"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
+            <dx:SimpleButton Width="80"
+                             Margin="3,0"
+                             Command="{Binding AddCommand}"
+                             Content="Add"
+                             IsCancel="True" />
+            <dx:SimpleButton Width="80"
+                             Margin="3,0"
+                             Command="{Binding CancelCommand}"
+                             Content="Cancel"
+                             IsCancel="True" />
+        </StackPanel>
+    </Grid>
+</dx:ThemedWindow>

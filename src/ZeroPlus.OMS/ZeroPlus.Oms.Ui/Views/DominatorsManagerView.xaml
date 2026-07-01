@@ -1,0 +1,1102 @@
+<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.DominatorsManagerView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 xmlns:Views="clr-namespace:ZeroPlus.Oms.Ui.Views"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 Title="{Binding ModuleTitle}"
+                 Width="1200"
+                 Height="800"
+                 MinWidth="400"
+                 MinHeight="300"
+                 d:DataContext="{d:DesignInstance Type=ViewModels:DominatorsManagerViewModel}"
+                 DataContext="{startuphelpers:DISource Type=ViewModels:DominatorsManagerViewModel}"
+                 WindowStartupLocation="CenterScreen"
+                 mc:Ignorable="d">
+
+    <dxmvvm:Interaction.Behaviors>
+        <services:OmsMessageBoxService />
+        <dxmvvm:DispatcherService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Window.Resources>
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <helper:SignToBrushConverter x:Key="SignToBrushConverter"
+                                     NegativeBrush="#B73535"
+                                     PositiveBrush="#10e411"
+                                     ZeroBrush="#10e411" />
+        <helper:SignToBrushConverter x:Key="CreepToBrushConverter"
+                                     Limit="5"
+                                     NegativeBrush="#1b9e1d"
+                                     PositiveBrush="#B73535"
+                                     ZeroBrush="#B73535" />
+        <dxmvvm:BooleanToObjectConverter x:Key="BooleanToStatusColorConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>
+                <SolidColorBrush Color="Green" />
+            </dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>
+                <SolidColorBrush Color="DarkRed" />
+            </dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+        <dxmvvm:BooleanToObjectConverter x:Key="BooleanToStateColorConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>
+                <SolidColorBrush Color="#039C23" />
+            </dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>
+                <SolidColorBrush Color="#D11C1C" />
+            </dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+        <dxmvvm:ObjectToBooleanConverter x:Key="NullToFalseConverter" />
+        <Style x:Key="DominatorsGridStyle"
+               TargetType="dxg:RowControl">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=IsSelected}"
+                             Value="True">
+                    <Setter Property="Background" Value="#1D3C52" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Row.ShowNotification}"
+                             Value="True">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Offset="0.05" Color="#5680c0" />
+                                <GradientStop Offset="0.25" Color="#b7363d" />
+                                <GradientStop Offset="0.45" Color="#5680c0" />
+                                <GradientStop Offset="0.65" Color="#b7363d" />
+                                <GradientStop Offset="1.00" Color="#5680c0" />
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard x:Name="beginAnimation">
+                            <Storyboard>
+                                <DoubleAnimation AutoReverse="True"
+                                                 RepeatBehavior="Forever"
+                                                 Storyboard.TargetProperty="(Opacity)"
+                                                 From="1.0"
+                                                 To="0.3"
+                                                 Duration="0:0:0.25" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <StopStoryboard BeginStoryboardName="beginAnimation" />
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+                <Trigger Property="dxg:GridViewBase.IsFocusedRow" Value="True">
+                    <Setter Property="Background" Value="#1D3C52" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <dx:ThemedWindow.HeaderItems>
+
+        <StackPanel Grid.Column="0"
+                    Margin="5,5,68,0"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
+            <dx:SimpleButton Width="130"
+                             Margin="5,0,0,0"
+                             Command="{Binding StartStagedCommand}"
+                             Content="Start Staged"
+                             Foreground="#76b246"
+                             Glyph="{dx:DXImage SvgImages/XAF/Action_Debug_Start.svg}"
+                             GlyphHeight="16" />
+            <dx:SimpleButton Width="130"
+                             Margin="5,0,0,0"
+                             Command="{Binding StopStagedCommand}"
+                             Content="Stop Staged"
+                             Foreground="#5680c0"
+                             Glyph="{dx:DXImage SvgImages/XAF/Action_Debug_Stop.svg}"
+                             GlyphHeight="16" />
+        </StackPanel>
+    </dx:ThemedWindow.HeaderItems>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="5" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="1"
+              Grid.Column="1">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Column="0"
+                        Margin="2,0,0,0"
+                        HorizontalAlignment="Left"
+                        Orientation="Horizontal">
+
+                <dx:SimpleButton Width="130"
+                                 Command="{Binding ModifySelectedCommand}"
+                                 Content="Modify Selected"
+                                 Glyph="{dx:DXImage SvgImages/XAF/ModelEditor_Settings.svg}"
+                                 GlyphHeight="16" />
+                <dx:SimpleButton Width="130"
+                                 Margin="5,0,0,0"
+                                 Command="{Binding StartSelectedCommand}"
+                                 Content="Start Selected"
+                                 Foreground="#76b246"
+                                 Glyph="{dx:DXImage SvgImages/XAF/Action_Debug_Start.svg}"
+                                 GlyphHeight="16" />
+                <dx:SimpleButton Width="130"
+                                 Margin="5,0,0,0"
+                                 Command="{Binding StopSelectedCommand}"
+                                 Content="Stop Selected"
+                                 Foreground="#5680c0"
+                                 Glyph="{dx:DXImage SvgImages/XAF/Action_Debug_Stop.svg}"
+                                 GlyphHeight="16" />
+            </StackPanel>
+            <StackPanel Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal">
+                <dx:DropDownButton Width="150"
+                                   Margin="2.5,0"
+                                   Content="Settings"
+                                   Glyph="{dx:DXImage SvgImages/XAF/Action_Printing_PageSetup.svg}"
+                                   GlyphHeight="16">
+                    <ItemsControl>
+                        <StackPanel Orientation="Vertical">
+                            <MenuItem Command="{Binding LoadSetupCommand}"
+                                      Header="Load Setup" />
+                            <dx:SuperTipItemControlSeparator />
+                            <MenuItem Command="{Binding LoadListCommand}"
+                                      Header="Load List" />
+                            <dx:SuperTipItemControlSeparator />
+                            <MenuItem Header="Allow Unique Spreads"
+                                      IsCheckable="True"
+                                      IsChecked="{Binding DominatorsManager.AllowUniqueSpreads}">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding AllowUniqueSpreadsChangedCommand}"
+                                                           EventName="Checked" />
+                                    <dxmvvm:EventToCommand Command="{Binding AllowUniqueSpreadsChangedCommand}"
+                                                           EventName="Unchecked" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </MenuItem>
+                            <dx:SuperTipItemControlSeparator />
+                            <MenuItem Command="{Binding ChangeRouteCommand}"
+                                      CommandParameter="BCBOE"
+                                      Header="Route $SPX to BCBOE" />
+                            <MenuItem Command="{Binding ChangeRouteCommand}"
+                                      CommandParameter="DCBOE"
+                                      Header="Route $SPX to DCBOE" />
+                            <MenuItem Command="{Binding ChangeRouteCommand}"
+                                      CommandParameter="ISPREAD"
+                                      Header="Route to CBOE ISPREAD" />
+                            <MenuItem Command="{Binding ChangeRouteCommand}"
+                                      CommandParameter="SMART"
+                                      Header="Route to IB SMART" />
+                            <dx:SuperTipItemControlSeparator />
+                            <MenuItem Command="{Binding RemoveHighDeltaSpreadsAndStartCommand}"
+                                      Header="Remove High Delta Spreads And Start" />
+                            <dx:SuperTipItemControlSeparator />
+                            <MenuItem Command="{Binding LoadEmaCaptureCommand}"
+                                      Header="Load Ema Capture" />
+                            <MenuItem Command="{Binding DisplayFirmTradeActivityCommand}"
+                                      Header="Display Firm Trade Activity" />
+                            <dx:SuperTipItemControlSeparator />
+                            <MenuItem Command="{Binding EnableLoadPriceChainCommand}"
+                                      Header="Enable Load Price Chain" />
+                            <MenuItem Command="{Binding DisableLoadPriceChainCommand}"
+                                      Header="Disable Load Price Chain" />
+                            <dx:SuperTipItemControlSeparator />
+                            <MenuItem Command="{Binding EnableLeastDataOptionCommand}"
+                                      Header="Enable Least Data Option" />
+                            <MenuItem Command="{Binding DisableLeastDataOptionCommand}"
+                                      Header="Disable Least Data Option" />
+                            <dx:SuperTipItemControlSeparator />
+                            <MenuItem Header="Select Channel">
+                                <MenuItem.Items>
+                                    <MenuItem Command="{Binding SelectChannelCommand}"
+                                              CommandParameter="1"
+                                              Header="Channel 1" />
+                                    <MenuItem Command="{Binding SelectChannelCommand}"
+                                              CommandParameter="2"
+                                              Header="Channel 2" />
+                                    <MenuItem Command="{Binding SelectChannelCommand}"
+                                              CommandParameter="3"
+                                              Header="Channel 3" />
+                                    <MenuItem Command="{Binding SelectChannelCommand}"
+                                              CommandParameter="4"
+                                              Header="Channel 4" />
+                                    <MenuItem Command="{Binding SelectChannelCommand}"
+                                              CommandParameter="5"
+                                              Header="Channel 5" />
+                                    <MenuItem Command="{Binding SelectChannelCommand}"
+                                              CommandParameter="6"
+                                              Header="Channel 6" />
+                                    <MenuItem Command="{Binding SelectChannelCommand}"
+                                              CommandParameter="7"
+                                              Header="Channel 7" />
+                                    <MenuItem Command="{Binding SelectChannelCommand}"
+                                              CommandParameter="8"
+                                              Header="Channel 8" />
+                                    <MenuItem Command="{Binding SelectChannelCommand}"
+                                              CommandParameter="9"
+                                              Header="Channel 9" />
+                                </MenuItem.Items>
+                            </MenuItem>
+                            <dx:SuperTipItemControlSeparator />
+                            <MenuItem Command="{Binding SaveLogsCommand}"
+                                      Header="Save Logs" />
+                        </StackPanel>
+                    </ItemsControl>
+                </dx:DropDownButton>
+
+                <Border Grid.Column="4"
+                        Margin="4,0,4,0"
+                        Padding="3,0,3,0"
+                        Background="DarkGreen"
+                        CornerRadius="8"
+                        Visibility="{Binding OmsCore.Config.DominatorsManagerAutoTraderEnabled, Converter={dxmvvm:BooleanToVisibilityConverter}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Label Width="58"
+                               Margin="2,0,0,0"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               FontStyle="Italic"
+                               Foreground="LightGray"
+                               IsHitTestVisible="False">
+                            AutoTrader
+                        </Label>
+                        <dxe:CheckEdit x:Name="showAutoTraderBar"
+                                       Grid.Column="1"
+                                       Margin="0"
+                                       Padding="0"
+                                       HorizontalAlignment="Center"
+                                       d:IsChecked="True"
+                                       Background="DarkGray"
+                                       CheckBoxWidth="14" />
+                    </Grid>
+
+                </Border>
+
+
+            </StackPanel>
+
+            <StackPanel Grid.Column="2"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                <dx:SimpleButton Width="130"
+                                 Margin="5,0,0,0"
+                                 Command="{Binding StartAllCommand}"
+                                 Content="Start All"
+                                 Foreground="#76b246"
+                                 Glyph="{dx:DXImage SvgImages/XAF/Action_Debug_Start.svg}"
+                                 GlyphHeight="16" />
+                <dx:SimpleButton Width="130"
+                                 Margin="5,0,0,0"
+                                 Command="{Binding StopAllCommand}"
+                                 Content="Stop All"
+                                 Foreground="#5680c0"
+                                 Glyph="{dx:DXImage SvgImages/XAF/Action_Debug_Stop.svg}"
+                                 GlyphHeight="16" />
+                <dx:SimpleButton Width="130"
+                                 Margin="5,0,0,0"
+                                 Command="{Binding ModifyAllCommand}"
+                                 Content="Modify All"
+                                 Glyph="{dx:DXImage SvgImages/XAF/ModelEditor_Settings.svg}"
+                                 GlyphHeight="16" />
+
+                <dx:SimpleButton Grid.Row="1"
+                                 Grid.Column="1"
+                                 Margin="5,0,0,0"
+                                 HorizontalAlignment="Right"
+                                 dxb:BarManager.MenuShowMouseButton="LeftButton"
+                                 Glyph="{dx:DXImage SvgImages/DiagramIcons/Orientation/ListOrientationVertical.svg}"
+                                 GlyphHeight="18">
+                    <dxb:BarManager.DXContextMenu>
+                        <dxb:PopupControlContainer>
+                            <ItemsControl>
+                                <StackPanel>
+                                    <MenuItem Height="25"
+                                              Command="{Binding CloneCommand}"
+                                              Header="Clone">
+                                        <MenuItem.Icon>
+                                            <Image Width="15"
+                                                   Height="15"
+                                                   Source="{dx:DXImage SvgImages/XAF/Action_CloneMerge_Merge_Object.svg}" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Height="25"
+                                              Click="ShareLayout"
+                                              Header="Share Layout">
+                                        <MenuItem.Icon>
+                                            <Image Width="15"
+                                                   Height="15"
+                                                   Source="{dx:DXImage SvgImages/Icon Builder/Actions_Send.svg}" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Height="25"
+                                              Click="SaveLayout"
+                                              Header="Save Layout">
+                                        <MenuItem.Icon>
+                                            <Image Width="15"
+                                                   Height="15"
+                                                   Source="{dx:DXImage SvgImages/Save/Save.svg}" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Height="25"
+                                              Command="{Binding BrowseLayoutsCommand}"
+                                              Header="Browse Layout">
+                                        <MenuItem.Icon>
+                                            <Image Width="15"
+                                                   Height="15"
+                                                   Source="{dx:DXImage SvgImages/Dashboards/ServerMode.svg}" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Height="25"
+                                              Click="LoadLayout"
+                                              Header="Load Layout">
+                                        <MenuItem.Icon>
+                                            <Image Width="15"
+                                                   Height="15"
+                                                   Source="{dx:DXImage SvgImages/Dashboards/LoadMap.svg}" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <dx:SuperTipItemControlSeparator />
+                                    <MenuItem Height="25"
+                                              Command="{Binding SaveSettingsCommand}"
+                                              Header="Save Settings">
+                                        <MenuItem.Icon>
+                                            <Image Width="15"
+                                                   Height="15"
+                                                   Source="{dx:DXImage SvgImages/Save/Save.svg}" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </StackPanel>
+                            </ItemsControl>
+                        </dxb:PopupControlContainer>
+                    </dxb:BarManager.DXContextMenu>
+                </dx:SimpleButton>
+            </StackPanel>
+            <StackPanel Grid.Row="1"
+                        Margin="4"
+                        Orientation="Horizontal"
+                        Visibility="{Binding IsChecked, ElementName=showAutoTraderBar, Converter={dxmvvm:BooleanToVisibilityConverter}}">
+                <dx:SimpleButton Width="110"
+                                 Margin="5,0,5,0"
+                                 Command="{DXCommand Execute='OpenLooperSettings(@e(DominatorsGrid).SelectedItem)',
+                                                     CanExecute='@e(DominatorsGrid).SelectedItem.OmsAutoTraderSettings != null'}"
+                                 Content="Looper"
+                                 Glyph="{dx:DXImage 'SvgImages/Dashboards/InsertBubbleMap.svg'}"
+                                 GlyphHeight="16" />
+
+                <dx:SimpleButton Width="110"
+                                 Margin="5,0,5,0"
+                                 Command="{DXCommand Execute='OpenFishLossSettings(@e(DominatorsGrid).SelectedItem)',
+                                                     CanExecute='@e(DominatorsGrid).SelectedItem.OmsAutoTraderSettings != null'}"
+                                 Content="Fish Loss"
+                                 Glyph="{dx:DXImage 'Images/Filter/IgnoreMasterFilter_16x16.png'}"
+                                 GlyphHeight="16" />
+
+                <dx:SimpleButton Width="110"
+                                 Margin="5,0,5,0"
+                                 Command="{DXCommand Execute='OpenAutoCancelSettings(@e(DominatorsGrid).SelectedItem)',
+                                                     CanExecute='@e(DominatorsGrid).SelectedItem.OmsAutoTraderSettings != null'}"
+                                 Content="AutoCancel"
+                                 Glyph="{dx:DXImage 'Images/XAF/Action_CloseAllWindows.png'}"
+                                 GlyphHeight="16" />
+                <dx:SimpleButton Width="50"
+                                 Margin="5,0,5,0"
+                                 Command="{DXCommand Execute='@e(DominatorsGrid).SelectedItem.Dominator.TestDummyReport()'}"
+                                 Content="Test" />
+                <dxe:CheckEdit EditValue="{Binding ElementName=DominatorsGrid, Path=SelectedItem.NegativeEdgeTest}" />
+
+            </StackPanel>
+            <StackPanel Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="4"
+                        Orientation="Horizontal"
+                        Visibility="{Binding IsChecked, ElementName=showAutoTraderBar, Converter={dxmvvm:BooleanToVisibilityConverter}}">
+
+                <dx:SimpleButton Width="110"
+                                 Margin="5,0,5,0"
+                                 Command="{DXCommand Execute='OpenAutoHedgeSettings(@e(DominatorsGrid).SelectedItem)',
+                                                     CanExecute='@e(DominatorsGrid).SelectedItem.OmsAutoTraderSettings != null'}"
+                                 Content="AutoHedge"
+                                 Glyph="{dx:DXImage 'Images/Chart/Area2_16x16.png'}"
+                                 GlyphHeight="16" />
+
+                <dx:SimpleButton Width="110"
+                                 Margin="5,0,5,0"
+                                 Command="{DXCommand Execute='OpenRouteSettings(@e(DominatorsGrid).SelectedItem)',
+                                                     CanExecute='@e(DominatorsGrid).SelectedItem.OmsAutoTraderSettings != null'}"
+                                 Content="Route"
+                                 Glyph="{dx:DXImage 'Images/Miscellaneous/Language_16x16.png'}"
+                                 GlyphHeight="16" />
+
+            </StackPanel>
+
+            <StackPanel Grid.Row="1"
+                        Grid.Column="2"
+                        Margin="4"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal"
+                        Visibility="{Binding IsChecked, ElementName=showAutoTraderBar, Converter={dxmvvm:BooleanToVisibilityConverter}}">
+                <Label Grid.Column="0"
+                       Padding="0"
+                       VerticalAlignment="Center"
+                       Content="AutoTrader Enabled:"
+                       FontWeight="Bold"
+                       Foreground="#AFAFB0"
+                       IsHitTestVisible="False" />
+                <dxe:CheckEdit Grid.Column="1"
+                               Margin="0"
+                               Padding="5,0,5,0"
+                               HorizontalAlignment="Center"
+                               CheckBoxWidth="14"
+                               IsChecked="{Binding ElementName=DominatorsGrid, Path=SelectedItem.UseAutoTrader}"
+                               IsEnabled="{Binding OmsCore.AutoTraderClient.IsConnected}" />
+                <dx:SimpleButton Width="110"
+                                 Margin="5,0,5,0"
+                                 Command="{DXCommand Execute='SendSettingsToAutoTrader(@e(DominatorsGrid).SelectedItem)',
+                                                     CanExecute='CanConnectToAutoTrader(@e(DominatorsGrid).SelectedItem)'}"
+                                 Content="Submit"
+                                 GlyphHeight="16" />
+            </StackPanel>
+            <StackPanel Grid.Row="2"
+                        Margin="4"
+                        Orientation="Horizontal"
+                        Visibility="{Binding IsChecked, ElementName=showAutoTraderBar, Converter={dxmvvm:BooleanToVisibilityConverter}}">
+
+                <dx:SimpleButton Width="110"
+                                 Margin="5,0,5,0"
+                                 Command="{DXCommand Execute='OpenAutoLegSettings(@e(DominatorsGrid).SelectedItem)',
+                                                     CanExecute='@e(DominatorsGrid).SelectedItem.OmsAutoTraderSettings != null'}"
+                                 Content="AutoLeg"
+                                 Glyph="{dx:DXImage 'SvgImages/Dashboards/InsertTreeView.svg'}"
+                                 GlyphHeight="16"
+                                 IsEnabled="False" />
+
+                <dx:SimpleButton Width="110"
+                                 Margin="5,0,5,0"
+                                 Command="{DXCommand Execute='OpeLegOutSettings(@e(DominatorsGrid).SelectedItem)',
+                                                     CanExecute='@e(DominatorsGrid).SelectedItem.OmsAutoTraderSettings != null'}"
+                                 Content="Leg Out"
+                                 Glyph="{dx:DXImage 'Office2013/Reports/EmptyTableRowSeparator_16x16.png'}"
+                                 GlyphHeight="16"
+                                 IsEnabled="False" />
+
+                <dx:SimpleButton Width="110"
+                                 Margin="5,0,5,0"
+                                 Command="{DXCommand Execute='OpenSweepSettings(@e(DominatorsGrid).SelectedItem)',
+                                                     CanExecute='@e(DominatorsGrid).SelectedItem.OmsAutoTraderSettings != null'}"
+                                 Content="Sweep"
+                                 Glyph="{dx:DXImage 'Images/Analysis/HighLowLines_16x16.png'}"
+                                 GlyphHeight="16"
+                                 IsEnabled="False" />
+
+            </StackPanel>
+
+            <StackPanel Grid.Row="2"
+                        Grid.Column="1"
+                        Margin="4"
+                        Orientation="Horizontal"
+                        Visibility="{Binding IsChecked, ElementName=showAutoTraderBar, Converter={dxmvvm:BooleanToVisibilityConverter}}">
+                <Label Grid.Column="0"
+                       Padding="3"
+                       VerticalAlignment="Center"
+                       Content="Venue:"
+                       FontWeight="Bold"
+                       Foreground="#AFAFB0"
+                       IsHitTestVisible="False" />
+
+                <dxe:ComboBoxEdit VerticalAlignment="Center"
+                                  EditValue="{Binding ElementName=DominatorsGrid, Path=SelectedItem.OmsAutoTraderSettings.AutoTraderVenue}"
+                                  IsEnabled="True"
+                                  IsTextEditable="False"
+                                  ItemsSource="{Binding Venues}">
+                    <dxe:ComboBoxEdit.StyleSettings>
+                        <dxe:RadioComboBoxStyleSettings />
+                    </dxe:ComboBoxEdit.StyleSettings>
+                </dxe:ComboBoxEdit>
+
+                <Label Grid.Column="0"
+                       Padding="16,0,3,0"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       Content="Edge:"
+                       FontWeight="Bold"
+                       Foreground="#AFAFB0"
+                       IsHitTestVisible="False" />
+
+                <dxe:ComboBoxEdit VerticalAlignment="Center"
+                                  EditValue="{Binding ElementName=DominatorsGrid, Path=SelectedItem.OmsAutoTraderSettings.EdgeType}"
+                                  IsEnabled="True"
+                                  IsTextEditable="False"
+                                  ItemsSource="{Binding EdgeTypes}">
+                    <dxe:ComboBoxEdit.StyleSettings>
+                        <dxe:RadioComboBoxStyleSettings />
+                    </dxe:ComboBoxEdit.StyleSettings>
+                </dxe:ComboBoxEdit>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2"
+                        Grid.Column="2"
+                        Margin="4"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal"
+                        Visibility="{Binding IsChecked, ElementName=showAutoTraderBar, Converter={dxmvvm:BooleanToVisibilityConverter}}">
+
+                <Label Grid.Column="0"
+                       Padding="0"
+                       VerticalAlignment="Center"
+                       Content="AutoTrader Config:"
+                       FontWeight="Bold"
+                       Foreground="#AFAFB0"
+                       IsHitTestVisible="False" />
+
+                <TextBlock Grid.Column="0"
+                           Margin="5,0,5,0"
+                           VerticalAlignment="Center"
+                           Text="{Binding ElementName=DominatorsGrid, Path=SelectedItem.OmsAutoTraderSettings.Title, Mode=TwoWay}" />
+                <dx:SimpleButton Grid.Column="1"
+                                 Width="22"
+                                 Height="22"
+                                 BorderThickness="1"
+                                 Command="{DXCommand Execute='SaveAutoTraderConfig(@e(DominatorsGrid).SelectedItem)',
+                                                     CanExecute='@e(DominatorsGrid).SelectedItem.OmsAutoTraderSettings != null'}"
+                                 Glyph="{dx:DXImage SvgImages/Save/Save.svg}"
+                                 GlyphHeight="13"
+                                 GlyphWidth="13" />
+
+                <dx:SimpleButton Width="110"
+                                 Margin="5,0,5,0"
+                                 Command="{DXCommand Execute='OpenRestoreAutoTraderSettings(@e(DominatorsGrid).SelectedItem)'}"
+                                 Content="Load Config"
+                                 Glyph="{dx:DXImage 'Images/Setup/LoadPageSetup_16x16.png'}"
+                                 GlyphHeight="16" />
+            </StackPanel>
+        </Grid>
+        <Slider x:Name="DominatorsGridScale"
+                Grid.Row="2"
+                Maximum="4"
+                Minimum="0.1"
+                Visibility="Hidden"
+                Value="1" />
+        <Grid Grid.Row="2"
+              Grid.Column="1"
+              Margin="0,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="317*" />
+                <ColumnDefinition Width="743*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Name="GridSplitterCol"
+                                  Width="auto" />
+            </Grid.ColumnDefinitions>
+            <dxg:GridControl Name="DominatorsGrid"
+                             Grid.ColumnSpan="2"
+                             dx:DXSerializer.StoreLayoutMode="All"
+                             dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                             AutoGenerateColumns="AddNew"
+                             AutoGeneratedColumns="Grid_ColumnsPopulated"
+                             EnableSmartColumnsGeneration="True"
+                             ItemsSource="{Binding DominatorsManager.Dominators}"
+                             PreviewMouseDown="DominatorsGrid_PreviewMouseDown"
+                             PreviewMouseWheel="OnZoomMouseWheel"
+                             SelectionMode="Row">
+                <dxg:GridControl.LayoutTransform>
+                    <ScaleTransform CenterX="0" CenterY="0" ScaleX="{Binding ElementName=DominatorsGridScale, Path=Value}" ScaleY="{Binding ElementName=DominatorsGridScale, Path=Value}" />
+                </dxg:GridControl.LayoutTransform>
+                <dxg:GridControl.Resources>
+                    <Style TargetType="dxg:GridColumn">
+                        <Setter Property="Visible" Value="False" />
+                        <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                    </Style>
+                </dxg:GridControl.Resources>
+                <dxg:GridControl.View>
+                    <dxg:TableView Name="DominatorsTable"
+                                   AllowDragDrop="True"
+                                   AutoWidth="True"
+                                   EditorShowMode="MouseUp"
+                                   EnableSelectedRowAppearance="True"
+                                   FadeSelectionOnLostFocus="False"
+                                   RowStyle="{StaticResource DominatorsGridStyle}"
+                                   ShowGridMenu="TableView_ShowGridMenu"
+                                   ShowGroupPanel="False"
+                                   ShowIndicator="True"
+                                   VerticalScrollbarVisibility="Auto">
+                        <dxg:TableView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Height="25"
+                                          Command="{Binding ShowColumnChooserCommand}"
+                                          CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                          Header="Show Column Chooser">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Command="{Binding ClearColumnsCommand}"
+                                          CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                          Header="Hide All Columns">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Command="{Binding ShowAllColumnsCommand}"
+                                          CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                          Header="Show All Columns">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Command="{Binding ShowDefaultColumnsCommand}"
+                                          CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                          Header="Show Default Columns">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </dxg:TableView.ContextMenu>
+                        <dxg:TableView.RowCellMenuCustomizations>
+                            <dxb:BarButtonItem Command="{Binding View.DataContext.CheckAllCommand}"
+                                               Content="Check All" />
+                            <dxb:BarButtonItem Command="{Binding View.DataContext.UncheckAllCommand}"
+                                               Content="Uncheck All" />
+                            <dxb:BarItemSeparator />
+                            <dxb:BarButtonItem Command="{Binding View.DataContext.ShowStatusCommand}"
+                                               CommandParameter="{Binding SelectedItem, ElementName=DominatorsGrid}"
+                                               Content="Show Status" />
+                            <dxb:BarItemSeparator />
+                            <dxb:BarButtonItem Command="{Binding Path=CurrentItem.CloseInstanceCommand, ElementName=DominatorsGrid}"
+                                               Content="Close Instance" />
+                        </dxg:TableView.RowCellMenuCustomizations>
+                    </dxg:TableView>
+                </dxg:GridControl.View>
+
+                <dxg:GridColumn Width="30"
+                                FieldName="Status"
+                                Header=""
+                                IsSmart="True"
+                                Visible="True">
+                    <dxg:GridColumn.CellTemplate>
+                        <DataTemplate>
+                            <Canvas Width="10"
+                                    Height="10">
+
+                                <Ellipse Width="10"
+                                         Height="10"
+                                         Fill="{Binding RowData.Row.IsRunning, Converter={StaticResource BooleanToStateColorConverter}}" />
+                            </Canvas>
+                        </DataTemplate>
+                    </dxg:GridColumn.CellTemplate>
+                </dxg:GridColumn>
+
+                <dxg:GridColumn Width="19"
+                                FieldName="Active"
+                                Header=""
+                                IsSmart="True"
+                                Visible="True">
+                    <dxg:GridColumn.CellTemplate>
+                        <DataTemplate>
+                            <dxe:CheckEdit Margin="0"
+                                           Padding="0"
+                                           HorizontalAlignment="Center"
+                                           Background="Transparent"
+                                           CheckBoxWidth="14"
+                                           Checked="RowActivated"
+                                           EditValue="{Binding RowData.Row.Active}"
+                                           Unchecked="RowDeactivated" />
+                        </DataTemplate>
+                    </dxg:GridColumn.CellTemplate>
+                </dxg:GridColumn>
+
+                <dxg:GridColumn AllowCellMerge="False"
+                                FieldName="Host"
+                                Header="Host"
+                                IsSmart="True"
+                                ReadOnly="True"
+                                Visible="True" />
+
+                <dxg:GridColumn AllowCellMerge="False"
+                                FieldName="Source"
+                                Header="Source"
+                                IsSmart="True"
+                                ReadOnly="True"
+                                Visible="True">
+                    <dxg:GridColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="2,0,0,0"
+                                       VerticalAlignment="Center"
+                                       Foreground="#F3A202"
+                                       Text="{Binding RowData.Row.Source}" />
+                        </DataTemplate>
+                    </dxg:GridColumn.CellTemplate>
+                </dxg:GridColumn>
+
+                <dxg:GridColumn AllowCellMerge="False"
+                                FieldName="Instance"
+                                Header="Instance"
+                                IsSmart="True"
+                                ReadOnly="True"
+                                Visible="True" />
+
+                <dxg:GridColumn AllowCellMerge="False"
+                                FieldName="Trader"
+                                Header="Trader"
+                                IsSmart="True"
+                                ReadOnly="True"
+                                Visible="True" />
+
+                <dxg:GridColumn AllowCellMerge="False"
+                                FieldName="Setup"
+                                Header="Setup"
+                                IsSmart="True"
+                                ReadOnly="True"
+                                Visible="True" />
+
+                <dxg:GridColumn AllowCellMerge="False"
+                                FieldName="Configs"
+                                Header="Configs"
+                                IsSmart="True"
+                                ReadOnly="True"
+                                Visible="True" />
+
+                <dxg:GridColumn FieldName="AdjustedPnl"
+                                Header="A. PnL"
+                                IsSmart="True"
+                                ToolTip="Adjusted PnL of Spread"
+                                Visible="True">
+                    <dxg:GridColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="0,0,5,0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontWeight="DemiBold"
+                                       Foreground="{Binding RowData.Row.AdjustedPnl, Converter={StaticResource SignToBrushConverter}}"
+                                       Text="{Binding RowData.Row.AdjustedPnl, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}" />
+                        </DataTemplate>
+                    </dxg:GridColumn.CellTemplate>
+                </dxg:GridColumn>
+
+                <dxg:GridColumn AllowCellMerge="False"
+                                FieldName="State"
+                                Header="State"
+                                IsSmart="True"
+                                ReadOnly="True"
+                                Visible="True" />
+
+                <dxg:GridColumn AllowCellMerge="False"
+                                FieldName="EdgeMultiplier"
+                                Header="Edge Multiplier"
+                                IsSmart="True"
+                                ReadOnly="True"
+                                Visible="True" />
+
+                <dxg:GridColumn AllowCellMerge="False"
+                                FieldName="DeltaMax"
+                                Header="Delta Max"
+                                IsSmart="True"
+                                ReadOnly="True"
+                                Visible="True" />
+
+                <dxg:GridColumn AllowCellMerge="False"
+                                FieldName="Fills"
+                                Header="Fills"
+                                IsSmart="True"
+                                ReadOnly="True"
+                                Visible="True" />
+
+                <dxg:GridColumn AllowCellMerge="False"
+                                FieldName="DomCount"
+                                Header="Dom Count"
+                                IsSmart="True"
+                                ReadOnly="True"
+                                Visible="True" />
+
+                <dxg:GridColumn Width="85"
+                                MinWidth="85"
+                                MaxWidth="85"
+                                FieldName="Staged"
+                                Header="Staged"
+                                IsSmart="False"
+                                Visible="True">
+                    <dxg:GridColumn.CellTemplate>
+                        <DataTemplate>
+                            <dxe:ToggleSwitch AnimationMode="OnToggle"
+                                              Background="#C55159"
+                                              BorderThickness="0"
+                                              CheckedStateContent="Staged"
+                                              ContentPlacement="Inside"
+                                              IsChecked="{Binding RowData.Row.Staged}"
+                                              ToggleSwitchWidth="85"
+                                              UncheckedStateContent="Not Staged" />
+
+                        </DataTemplate>
+                    </dxg:GridColumn.CellTemplate>
+                </dxg:GridColumn>
+
+                <dxg:GridColumn Width="72"
+                                MinWidth="72"
+                                MaxWidth="72"
+                                FieldName="Start"
+                                Header=""
+                                IsSmart="False"
+                                Visible="True">
+                    <dxg:GridColumn.CellTemplate>
+                        <DataTemplate>
+                            <dx:SimpleButton Width="72"
+                                             VerticalAlignment="Center"
+                                             BorderThickness="0"
+                                             Command="{Binding RowData.Row.StartAsyncCommand}"
+                                             Content="Start"
+                                             Foreground="#10e411" />
+                        </DataTemplate>
+                    </dxg:GridColumn.CellTemplate>
+                </dxg:GridColumn>
+
+                <dxg:GridColumn AllowCellMerge="False"
+                                FieldName="UniqueSubmissionsOn"
+                                Header="Unique Submissions"
+                                IsSmart="True"
+                                ReadOnly="True"
+                                Visible="True" />
+
+                <dxg:GridColumn Width="72"
+                                MinWidth="72"
+                                MaxWidth="72"
+                                FieldName="Stop"
+                                Header=""
+                                IsSmart="False"
+                                Visible="True">
+                    <dxg:GridColumn.CellTemplate>
+                        <DataTemplate>
+                            <dx:SimpleButton Width="72"
+                                             VerticalAlignment="Center"
+                                             BorderThickness="0"
+                                             Command="{Binding RowData.Row.StopAsyncCommand}"
+                                             Content="Stop"
+                                             Foreground="#5680c0" />
+                        </DataTemplate>
+                    </dxg:GridColumn.CellTemplate>
+                </dxg:GridColumn>
+
+            </dxg:GridControl>
+
+            <GridSplitter Grid.Column="2"
+                          Width="3"
+                          Margin="2,0,2,0"
+                          HorizontalAlignment="Stretch"
+                          MouseDoubleClick="GridSplitter_MouseDoubleClick" />
+
+            <dx:SimpleButton Name="ExpandCollapseGridButton"
+                             Grid.Column="2"
+                             Width="8"
+                             Height="100"
+                             Margin="0,308,0,307"
+                             Padding="-1,0,0,0"
+                             HorizontalAlignment="Center"
+                             Click="ExpandCollapseGrid_Click"
+                             Content="4"
+                             CornerRadius="3"
+                             FontFamily="Marlett"
+                             FontSize="10" />
+
+            <dxg:GridControl Name="ExcelManagersGrid"
+                             Grid.Column="3"
+                             AutoGenerateColumns="AddNew"
+                             ItemsSource="{Binding DominatorsManager.ExcelManagers}"
+                             SelectionMode="Row">
+                <dxg:GridControl.Resources>
+                    <Style TargetType="dxg:GridColumn">
+                        <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                        <Setter Property="Visible" Value="False" />
+                    </Style>
+                </dxg:GridControl.Resources>
+                <dxg:GridControl.View>
+                    <dxg:TableView AllowEditing="False"
+                                   AutoWidth="True"
+                                   NavigationStyle="Row"
+                                   ShowGroupPanel="False"
+                                   ShowIndicator="True"
+                                   ShowTotalSummary="False"
+                                   VerticalScrollbarVisibility="Auto">
+                        <dxg:TableView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Height="25"
+                                          Command="{Binding ShowColumnChooserCommand}"
+                                          CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                          Header="Show Column Chooser">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Command="{Binding ClearColumnsCommand}"
+                                          CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                          Header="Hide All Columns">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Command="{Binding ShowAllColumnsCommand}"
+                                          CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                          Header="Show All Columns">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Command="{Binding ShowDefaultColumnsCommand}"
+                                          CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                          Header="Show Default Columns">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </dxg:TableView.ContextMenu>
+                        <dxg:TableView.RowCellMenuCustomizations>
+                            <dxb:BarButtonItem Command="{Binding View.DataContext.StartExcelInstanceCommand}"
+                                               CommandParameter="{Binding Path=SelectedItem, ElementName=ExcelManagersGrid}"
+                                               Content="Start Excel Instance" />
+                        </dxg:TableView.RowCellMenuCustomizations>
+                    </dxg:TableView>
+
+                </dxg:GridControl.View>
+
+                <dxg:GridColumn FieldName="Host"
+                                Header="Hosts"
+                                IsSmart="True"
+                                Visible="True" />
+            </dxg:GridControl>
+        </Grid>
+        <dxb:BarContainerControl Grid.Row="3"
+                                 Grid.Column="1"
+                                 ContainerType="Bottom">
+            <dxb:StatusBarControl Background="Transparent"
+                                  Caption="Status Bar">
+                <dxb:BarButtonItem Command="{Binding RestartServerCommand}"
+                                   Content="{Binding}">
+                    <dxb:BarButtonItem.ContentTemplate>
+                        <DataTemplate>
+                            <Label Width="70"
+                                   Padding="5,2"
+                                   VerticalAlignment="Center"
+                                   HorizontalContentAlignment="Center"
+                                   Background="{Binding Listening, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                   Content="LISTENER"
+                                   FontSize="9" />
+                        </DataTemplate>
+                    </dxb:BarButtonItem.ContentTemplate>
+                </dxb:BarButtonItem>
+            </dxb:StatusBarControl>
+        </dxb:BarContainerControl>
+
+        <TextBlock Grid.Row="3"
+                   Grid.Column="1"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Foreground="#F26543"
+                   Text="{Binding Message}" />
+
+        <StackPanel Grid.Row="3"
+                    Grid.Column="1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+
+            <Views:LatencyIndicatorView VerticalAlignment="Center" />
+
+            <dx:SimpleButton Width="22"
+                             Height="22"
+                             Margin="5,0,0,0"
+                             ButtonKind="Toggle"
+                             Glyph="{dx:DXImage SvgImages/XAF/Action_Bell.svg}"
+                             GlyphHeight="15"
+                             IsChecked="{Binding DominatorsManager.AlertCreepEnabled}" />
+            <dxe:SpinEdit Width="65"
+                          Height="22"
+                          HorizontalContentAlignment="Right"
+                          AllowSpinOnMouseWheel="True"
+                          DisplayFormatString="N2"
+                          EditValue="{Binding DominatorsManager.AlertCreepThreshold, UpdateSourceTrigger=PropertyChanged}"
+                          EditValueType="{x:Type sys:Double}"
+                          Increment="1"
+                          IsEnabled="{Binding DominatorsManager.AlertCreepEnabled}"
+                          Mask="N2"
+                          MinValue="0"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+
+            <dx:SimpleButton Width="22"
+                             Height="22"
+                             Margin="5,0,0,0"
+                             ButtonKind="Toggle"
+                             Glyph="{dx:DXImage SvgImages/Arrows/Stop.svg}"
+                             GlyphHeight="15"
+                             IsChecked="{Binding DominatorsManager.StopCreepEnabled}" />
+            <dxe:SpinEdit Width="65"
+                          Height="22"
+                          HorizontalContentAlignment="Right"
+                          AllowSpinOnMouseWheel="True"
+                          DisplayFormatString="N2"
+                          EditValue="{Binding DominatorsManager.StopCreepThreshold, UpdateSourceTrigger=PropertyChanged}"
+                          EditValueType="{x:Type sys:Double}"
+                          Increment="1"
+                          IsEnabled="{Binding DominatorsManager.StopCreepEnabled}"
+                          Mask="N2"
+                          MinValue="0"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+        </StackPanel>
+    </Grid>
+</dx:ThemedWindow>

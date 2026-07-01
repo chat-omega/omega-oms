@@ -1,0 +1,1359 @@
+<view:ModuleWindow x:Class="ZeroPlus.Oms.Ui.Views.LowLatencyManagerView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                   xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                   xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                   xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                   xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
+                   xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                   xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                   xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                   xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                   xmlns:view="clr-namespace:ZeroPlus.Oms.Ui.Views"
+                   xmlns:viewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                   Title="{Binding ModuleTitle}"
+                   Width="1900"
+                   Height="700"
+                   MinWidth="520"
+                   MinHeight="300"
+                   d:DataContext="{d:DesignInstance Type=viewModels:LowLatencyManagerViewModel}"
+                   DataContext="{startuphelpers:DISource Type=viewModels:LowLatencyManagerViewModel}"
+                   WindowStartupLocation="CenterScreen"
+                   mc:Ignorable="d">
+
+    <dxmvvm:Interaction.Behaviors>
+        <services:OmsMessageBoxService />
+        <dxmvvm:OpenFileDialogService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <view:ModuleWindow.HeaderItems>
+        <view:ModuleHeaderItems />
+    </view:ModuleWindow.HeaderItems>
+
+    <view:ModuleWindow.Resources>
+        <dxmvvm:BooleanToObjectConverter x:Key="BooleanToStateColorConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>
+                <SolidColorBrush Color="#c6c6c6" />
+            </dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>
+                <SolidColorBrush Color="#F30005" />
+            </dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+        <dxmvvm:BooleanToObjectConverter x:Key="BooleanToFillColorConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>
+                <SolidColorBrush Color="#9fffb2" />
+            </dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>
+                <SolidColorBrush Color="Transparent" />
+            </dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+        <dxmvvm:BooleanToObjectConverter x:Key="BooleanToBackColorConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>
+                <SolidColorBrush Color="Transparent" />
+            </dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>
+                <SolidColorBrush Color="#f55762" />
+            </dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+        <dxmvvm:BooleanToObjectConverter x:Key="BooleanToForeColorConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>
+                <SolidColorBrush Color="#02F302" />
+            </dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>
+                <SolidColorBrush Color="#F1F1F1" />
+            </dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+        <helper:NullToBooleanConverter x:Key="NullToBooleanInverseConverter"
+                                       Inverted="True" />
+        <helper:MuteToGlyphConverter x:Key="MuteToGlyphConverter" />
+        <helper:DisableTicketToGlyphConverter x:Key="DisableTicketToGlyphConverter" />
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <helper:SignToBrushConverter x:Key="SignToBrushConverter"
+                                     NegativeBrush="#F30005"
+                                     PositiveBrush="#02F302"
+                                     ZeroBrush="#F1F1F1" />
+
+        <Style x:Key="RowStyle"
+               TargetType="dxg:RowControl">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=IsSelected}"
+                             Value="True">
+                    <Setter Property="Background" Value="#2d313b" />
+                </DataTrigger>
+                <Trigger Property="dxg:GridViewBase.IsFocusedRow" Value="True">
+                    <Setter Property="Background" Value="#3b404a" />
+                </Trigger>
+                <Trigger Property="dxg:GridViewBase.IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#4e5563" />
+                </Trigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=IsSelected}" Value="True" />
+                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="#4d4d4d" />
+                </MultiDataTrigger>
+                <DataTrigger Binding="{Binding Row.ShowNotification}"
+                             Value="True">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Offset="0.05" Color="#5680c0" />
+                                <GradientStop Offset="0.25" Color="#b7363d" />
+                                <GradientStop Offset="0.45" Color="#5680c0" />
+                                <GradientStop Offset="0.65" Color="#b7363d" />
+                                <GradientStop Offset="1.00" Color="#5680c0" />
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard x:Name="beginAnimation">
+                            <Storyboard>
+                                <DoubleAnimation AutoReverse="True"
+                                                 RepeatBehavior="Forever"
+                                                 Storyboard.TargetProperty="(Opacity)"
+                                                 From="1.0"
+                                                 To="0.5"
+                                                 Duration="0:0:0.4" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <StopStoryboard BeginStoryboardName="beginAnimation" />
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+    </view:ModuleWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="3" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="3" />
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Row="1"
+                Grid.Column="1"
+                Width="550"
+                Padding="5,2"
+                HorizontalAlignment="Left"
+                BorderBrush="#3f3f46"
+                BorderThickness="1"
+                CornerRadius="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       HorizontalAlignment="Center"
+                       Content="TOTAL POS"
+                       Foreground="#AFAFB0" />
+                <Label Grid.Row="0"
+                       Grid.Column="1"
+                       HorizontalAlignment="Center"
+                       Content="WORKING POS"
+                       Foreground="#AFAFB0" />
+                <Label Grid.Row="0"
+                       Grid.Column="2"
+                       HorizontalAlignment="Center"
+                       Content="REAL PnL"
+                       Foreground="#AFAFB0" />
+                <Label Grid.Row="0"
+                       Grid.Column="3"
+                       HorizontalAlignment="Center"
+                       Content="UNREAL PnL"
+                       Foreground="#AFAFB0" />
+                <Label Grid.Row="0"
+                       Grid.Column="4"
+                       HorizontalAlignment="Center"
+                       Content="NET PnL"
+                       Foreground="#AFAFB0" />
+
+                <Grid Grid.Row="1"
+                      Grid.Column="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               HorizontalAlignment="Center"
+                               FontWeight="Bold"
+                               Foreground="#FF0000"
+                               Text="{Binding TotalShortPos, StringFormat={}{0:-#0;-#0;-}}" />
+                    <TextBlock Grid.Column="1"
+                               Margin="0,-3,0,0"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="|" />
+                    <TextBlock Grid.Column="2"
+                               HorizontalAlignment="Center"
+                               FontWeight="Bold"
+                               Foreground="#10e411"
+                               Text="{Binding TotalLongPos, StringFormat={}{0:+#0;-#0;-}}" />
+                </Grid>
+                <Grid Grid.Row="1"
+                      Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               HorizontalAlignment="Center"
+                               FontWeight="Bold"
+                               Foreground="#FF0000"
+                               Text="{Binding TotalWorkingShortPos, StringFormat={}{0:-#0;-#0;-}}" />
+                    <TextBlock Grid.Column="1"
+                               Margin="0,-3,0,0"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="|" />
+                    <TextBlock Grid.Column="2"
+                               HorizontalAlignment="Center"
+                               FontWeight="Bold"
+                               Foreground="#10e411"
+                               Text="{Binding TotalWorkingLongPos, StringFormat={}{0:+#0;-#0;-}}" />
+                </Grid>
+                <TextBlock Grid.Row="1"
+                           Grid.Column="2"
+                           HorizontalAlignment="Center"
+                           FontWeight="Bold"
+                           Foreground="{Binding TotalRealPnl, Converter={StaticResource SignToBrushConverter}}"
+                           Text="{Binding TotalRealPnl, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}" />
+                <TextBlock Grid.Row="1"
+                           Grid.Column="3"
+                           HorizontalAlignment="Center"
+                           FontWeight="Bold"
+                           Foreground="{Binding TotalUnrealPnl, Converter={StaticResource SignToBrushConverter}}"
+                           Text="{Binding TotalUnrealPnl, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}" />
+                <TextBlock Grid.Row="1"
+                           Grid.Column="4"
+                           HorizontalAlignment="Center"
+                           FontWeight="Bold"
+                           Foreground="{Binding TotalNetPnl, Converter={StaticResource SignToBrushConverter}}"
+                           Text="{Binding TotalNetPnl, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}" />
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1"
+              Grid.Column="2"
+              IsEnabled="{Binding IsBusy, Converter={StaticResource BooleanNegationConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <dx:SimpleButton Grid.Column="0"
+                             Width="90"
+                             Height="24"
+                             Margin="5,0,0,0"
+                             VerticalAlignment="Bottom"
+                             Command="{Binding AddCommand}"
+                             Content="Add"
+                             CornerRadius=".5"
+                             Foreground="#CCCCCC"
+                             Glyph="{dx:DXImage SvgImages/XAF/Action_Inline_New.svg}"
+                             GlyphHeight="18"
+                             GlyphWidth="18" />
+
+            <dx:SplitButton Grid.Column="1"
+                            Height="24"
+                            Margin="5,0,0,0"
+                            VerticalAlignment="Bottom"
+                            AsyncDisplayMode="WaitCancel"
+                            Command="{Binding RefreshAllCommand}"
+                            Content="Refresh All"
+                            CornerRadius=".5"
+                            Foreground="#CCCCCC"
+                            Glyph="{dx:DXImage SvgImages/XAF/Action_Reload.svg}"
+                            GlyphHeight="15"
+                            GlyphWidth="15">
+                <dx:SimpleButton Height="24"
+                                 Padding="-12,0,0,0"
+                                 Command="{Binding ReloadSavedConfigsCommand}"
+                                 Content="Reload Configs"
+                                 CornerRadius=".5"
+                                 Foreground="#CCCCCC"
+                                 Glyph="{dx:DXImage SvgImages/XAF/Action_Reload.svg}"
+                                 GlyphHeight="15"
+                                 GlyphWidth="15" />
+            </dx:SplitButton>
+
+            <dx:SimpleButton Grid.Column="2"
+                             Width="24"
+                             Height="24"
+                             Margin="5,0,0,0"
+                             VerticalAlignment="Bottom"
+                             Command="{Binding FlipMuteLoopsCommand}"
+                             CornerRadius=".5"
+                             Glyph="{Binding LowLatencyTransactionsProcessor.AudioMuted, Converter={StaticResource MuteToGlyphConverter}}"
+                             GlyphHeight="18"
+                             GlyphWidth="18" />
+
+            <dx:SimpleButton Grid.Column="3"
+                             Width="55"
+                             Height="24"
+                             Margin="5,0,0,0"
+                             VerticalAlignment="Bottom"
+                             Command="{Binding FlipOpenTicketCommand}"
+                             CornerRadius=".5"
+                             Glyph="{Binding LowLatencyTransactionsProcessor.DisableOpenTicket, Converter={StaticResource DisableTicketToGlyphConverter}}"
+                             GlyphHeight="30"
+                             GlyphWidth="50" />
+
+            <dx:SimpleButton Grid.Column="4"
+                             Height="24"
+                             Margin="5,0,0,0"
+                             VerticalAlignment="Bottom"
+                             Command="{Binding OpenManualAdjustmentCommand}"
+                             Content="Manual Adj"
+                             CornerRadius=".5"
+                             Foreground="#CCCCCC"
+                             Glyph="{dx:DXImage SvgImages/Dashboards/Manual.svg}"
+                             GlyphHeight="15"
+                             GlyphWidth="15" />
+
+            <dx:DropDownButton Grid.Column="5"
+                               Margin="25,0,0,0"
+                               VerticalAlignment="Bottom"
+                               Background="#18270d"
+                               BorderBrush="#7ac142"
+                               Content="Start Multiple"
+                               CornerRadius=".5"
+                               FontWeight="DemiBold">
+                <ItemsControl>
+                    <dxe:RatingEdit HorizontalContentAlignment="Center"
+                                    EditValue="{Binding StartMinRank}"
+                                    EditValueType="{x:Type sys:Int32}"
+                                    FlowDirection="RightToLeft"
+                                    ItemsCount="4"
+                                    Maximum="4"
+                                    Minimum="0"
+                                    Precision="Full">
+                        <dxmvvm:Interaction.Behaviors>
+                            <dxmvvm:EventToCommand Command="{Binding StartByRankCommand}"
+                                                   EventName="EditValueChanged" />
+                        </dxmvvm:Interaction.Behaviors>
+                    </dxe:RatingEdit>
+                </ItemsControl>
+            </dx:DropDownButton>
+
+            <dx:SplitButton Grid.Column="6"
+                            Width="125"
+                            Margin="25,0,0,0"
+                            VerticalAlignment="Bottom"
+                            Command="{Binding StopAllCommand}"
+                            Content="Stop All"
+                            CornerRadius=".5"
+                            FontWeight="DemiBold"
+                            Style="{StaticResource EmergencyStopButtonStyle}">
+                <dx:SimpleButton.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem HorizontalContentAlignment="Center"
+                                  Command="{Binding KillAllCommand}"
+                                  Header="Kill All" />
+                    </ContextMenu>
+                </dx:SimpleButton.ContextMenu>
+                <StackPanel>
+                    <dxe:RatingEdit HorizontalContentAlignment="Center"
+                                    EditValue="{Binding StopMaxRank}"
+                                    EditValueType="{x:Type sys:Int32}"
+                                    ItemsCount="4"
+                                    Maximum="4"
+                                    Minimum="0"
+                                    Precision="Full">
+                        <dxmvvm:Interaction.Behaviors>
+                            <dxmvvm:EventToCommand Command="{Binding StopByRankCommand}"
+                                                   EventName="EditValueChanged" />
+                        </dxmvvm:Interaction.Behaviors>
+                    </dxe:RatingEdit>
+                    <dx:SuperTipItemControlSeparator />
+                    <ItemsControl Name="HostsControl"
+                                  ItemsSource="{Binding Hosts}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <MenuItem HorizontalContentAlignment="Center"
+                                          Command="{Binding DataContext.KillByHostCommand, ElementName=HostsControl}"
+                                          CommandParameter="{Binding}"
+                                          Header="{Binding Name}">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage 'SvgImages/Dashboards/ServerMode.svg'}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </dx:SplitButton>
+        </Grid>
+
+        <Slider x:Name="LowLatencyMainGridScale"
+                Grid.Row="2"
+                Grid.Column="0"
+                Maximum="4"
+                Minimum="0.1"
+                Visibility="Hidden"
+                Value="1" />
+
+        <dx:WaitIndicator Grid.Row="2"
+                          Grid.Column="1"
+                          Grid.ColumnSpan="2"
+                          Panel.ZIndex="1"
+                          d:Panel.ZIndex="-1"
+                          Content="{Binding IsBusyMessage}"
+                          DeferedVisibility="{Binding IsBusy}"
+                          IsTabStop="False" />
+
+        <dxg:GridControl x:Name="LowLatencyMainGrid"
+                         Grid.Row="2"
+                         Grid.Column="1"
+                         Grid.ColumnSpan="2"
+                         Margin="0,3,0,0"
+                         dx:DXSerializer.StoreLayoutMode="All"
+                         dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                         AutoGenerateColumns="AddNew"
+                         AutoGeneratedColumns="Grid_ColumnsPopulated"
+                         CustomColumnDisplayText="GridControl_CustomColumnsDisplayText"
+                         EnableSmartColumnsGeneration="True"
+                         IsEnabled="{Binding IsBusy, Converter={StaticResource BooleanNegationConverter}}"
+                         ItemsSource="{Binding LowLatencyModels}"
+                         PreviewMouseWheel="OnZoomMouseWheel"
+                         RestoreStateOnSourceChange="True"
+                         SelectionMode="Row">
+            <dxg:GridControl.LayoutTransform>
+                <ScaleTransform CenterX="0" CenterY="0" ScaleX="{Binding ElementName=LowLatencyMainGridScale, Path=Value}" ScaleY="{Binding ElementName=LowLatencyMainGridScale, Path=Value}" />
+            </dxg:GridControl.LayoutTransform>
+            <dxg:GridControl.Resources>
+                <Style TargetType="dxg:GridColumn">
+                    <Setter Property="Visible" Value="False" />
+                    <Setter Property="IsSmart" Value="True" />
+                    <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                </Style>
+                <Style TargetType="dxg:GridControlBand">
+                    <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                </Style>
+                <ControlTemplate x:Key="{dxgt:GridColumnHeaderThemeKey ResourceKey=ColumnFilterTemplate}"
+                                 TargetType="{x:Type ToggleButton}" />
+            </dxg:GridControl.Resources>
+            <dxg:GridControl.View>
+                <dxg:TableView AllowDragDrop="True"
+                               AllowEditing="False"
+                               AutoWidth="True"
+                               BandSeparatorWidth="1"
+                               EnableSelectedRowAppearance="True"
+                               GroupSummaryDisplayMode="AlignByColumns"
+                               NavigationStyle="Cell"
+                               RowStyle="{StaticResource RowStyle}"
+                               ShowGridMenu="TableView_ShowGridMenu"
+                               ShowGroupPanel="False"
+                               ShowIndicator="True"
+                               ShowTotalSummary="False"
+                               VerticalScrollbarVisibility="Auto">
+                    <dxg:TableView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowColumnChooserCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Column Chooser">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ClearColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Hide All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowAllColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowDefaultColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Default Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </dxg:TableView.ContextMenu>
+                    <dxg:TableView.RowCellMenuCustomizations>
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.CloneCommand}"
+                                           CommandParameter="{Binding Path=SelectedItem, ElementName=LowLatencyMainGrid}"
+                                           Content="Clone"
+                                           Glyph="{dx:DXImage 'SvgImages/XAF/Action_CloneMerge_Merge_Object.svg'}" />
+                        <dxb:BarSplitButtonItem Name="OpenHangsMainButton"
+                                                Command="{Binding View.DataContext.OpenHangsCommand}"
+                                                CommandParameter="{Binding Path=SelectedItem, ElementName=LowLatencyMainGrid}"
+                                                Content="Open Hangs">
+                            <dxb:BarSplitButtonItem.PopupControl>
+                                <dxb:PopupMenu Name="OpenHangsSubButton" />
+                            </dxb:BarSplitButtonItem.PopupControl>
+                        </dxb:BarSplitButtonItem>
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.RunFromFileCommand}"
+                                           CommandParameter="{Binding Path=SelectedItem, ElementName=LowLatencyMainGrid}"
+                                           Content="Run From File"
+                                           Glyph="{dx:DXImage 'SvgImages/Spreadsheet/ChartVerticalAxis_LogScale.svg'}" />
+                        <dxb:BarCheckItem Content="Force Resend Watchlist"
+                                          IsChecked="{Binding SelectedItem.ForceResendWatchlist, ElementName=LowLatencyMainGrid}" />
+                        <dxb:BarItemSeparator />
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.ClearNotificationCommand}"
+                                           CommandParameter="{Binding Path=SelectedItem, ElementName=LowLatencyMainGrid}"
+                                           Content="Clear Notification" />
+                    </dxg:TableView.RowCellMenuCustomizations>
+                </dxg:TableView>
+            </dxg:GridControl.View>
+            <dxg:GridControl.Bands>
+                <dxg:GridControlBand Header="Is Running">
+                    <dxg:GridControlBand.HeaderTemplate>
+                        <DataTemplate />
+                    </dxg:GridControlBand.HeaderTemplate>
+                    <dxg:GridColumn Width="30"
+                                    FieldName="IsRunning"
+                                    Header="Is Running"
+                                    Visible="True">
+                        <dxg:GridColumn.HeaderTemplate>
+                            <DataTemplate />
+                        </dxg:GridColumn.HeaderTemplate>
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <Canvas Width="10"
+                                        Height="10">
+                                    <Ellipse Width="10"
+                                             Height="10"
+                                             Fill="{Binding RowData.Row.IsRunning, Converter={StaticResource BooleanToFillColorConverter}}"
+                                             Stroke="{Binding RowData.Row.IsRunning, Converter={StaticResource BooleanToStateColorConverter}}" />
+                                </Canvas>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
+                <dxg:GridControlBand Header="Instance Details">
+                    <dxg:GridControlBand.HeaderTemplate>
+                        <DataTemplate />
+                    </dxg:GridControlBand.HeaderTemplate>
+                    <dxg:GridColumn FieldName="Name"
+                                    ReadOnly="False"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:TextEdit Height="24"
+                                              Margin="-1"
+                                              VerticalAlignment="Center"
+                                              Background="Transparent"
+                                              BorderThickness="0"
+                                              CharacterCasing="Upper"
+                                              Foreground="#F3A202"
+                                              IsReadOnly="{Binding RowData.Row.IsRunning}"
+                                              Text="{Binding RowData.Row.Name}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="Rank"
+                                    ReadOnly="False"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:RatingEdit HorizontalContentAlignment="Center"
+                                                EditValue="{Binding RowData.Row.Rank}"
+                                                EditValueType="{x:Type sys:Int32}"
+                                                ItemsCount="4"
+                                                Maximum="4"
+                                                Minimum="0"
+                                                Precision="Full" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="Host"
+                                    ReadOnly="True"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Padding="4,3,3,3"
+                                           Background="{Binding Path=RowData.Row.IsConnected, Converter={StaticResource BooleanToBackColorConverter}}"
+                                           Foreground="{Binding Path=RowData.Row.IsConnected, Converter={StaticResource BooleanToForeColorConverter}}"
+                                           Text="{Binding Path=RowData.Row.Host}"
+                                           TextAlignment="Left" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
+
+                <dxg:GridControlBand Header="Stats">
+                    <dxg:GridColumn FieldName="AdjPnl"
+                                    Header="A-PnL"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="0,0,5,0"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontWeight="DemiBold"
+                                           Foreground="{Binding RowData.Row.AdjPnl, Converter={StaticResource SignToBrushConverter}}"
+                                           Text="{Binding RowData.Row.AdjPnl, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="RealPnl"
+                                    Header="R-PnL"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="0,0,5,0"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontWeight="DemiBold"
+                                           Foreground="{Binding RowData.Row.RealPnl, Converter={StaticResource SignToBrushConverter}}"
+                                           Text="{Binding RowData.Row.RealPnl, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="UnrealPnl"
+                                    Header="U-PnL"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="0,0,5,0"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontWeight="DemiBold"
+                                           Foreground="{Binding RowData.Row.UnrealPnl, Converter={StaticResource SignToBrushConverter}}"
+                                           Text="{Binding RowData.Row.UnrealPnl, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn MaxWidth="100"
+                                    FieldName="NetQty"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{Binding RowData.Row.NetQty, Converter={StaticResource SignToBrushConverter}}"
+                                           Text="{Binding RowData.Row.NetQty, StringFormat={}{0:-#0;-#0;-}}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn MaxWidth="100"
+                                    FieldName="TotalFills"
+                                    Header="Fills"
+                                    Visible="True" />
+                    <dxg:GridColumn MaxWidth="100"
+                                    FieldName="TotalSubmissions"
+                                    Header="Subs"
+                                    Visible="True" />
+                    <dxg:GridColumn Width="100"
+                                    MinWidth="100"
+                                    MaxWidth="100"
+                                    FieldName="SymbolsCount"
+                                    Header="Symbols"
+                                    Visible="True" />
+                </dxg:GridControlBand>
+                <dxg:GridControlBand Header="Initiator">
+                    <dxg:GridColumn FieldName="InitiatorTemplate"
+                                    HorizontalHeaderContentAlignment="Stretch"
+                                    ReadOnly="False"
+                                    Visible="True">
+                        <dxg:GridColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Stretch">
+                                    <TextBlock HorizontalAlignment="Center"
+                                               Text="Template" />
+                                    <dx:SimpleButton Width="15"
+                                                     Height="15"
+                                                     Margin="5,0,0,0"
+                                                     HorizontalAlignment="Right"
+                                                     VerticalAlignment="Bottom"
+                                                     Background="#18270d"
+                                                     BorderBrush="#7ac142"
+                                                     Command="{Binding DataContext.AddTemplateCommand, ElementName=LowLatencyMainGrid}"
+                                                     CommandParameter="LoLaInitiator"
+                                                     CornerRadius=".5"
+                                                     FontWeight="DemiBold"
+                                                     Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Add.svg}" />
+                                </Grid>
+                            </DataTemplate>
+                        </dxg:GridColumn.HeaderTemplate>
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:ComboBoxEdit Margin="-1,-1,-1,-1"
+                                                  HorizontalContentAlignment="Stretch"
+                                                  AllowDrop="False"
+                                                  Background="Transparent"
+                                                  DisplayMember="Title"
+                                                  EditValue="{Binding RowData.Row.Initiator, UpdateSourceTrigger=PropertyChanged}"
+                                                  IsTextEditable="False"
+                                                  ItemsSource="{Binding RowData.Row.Initiators}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding View.DataContext.InitiatorTemplateChangedCommand}"
+                                                               CommandParameter="{Binding RowData.Row}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                    <dxe:ComboBoxEdit.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid HorizontalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="auto" />
+                                                    <ColumnDefinition Width="auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Label Grid.Column="0"
+                                                       MinWidth="90"
+                                                       Padding="0,0.5"
+                                                       Content="{Binding Title}"
+                                                       FontSize="12" />
+                                                <dx:SimpleButton Grid.Column="1"
+                                                                 Width="22"
+                                                                 Margin="2,-2"
+                                                                 Background="Transparent"
+                                                                 BorderThickness="0"
+                                                                 Command="{Binding Path=DataContext.EditInitiatorCommand, ElementName=LowLatencyMainGrid}"
+                                                                 CommandParameter="{Binding}"
+                                                                 Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_Edit.svg'}"
+                                                                 GlyphHeight="15"
+                                                                 GlyphWidth="15" />
+                                                <dx:SimpleButton Grid.Column="2"
+                                                                 Width="22"
+                                                                 Margin="-1,-2"
+                                                                 Background="Transparent"
+                                                                 BorderThickness="0"
+                                                                 Command="{Binding Path=DataContext.CloneInitiatorCommand, ElementName=LowLatencyMainGrid}"
+                                                                 CommandParameter="{Binding}"
+                                                                 Glyph="{dx:DXImage 'SvgImages/XAF/Action_CloneMerge_Merge_Object.svg'}"
+                                                                 GlyphHeight="15"
+                                                                 GlyphWidth="15" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </dxe:ComboBoxEdit.ItemTemplate>
+                                </dxe:ComboBoxEdit>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
+                <dxg:GridControlBand Header="Loop">
+                    <dxg:GridColumn FieldName="LoopTemplate"
+                                    HorizontalHeaderContentAlignment="Stretch"
+                                    ReadOnly="False"
+                                    Visible="True">
+                        <dxg:GridColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Stretch">
+                                    <TextBlock HorizontalAlignment="Center"
+                                               Text="Template" />
+                                    <dx:SimpleButton Width="15"
+                                                     Height="15"
+                                                     Margin="5,0,0,0"
+                                                     HorizontalAlignment="Right"
+                                                     VerticalAlignment="Bottom"
+                                                     Background="#18270d"
+                                                     BorderBrush="#7ac142"
+                                                     Command="{Binding DataContext.AddTemplateCommand, ElementName=LowLatencyMainGrid}"
+                                                     CommandParameter="LoLaLoop"
+                                                     CornerRadius=".5"
+                                                     FontWeight="DemiBold"
+                                                     Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Add.svg}" />
+                                </Grid>
+                            </DataTemplate>
+                        </dxg:GridColumn.HeaderTemplate>
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:ComboBoxEdit Margin="-1,-1,-1,-1"
+                                                  HorizontalContentAlignment="Stretch"
+                                                  AllowDrop="False"
+                                                  Background="Transparent"
+                                                  DisplayMember="Title"
+                                                  EditValue="{Binding RowData.Row.Loop, UpdateSourceTrigger=PropertyChanged}"
+                                                  IsTextEditable="False"
+                                                  ItemsSource="{Binding RowData.Row.Loops}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding View.DataContext.InitiatorTemplateChangedCommand}"
+                                                               CommandParameter="{Binding RowData.Row}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                    <dxe:ComboBoxEdit.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid HorizontalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="auto" />
+                                                    <ColumnDefinition Width="auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Label Grid.Column="0"
+                                                       MinWidth="90"
+                                                       Padding="0,0.5"
+                                                       Content="{Binding Title}"
+                                                       FontSize="12" />
+                                                <dx:SimpleButton Grid.Column="1"
+                                                                 Width="22"
+                                                                 Margin="2,-2"
+                                                                 Background="Transparent"
+                                                                 BorderThickness="0"
+                                                                 Command="{Binding Path=DataContext.EditLoopCommand, ElementName=LowLatencyMainGrid}"
+                                                                 CommandParameter="{Binding}"
+                                                                 Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_Edit.svg'}"
+                                                                 GlyphHeight="15"
+                                                                 GlyphWidth="15" />
+                                                <dx:SimpleButton Grid.Column="2"
+                                                                 Width="22"
+                                                                 Margin="-1,-2"
+                                                                 Background="Transparent"
+                                                                 BorderThickness="0"
+                                                                 Command="{Binding Path=DataContext.CloneLoopCommand, ElementName=LowLatencyMainGrid}"
+                                                                 CommandParameter="{Binding}"
+                                                                 Glyph="{dx:DXImage 'SvgImages/XAF/Action_CloneMerge_Merge_Object.svg'}"
+                                                                 GlyphHeight="15"
+                                                                 GlyphWidth="15" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </dxe:ComboBoxEdit.ItemTemplate>
+                                </dxe:ComboBoxEdit>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                </dxg:GridControlBand>
+                <dxg:GridControlBand Header="Liquidator">
+                    <dxg:GridColumn FieldName="LiquidatorTemplate"
+                                    HorizontalHeaderContentAlignment="Stretch"
+                                    ReadOnly="False"
+                                    Visible="True">
+                        <dxg:GridColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Stretch">
+                                    <TextBlock HorizontalAlignment="Center"
+                                               Text="Template" />
+                                    <dx:SimpleButton Width="15"
+                                                     Height="15"
+                                                     Margin="5,0,0,0"
+                                                     HorizontalAlignment="Right"
+                                                     VerticalAlignment="Bottom"
+                                                     Background="#18270d"
+                                                     BorderBrush="#7ac142"
+                                                     Command="{Binding DataContext.AddTemplateCommand, ElementName=LowLatencyMainGrid}"
+                                                     CommandParameter="LoLaLiquidator"
+                                                     CornerRadius=".5"
+                                                     FontWeight="DemiBold"
+                                                     Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Add.svg}" />
+                                </Grid>
+                            </DataTemplate>
+                        </dxg:GridColumn.HeaderTemplate>
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:ComboBoxEdit Margin="-1,-1,-1,-1"
+                                                  HorizontalContentAlignment="Stretch"
+                                                  AllowDrop="False"
+                                                  Background="Transparent"
+                                                  DisplayMember="Title"
+                                                  EditValue="{Binding RowData.Row.Liquidator, UpdateSourceTrigger=PropertyChanged}"
+                                                  IsTextEditable="False"
+                                                  ItemsSource="{Binding RowData.Row.Liquidators}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding View.DataContext.LiquidatorTemplateChangedCommand}"
+                                                               CommandParameter="{Binding RowData.Row}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                    <dxe:ComboBoxEdit.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid HorizontalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="auto" />
+                                                    <ColumnDefinition Width="auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Label Grid.Column="0"
+                                                       MinWidth="90"
+                                                       Padding="0,0.5"
+                                                       Content="{Binding Title}"
+                                                       FontSize="12" />
+                                                <dx:SimpleButton Grid.Column="1"
+                                                                 Width="22"
+                                                                 Margin="2,-2"
+                                                                 Background="Transparent"
+                                                                 BorderThickness="0"
+                                                                 Command="{Binding Path=DataContext.EditLiquidatorCommand, ElementName=LowLatencyMainGrid}"
+                                                                 CommandParameter="{Binding}"
+                                                                 Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_Edit.svg'}"
+                                                                 GlyphHeight="15"
+                                                                 GlyphWidth="15" />
+                                                <dx:SimpleButton Grid.Column="2"
+                                                                 Width="22"
+                                                                 Margin="-1,-2"
+                                                                 Background="Transparent"
+                                                                 BorderThickness="0"
+                                                                 Command="{Binding Path=DataContext.CloneLiquidatorCommand, ElementName=LowLatencyMainGrid}"
+                                                                 CommandParameter="{Binding}"
+                                                                 Glyph="{dx:DXImage 'SvgImages/XAF/Action_CloneMerge_Merge_Object.svg'}"
+                                                                 GlyphHeight="15"
+                                                                 GlyphWidth="15" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </dxe:ComboBoxEdit.ItemTemplate>
+                                </dxe:ComboBoxEdit>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn Width="75"
+                                    MinWidth="75"
+                                    MaxWidth="75"
+                                    FieldName="LiquidatorProfitTicks"
+                                    Header="Profit Ticks"
+                                    IsSmart="False"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit Margin="-1"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.Liquidator.ChaserModel.OffsetProfitTicks, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Increment="1"
+                                              IsEnabled="{Binding RowData.Row.Liquidator, Converter={StaticResource NullToBooleanInverseConverter}}"
+                                              Mask="N0"
+                                              MaskUseAsDisplayFormat="True"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding View.DataContext.LiquidatorTemplateChangedCommand}"
+                                                               CommandParameter="{Binding RowData.Row}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                </dxg:GridControlBand>
+                <dxg:GridControlBand Header="Signal">
+                    <dxg:GridColumn FieldName="SignalTemplate"
+                                    HorizontalHeaderContentAlignment="Stretch"
+                                    ReadOnly="False"
+                                    Visible="True">
+                        <dxg:GridColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Stretch">
+                                    <TextBlock HorizontalAlignment="Center"
+                                               Text="Template" />
+                                    <dx:SimpleButton Width="15"
+                                                     Height="15"
+                                                     Margin="5,0,0,0"
+                                                     HorizontalAlignment="Right"
+                                                     VerticalAlignment="Bottom"
+                                                     Background="#18270d"
+                                                     BorderBrush="#7ac142"
+                                                     Command="{Binding DataContext.AddTemplateCommand, ElementName=LowLatencyMainGrid}"
+                                                     CommandParameter="LoLaSignal"
+                                                     CornerRadius=".5"
+                                                     FontWeight="DemiBold"
+                                                     Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Add.svg}" />
+                                </Grid>
+                            </DataTemplate>
+                        </dxg:GridColumn.HeaderTemplate>
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:ComboBoxEdit Margin="-1,-1,-1,-1"
+                                                  HorizontalContentAlignment="Stretch"
+                                                  AllowDrop="False"
+                                                  Background="Transparent"
+                                                  DisplayMember="Title"
+                                                  EditValue="{Binding RowData.Row.Signal, UpdateSourceTrigger=PropertyChanged}"
+                                                  IsTextEditable="False"
+                                                  ItemsSource="{Binding RowData.Row.Signals}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding View.DataContext.SignalTemplateChangedCommand}"
+                                                               CommandParameter="{Binding RowData.Row}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                    <dxe:ComboBoxEdit.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid HorizontalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="auto" />
+                                                    <ColumnDefinition Width="auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Label Grid.Column="0"
+                                                       MinWidth="90"
+                                                       Padding="0,0.5"
+                                                       Content="{Binding Title}"
+                                                       FontSize="12" />
+                                                <dx:SimpleButton Grid.Column="1"
+                                                                 Width="22"
+                                                                 Margin="2,-2"
+                                                                 Background="Transparent"
+                                                                 BorderThickness="0"
+                                                                 Command="{Binding Path=DataContext.EditSignalCommand, ElementName=LowLatencyMainGrid}"
+                                                                 CommandParameter="{Binding}"
+                                                                 Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_Edit.svg'}"
+                                                                 GlyphHeight="15"
+                                                                 GlyphWidth="15" />
+                                                <dx:SimpleButton Grid.Column="2"
+                                                                 Width="22"
+                                                                 Margin="-1,-2"
+                                                                 Background="Transparent"
+                                                                 BorderThickness="0"
+                                                                 Command="{Binding Path=DataContext.CloneSignalCommand, ElementName=LowLatencyMainGrid}"
+                                                                 CommandParameter="{Binding}"
+                                                                 Glyph="{dx:DXImage 'SvgImages/XAF/Action_CloneMerge_Merge_Object.svg'}"
+                                                                 GlyphHeight="15"
+                                                                 GlyphWidth="15" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </dxe:ComboBoxEdit.ItemTemplate>
+                                </dxe:ComboBoxEdit>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn Width="75"
+                                    MinWidth="75"
+                                    MaxWidth="75"
+                                    FieldName="EdgeMultiplier"
+                                    Header="Edge Mul"
+                                    IsSmart="False"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit Margin="-1"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.Signal.EdgeMultiplier, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment=".01"
+                                              IsEnabled="{Binding RowData.Row.Signal, Converter={StaticResource NullToBooleanInverseConverter}}"
+                                              Mask="N3"
+                                              MaskUseAsDisplayFormat="True"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding View.DataContext.SignalTemplateChangedCommand}"
+                                                               CommandParameter="{Binding RowData.Row}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                </dxg:GridControlBand>
+                <dxg:GridControlBand Header="Risk">
+                    <dxg:GridColumn FieldName="RiskTemplate"
+                                    HorizontalHeaderContentAlignment="Stretch"
+                                    ReadOnly="False"
+                                    Visible="True">
+                        <dxg:GridColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Stretch">
+                                    <TextBlock HorizontalAlignment="Center"
+                                               Text="Template" />
+                                    <dx:SimpleButton Width="15"
+                                                     Height="15"
+                                                     Margin="5,0,0,0"
+                                                     HorizontalAlignment="Right"
+                                                     VerticalAlignment="Bottom"
+                                                     Background="#18270d"
+                                                     BorderBrush="#7ac142"
+                                                     Command="{Binding DataContext.AddTemplateCommand, ElementName=LowLatencyMainGrid}"
+                                                     CommandParameter="LoLaRisk"
+                                                     CornerRadius=".5"
+                                                     FontWeight="DemiBold"
+                                                     Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Add.svg}" />
+                                </Grid>
+                            </DataTemplate>
+                        </dxg:GridColumn.HeaderTemplate>
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:ComboBoxEdit Margin="-1,-1,-1,-1"
+                                                  HorizontalContentAlignment="Stretch"
+                                                  AllowDrop="False"
+                                                  Background="Transparent"
+                                                  DisplayMember="Title"
+                                                  EditValue="{Binding RowData.Row.Risk, UpdateSourceTrigger=PropertyChanged}"
+                                                  IsTextEditable="False"
+                                                  ItemsSource="{Binding RowData.Row.RiskModels}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding View.DataContext.RiskTemplateChangedCommand}"
+                                                               CommandParameter="{Binding RowData.Row}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                    <dxe:ComboBoxEdit.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid HorizontalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="auto" />
+                                                    <ColumnDefinition Width="auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Label Grid.Column="0"
+                                                       MinWidth="90"
+                                                       Padding="0,0.5"
+                                                       Content="{Binding Title}"
+                                                       FontSize="12" />
+                                                <dx:SimpleButton Grid.Column="1"
+                                                                 Width="22"
+                                                                 Margin="2,-2"
+                                                                 Background="Transparent"
+                                                                 BorderThickness="0"
+                                                                 Command="{Binding Path=DataContext.EditRiskCommand, ElementName=LowLatencyMainGrid}"
+                                                                 CommandParameter="{Binding}"
+                                                                 Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_Edit.svg'}"
+                                                                 GlyphHeight="15"
+                                                                 GlyphWidth="15" />
+                                                <dx:SimpleButton Grid.Column="2"
+                                                                 Width="22"
+                                                                 Margin="-1,-2"
+                                                                 Background="Transparent"
+                                                                 BorderThickness="0"
+                                                                 Command="{Binding Path=DataContext.CloneRiskCommand, ElementName=LowLatencyMainGrid}"
+                                                                 CommandParameter="{Binding}"
+                                                                 Glyph="{dx:DXImage 'SvgImages/XAF/Action_CloneMerge_Merge_Object.svg'}"
+                                                                 GlyphHeight="15"
+                                                                 GlyphWidth="15" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </dxe:ComboBoxEdit.ItemTemplate>
+                                </dxe:ComboBoxEdit>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn Width="75"
+                                    MinWidth="75"
+                                    MaxWidth="75"
+                                    FieldName="MaxLossInitiator"
+                                    Header="Max Loss"
+                                    IsSmart="False"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit Margin="-1"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.Risk.MaxLossInitiator, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Increment="1"
+                                              IsEnabled="{Binding RowData.Row.Risk, Converter={StaticResource NullToBooleanInverseConverter}}"
+                                              Mask="N0"
+                                              MaskUseAsDisplayFormat="True"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding View.DataContext.RiskTemplateChangedCommand}"
+                                                               CommandParameter="{Binding RowData.Row}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                </dxg:GridControlBand>
+                <dxg:GridControlBand Header="Watchlist">
+                    <dxg:GridColumn FieldName="WatchlistTemplate"
+                                    Header="Generator"
+                                    ReadOnly="False"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:ComboBoxEdit Margin="-1,-1,-1,-1"
+                                                  HorizontalContentAlignment="Stretch"
+                                                  AllowDrop="False"
+                                                  Background="Transparent"
+                                                  DisplayMember="Title"
+                                                  EditValue="{Binding RowData.Row.WatchlistGenerator, UpdateSourceTrigger=PropertyChanged}"
+                                                  IsTextEditable="False"
+                                                  ItemsSource="{Binding View.DataContext.WatchlistGenerators}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn Width="100"
+                                    MinWidth="100"
+                                    MaxWidth="100"
+                                    AllowSorting="False"
+                                    FieldName="Refresh"
+                                    Header="Refresh"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dx:SimpleButton Padding="3,0"
+                                                 Background="Transparent"
+                                                 BorderThickness="0"
+                                                 Command="{Binding View.DataContext.RefreshCommand}"
+                                                 CommandParameter="{Binding RowData.Row}"
+                                                 Content="Refresh" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
+                <dxg:GridControlBand Header="Control">
+                    <dxg:GridColumn Width="100"
+                                    MinWidth="100"
+                                    MaxWidth="100"
+                                    AllowSorting="False"
+                                    FieldName="Start"
+                                    Header="Start"
+                                    IsSmart="False"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dx:SimpleButton Background="Transparent"
+                                                 BorderThickness="0"
+                                                 Command="{Binding View.DataContext.StartCommand}"
+                                                 CommandParameter="{Binding RowData.Row}"
+                                                 Content="Start"
+                                                 Foreground="#7ac142"
+                                                 GlyphHeight="16"
+                                                 IsEnabled="{Binding RowData.Row.CanStart}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn Width="100"
+                                    MinWidth="100"
+                                    MaxWidth="100"
+                                    AllowSorting="False"
+                                    FieldName="Stop"
+                                    Header="Stop"
+                                    IsSmart="False"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dx:SimpleButton Background="Transparent"
+                                                 BorderThickness="0"
+                                                 Command="{Binding View.DataContext.StopCommand}"
+                                                 CommandParameter="{Binding RowData.Row}"
+                                                 Content="Stop"
+                                                 Foreground="#ea4336">
+                                    <dx:SimpleButton.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem HorizontalContentAlignment="Center"
+                                                      Command="{Binding View.DataContext.KillAllForInstanceCommand}"
+                                                      CommandParameter="{Binding RowData.Row}"
+                                                      Header="Kill All" />
+                                        </ContextMenu>
+                                    </dx:SimpleButton.ContextMenu>
+                                </dx:SimpleButton>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn Width="100"
+                                    MinWidth="100"
+                                    MaxWidth="100"
+                                    AllowSorting="False"
+                                    FieldName="RunInTestMode"
+                                    FixedWidth="True"
+                                    Header="Test Mode"
+                                    IsSmart="False"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:ToggleSwitch Background="Transparent"
+                                                  BorderThickness="0"
+                                                  CheckedStateContent="On"
+                                                  ContentPlacement="Inside"
+                                                  IsChecked="{Binding RowData.Row.RunInTestMode}"
+                                                  IsEnabled="{Binding RowData.Row.IsRunning, Converter={StaticResource BooleanNegationConverter}}"
+                                                  ToggleSwitchWidth="100"
+                                                  UncheckedStateContent="Off" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn Width="20"
+                                    AllowSorting="False"
+                                    FieldName="Remove"
+                                    FixedWidth="True"
+                                    Header="Remove"
+                                    IsSmart="False"
+                                    Visible="True">
+                        <dxg:GridColumn.HeaderTemplate>
+                            <DataTemplate />
+                        </dxg:GridColumn.HeaderTemplate>
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dx:SimpleButton Background="Transparent"
+                                                 BorderThickness="0"
+                                                 Command="{Binding View.DataContext.RemoveInstanceCommand}"
+                                                 CommandParameter="{Binding RowData.Row}"
+                                                 Glyph="{dx:DXImage SvgImages/HybridDemoIcons/BottomPanel/HybridDemo_Close.svg}"
+                                                 GlyphWidth="19" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
+                <dxg:GridControlBand>
+                    <dxg:GridColumn FieldName="Message"
+                                    Header="Message"
+                                    Visible="True" />
+                </dxg:GridControlBand>
+            </dxg:GridControl.Bands>
+        </dxg:GridControl>
+    </Grid>
+</view:ModuleWindow>

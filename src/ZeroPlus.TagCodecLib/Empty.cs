@@ -1,0 +1,1 @@
+namespace ZeroPlus.TagCodecLib; // Stub

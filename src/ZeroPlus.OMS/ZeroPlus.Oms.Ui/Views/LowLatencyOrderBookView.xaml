@@ -1,0 +1,711 @@
+<view:ModuleWindow x:Class="ZeroPlus.Oms.Ui.Views.LowLatencyOrderBookView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                   xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                   xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                   xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                   xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                   xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                   xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                   xmlns:view="clr-namespace:ZeroPlus.Oms.Ui.Views"
+                   xmlns:viewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                   Title="{Binding ModuleTitle}"
+                   Width="1800"
+                   Height="700"
+                   MinWidth="520"
+                   MinHeight="300"
+                   d:DataContext="{d:DesignInstance Type=viewModels:LowLatencyOrderBookViewModel}"
+                   DataContext="{startuphelpers:DISource Type=viewModels:LowLatencyOrderBookViewModel}"
+                   WindowStartupLocation="CenterScreen"
+                   mc:Ignorable="d">
+    <dxmvvm:Interaction.Behaviors>
+        <services:OmsMessageBoxService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <view:ModuleWindow.Resources>
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <helper:OrderToBackBrushConverter x:Key="OrderToBackBrushConverter" />
+    </view:ModuleWindow.Resources>
+
+    <view:ModuleWindow.HeaderItems>
+        <view:ModuleHeaderItems />
+    </view:ModuleWindow.HeaderItems>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition x:Name="GridSplitterRow"
+                           Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="1.8*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0"
+              Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+            <Label Margin="5,0,0,0"
+                   Content="Instance:" />
+            <dxe:ComboBoxEdit Name="GroupByComboBox"
+                              Grid.Column="1"
+                              Width="150"
+                              Margin="5,0,0,0"
+                              HorizontalAlignment="Left"
+                              DisplayMember="Title"
+                              EditValue="{Binding SelectedInstance, UpdateSourceTrigger=PropertyChanged}"
+                              IsTextEditable="False"
+                              ItemsSource="{Binding Instances}">
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:EventToCommand Command="{Binding SelectionChangedCommand}"
+                                           EventName="EditValueChanged" />
+                </dxmvvm:Interaction.Behaviors>
+            </dxe:ComboBoxEdit>
+        </Grid>
+
+        <dxg:GridControl x:Name="WorkingOrdersGrid"
+                         Grid.Row="1"
+                         MinHeight="70"
+                         MaxHeight="5000"
+                         Margin="5"
+                         AutoGenerateColumns="None"
+                         CurrentItem="{Binding LastWorkingOrder}"
+                         EnableSmartColumnsGeneration="False"
+                         ItemsSource="{Binding WorkingOrders}">
+            <dxg:GridControl.Resources>
+                <Style TargetType="dxg:GridColumn">
+                    <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                    <Setter Property="Visible" Value="True" />
+                </Style>
+                <Style x:Key="OrderRowStyle"
+                       TargetType="dxg:RowControl">
+                    <Style.Setters>
+                        <Setter Property="FontWeight" Value="{Binding Path=Row.OrderUpdateModel, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='FONTWEIGHT'}" />
+                        <Setter Property="Background" Value="{Binding Path=Row.OrderUpdateModel, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='Background'}" />
+                        <Setter Property="Foreground" Value="{Binding Path=Row.OrderUpdateModel, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='Foreground'}" />
+                    </Style.Setters>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsSelected}"
+                                     Value="True">
+                            <Setter Property="Background" Value="{Binding Path=Row.OrderUpdateModel, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='Focused'}" />
+                        </DataTrigger>
+                        <Trigger Property="dxg:GridViewBase.IsFocusedRow" Value="True">
+                            <Setter Property="Background" Value="{Binding Path=Row.OrderUpdateModel, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='Focused'}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{Binding Path=Row.OrderUpdateModel, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='MouseOver'}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </dxg:GridControl.Resources>
+            <dxg:GridControl.View>
+                <dxg:TableView Name="WorkingOrdersTableView"
+                               AllowEditing="False"
+                               AllowGrouping="False"
+                               AutoWidth="True"
+                               FadeSelectionOnLostFocus="False"
+                               RowStyle="{StaticResource OrderRowStyle}"
+                               ShowGroupPanel="False"
+                               ShowIndicator="True"
+                               VerticalScrollbarVisibility="Auto">
+                    <dxg:TableView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowColumnChooserCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Column Chooser">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ClearColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Hide All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowAllColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowDefaultColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Default Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </dxg:TableView.ContextMenu>
+                </dxg:TableView>
+            </dxg:GridControl.View>
+
+            <dxg:GridColumn FieldName="LastUpdateTime" />
+            <dxg:GridColumn FieldName="Underlying"
+                            Header="Under" />
+            <dxg:GridColumn FieldName="Symbol" />
+            <dxg:GridColumn FieldName="Status" />
+            <dxg:GridColumn FieldName="OrderPrice" />
+            <dxg:GridColumn FieldName="FillPrice" />
+            <dxg:GridColumn FieldName="Latency" />
+            <dxg:GridColumn FieldName="Qty" />
+            <dxg:GridColumn FieldName="FillQty" />
+            <dxg:GridColumn FieldName="RemOrderQty" />
+            <dxg:GridColumn FieldName="What"
+                            Header="Open/Close" />
+            <dxg:GridColumn FieldName="Who" />
+            <dxg:GridColumn FieldName="UserName" />
+            <dxg:GridColumn FieldName="UserId" />
+            <dxg:GridColumn FieldName="StratType" />
+            <dxg:GridColumn FieldName="StratName" />
+            <dxg:GridColumn FieldName="StratId" />
+            <dxg:GridColumn FieldName="StratIdInResponseTo" />
+            <dxg:GridColumn FieldName="SignalInstance" />
+            <dxg:GridColumn FieldName="ClOrdId" />
+            <dxg:GridColumn FieldName="DiffMillis" />
+            <dxg:GridColumn FieldName="ExecutedExchange" />
+            <dxg:GridColumn FieldName="Error" />
+            <dxg:GridColumn FieldName="ResponseToPrice" />
+            <dxg:GridColumn FieldName="ResponseToClOrdId" />
+            <dxg:GridColumn FieldName="OrderExtra" />
+            <dxg:GridColumn FieldName="Nbbo" />
+            <dxg:GridColumn FieldName="OrderStatus" />
+            <dxg:GridColumn FieldName="Side" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Pnl, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}"
+                            FieldName="Pnl" />
+            <dxg:GridColumn FieldName="Dte" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.EdgeToTheo, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="EdgeToTheo" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.PctBid, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                            FieldName="PctBid"
+                            Header="% Bid" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.BidCount, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                            FieldName="BidCount"
+                            Header="Bid Ct" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.BidQty, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="BidQty" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.BidPx, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="BidPx" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.AskCount, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                            FieldName="AskCount"
+                            Header="Ask Ct" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.AskQty, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="AskQty" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.AskPx, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="AskPx" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Width, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="Width" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SignalBid, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SignalBid"
+                            Header="Sig Bid" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SignalAsk, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SignalAsk"
+                            Header="Sig Ask" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SignalWidth, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SignalWidth"
+                            Header="Sig Width" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SignalTrade, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SignalTrade"
+                            Header="Sig Trade" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SignalPctBid, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SignalPctBid"
+                            Header="Sig % Bid" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SignalEdgeToTheo, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SignalEdgeToTheo"
+                            Header="Sig ETT" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SignalLatency, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SignalLatency"
+                            Header="Sig Lat" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SignalDeltaAdjTheo, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SignalDeltaAdjTheo"
+                            Header="Sig DAT" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.UnderBid, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="UnderBid"
+                            Header="UL Bid" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.UnderAsk, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="UnderAsk"
+                            Header="UL Ask" />
+
+            <dxg:GridControl.DetailDescriptor>
+                <dxg:DataControlDetailDescriptor ItemsSourceBinding="{Binding Details}">
+                    <dxg:DataControlDetailDescriptor.DataControl>
+                        <dxg:GridControl Name="WorkingDetailsGrid"
+                                         AutoGenerateColumns="AddNew"
+                                         EnableSmartColumnsGeneration="True"
+                                         SelectionMode="Row">
+                            <dxg:GridControl.Resources>
+                                <dxe:TextEditSettings x:Key="numeric"
+                                                      Mask="##0.00"
+                                                      MaskType="Numeric"
+                                                      MaskUseAsDisplayFormat="True" />
+                                <Style TargetType="dxg:GridColumn">
+                                    <Setter Property="Visible" Value="False" />
+                                    <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                                </Style>
+                                <Style x:Key="LegRowStyle"
+                                       TargetType="dxg:RowControl">
+                                    <Style.Setters>
+                                        <Setter Property="Background" Value="{Binding Path=Row, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='Background'}" />
+                                        <Setter Property="Foreground" Value="{Binding Path=Row, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='Foreground'}" />
+                                    </Style.Setters>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsSelected}"
+                                                     Value="True">
+                                            <Setter Property="Background" Value="{Binding Path=Row, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='Focused'}" />
+                                        </DataTrigger>
+                                        <Trigger Property="dxg:GridViewBase.IsFocusedRow" Value="True">
+                                            <Setter Property="Background" Value="{Binding Path=Row, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='Focused'}" />
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{Binding Path=Row, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='MouseOver'}" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </dxg:GridControl.Resources>
+
+                            <dxg:GridControl.View>
+                                <dxg:TableView AutoWidth="True"
+                                               FadeSelectionOnLostFocus="False"
+                                               RowStyle="{StaticResource LegRowStyle}"
+                                               ShowGroupPanel="False"
+                                               ShowIndicator="True"
+                                               VerticalScrollbarVisibility="Auto">
+                                    <dxg:TableView.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Height="25"
+                                                      Command="{Binding ShowColumnChooserCommand}"
+                                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Header="Show Column Chooser">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Height="25"
+                                                      Command="{Binding ClearColumnsCommand}"
+                                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Header="Hide All Columns">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Height="25"
+                                                      Command="{Binding ShowAllColumnsCommand}"
+                                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Header="Show All Columns">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Height="25"
+                                                      Command="{Binding ShowDefaultColumnsCommand}"
+                                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Header="Show Default Columns">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </dxg:TableView.ContextMenu>
+                                </dxg:TableView>
+                            </dxg:GridControl.View>
+                            <dxg:GridColumn FieldName="LastUpdateTime"
+                                            Header="Time"
+                                            ReadOnly="True"
+                                            Visible="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings HorizontalContentAlignment="Right"
+                                                          Mask="hh:mm:ss\\.ffff"
+                                                          MaskType="DateTime"
+                                                          MaskUseAsDisplayFormat="True" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn FieldName="Side"
+                                            ReadOnly="True"
+                                            Visible="True" />
+                            <dxg:GridColumn FieldName="Symbol"
+                                            ReadOnly="True"
+                                            Visible="True" />
+                            <dxg:GridColumn FieldName="Quantity"
+                                            ReadOnly="True"
+                                            Visible="True" />
+                            <dxg:GridColumn FieldName="Filled"
+                                            ReadOnly="True"
+                                            Visible="True" />
+                            <dxg:GridColumn FieldName="Leaves"
+                                            ReadOnly="True"
+                                            Visible="True" />
+                            <dxg:GridColumn FieldName="OrderStatus"
+                                            ReadOnly="True"
+                                            Visible="True" />
+                        </dxg:GridControl>
+                    </dxg:DataControlDetailDescriptor.DataControl>
+                </dxg:DataControlDetailDescriptor>
+            </dxg:GridControl.DetailDescriptor>
+        </dxg:GridControl>
+
+        <StackPanel Grid.Row="2"
+                    Height="22"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal">
+            <TextBlock Margin="5,3,0,0"
+                       Text="Working:" />
+            <TextBlock Margin="3,3,3,0"
+                       Text="{Binding WorkingOrders.Count}" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="2"
+                    Height="22"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+            <TextBlock Margin="5,3,0,0"
+                       Text="Closed:" />
+            <TextBlock Margin="3,3,3,0"
+                       Text="{Binding Orders.Count}" />
+        </StackPanel>
+
+        <GridSplitter Grid.Row="2"
+                      Height="5"
+                      Margin="100,0"
+                      HorizontalAlignment="Stretch"
+                      Visibility="{Binding ShowWorkingOrders, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+        <dxg:GridControl x:Name="OrdersGrid"
+                         Grid.Row="3"
+                         MinHeight="70"
+                         MaxHeight="5000"
+                         Margin="5"
+                         AutoGenerateColumns="None"
+                         CurrentItem="{Binding LastOrder}"
+                         EnableSmartColumnsGeneration="False"
+                         ItemsSource="{Binding Orders}">
+            <dxg:GridControl.Resources>
+                <Style TargetType="dxg:GridColumn">
+                    <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                    <Setter Property="Visible" Value="True" />
+                    <Setter Property="IsSmart" Value="True" />
+                </Style>
+                <Style x:Key="OrderRowStyle"
+                       TargetType="dxg:RowControl">
+                    <Style.Setters>
+                        <Setter Property="FontWeight" Value="{Binding Path=Row.OrderUpdateModel, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='FONTWEIGHT'}" />
+                        <Setter Property="Background" Value="{Binding Path=Row.OrderUpdateModel, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='Background'}" />
+                        <Setter Property="Foreground" Value="{Binding Path=Row.OrderUpdateModel, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='Foreground'}" />
+                    </Style.Setters>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsSelected}"
+                                     Value="True">
+                            <Setter Property="Background" Value="{Binding Path=Row.OrderUpdateModel, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='Focused'}" />
+                        </DataTrigger>
+                        <Trigger Property="dxg:GridViewBase.IsFocusedRow" Value="True">
+                            <Setter Property="Background" Value="{Binding Path=Row.OrderUpdateModel, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='Focused'}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{Binding Path=Row.OrderUpdateModel, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='MouseOver'}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </dxg:GridControl.Resources>
+            <dxg:GridControl.View>
+                <dxg:TableView Name="OrdersTableView"
+                               AllowEditing="False"
+                               AllowGrouping="False"
+                               AutoWidth="True"
+                               FadeSelectionOnLostFocus="False"
+                               RowStyle="{StaticResource OrderRowStyle}"
+                               ShowGroupPanel="False"
+                               ShowIndicator="True"
+                               VerticalScrollbarVisibility="Auto">
+                    <dxg:TableView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowColumnChooserCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Column Chooser">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ClearColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Hide All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowAllColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowDefaultColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Default Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </dxg:TableView.ContextMenu>
+                    <dxg:TableView.RowCellMenuCustomizations>
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.ClearCommand}"
+                                           Content="Clear Table"
+                                           Glyph="{dx:DXImage 'SvgImages/Snap/ClearTableStyle.svg'}" />
+                    </dxg:TableView.RowCellMenuCustomizations>
+                </dxg:TableView>
+            </dxg:GridControl.View>
+
+            <dxg:GridColumn FieldName="LastUpdateTime" />
+            <dxg:GridColumn FieldName="Underlying"
+                            Header="Under" />
+            <dxg:GridColumn FieldName="Symbol" />
+            <dxg:GridColumn FieldName="Status" />
+            <dxg:GridColumn FieldName="OrderPrice" />
+            <dxg:GridColumn FieldName="FillPrice" />
+            <dxg:GridColumn FieldName="Latency" />
+            <dxg:GridColumn FieldName="Qty" />
+            <dxg:GridColumn FieldName="FillQty" />
+            <dxg:GridColumn FieldName="RemOrderQty" />
+            <dxg:GridColumn FieldName="What"
+                            Header="Open/Close" />
+            <dxg:GridColumn FieldName="Who" />
+            <dxg:GridColumn FieldName="UserName" />
+            <dxg:GridColumn FieldName="UserId" />
+            <dxg:GridColumn FieldName="StratType" />
+            <dxg:GridColumn FieldName="StratName" />
+            <dxg:GridColumn FieldName="StratId" />
+            <dxg:GridColumn FieldName="StratIdInResponseTo" />
+            <dxg:GridColumn FieldName="SignalInstance" />
+            <dxg:GridColumn FieldName="ClOrdId" />
+            <dxg:GridColumn FieldName="DiffMillis" />
+            <dxg:GridColumn FieldName="ExecutedExchange" />
+            <dxg:GridColumn FieldName="Error" />
+            <dxg:GridColumn FieldName="ResponseToPrice" />
+            <dxg:GridColumn FieldName="ResponseToClOrdId" />
+            <dxg:GridColumn FieldName="OrderExtra" />
+            <dxg:GridColumn FieldName="Nbbo" />
+            <dxg:GridColumn FieldName="OrderStatus" />
+            <dxg:GridColumn FieldName="Side" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Pnl, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}"
+                            FieldName="Pnl" />
+            <dxg:GridColumn FieldName="Dte" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.EdgeToTheo, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="EdgeToTheo" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.PctBid, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                            FieldName="PctBid"
+                            Header="% Bid" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.BidCount, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                            FieldName="BidCount"
+                            Header="Bid Ct" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.BidQty, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="BidQty" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.BidPx, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="BidPx" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.AskCount, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                            FieldName="AskCount"
+                            Header="Ask Ct" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.AskQty, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="AskQty" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.AskPx, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="AskPx" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Width, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="Width" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SignalBid, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SignalBid"
+                            Header="Sig Bid" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SignalAsk, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SignalAsk"
+                            Header="Sig Ask" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SignalWidth, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SignalWidth"
+                            Header="Sig Width" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SignalTrade, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SignalTrade"
+                            Header="Sig Trade" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SignalPctBid, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SignalPctBid"
+                            Header="Sig % Bid" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SignalEdgeToTheo, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SignalEdgeToTheo"
+                            Header="Sig ETT" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SignalLatency, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SignalLatency"
+                            Header="Sig Lat" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SignalDeltaAdjTheo, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SignalDeltaAdjTheo"
+                            Header="Sig DAT" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.UnderBid, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="UnderBid"
+                            Header="UL Bid" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.UnderAsk, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="UnderAsk"
+                            Header="UL Ask" />
+
+            <dxg:GridControl.DetailDescriptor>
+                <dxg:DataControlDetailDescriptor ItemsSourceBinding="{Binding Details}">
+                    <dxg:DataControlDetailDescriptor.DataControl>
+                        <dxg:GridControl Name="DetailsGrid"
+                                         AutoGenerateColumns="AddNew"
+                                         EnableSmartColumnsGeneration="True"
+                                         SelectionMode="Row">
+                            <dxg:GridControl.Resources>
+                                <dxe:TextEditSettings x:Key="numeric"
+                                                      Mask="##0.00"
+                                                      MaskType="Numeric"
+                                                      MaskUseAsDisplayFormat="True" />
+                                <Style TargetType="dxg:GridColumn">
+                                    <Setter Property="Visible" Value="False" />
+                                    <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                                </Style>
+                                <Style x:Key="LegRowStyle"
+                                       TargetType="dxg:RowControl">
+                                    <Style.Setters>
+                                        <Setter Property="Background" Value="{Binding Path=Row, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='Background'}" />
+                                        <Setter Property="Foreground" Value="{Binding Path=Row, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='Foreground'}" />
+                                    </Style.Setters>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsSelected}"
+                                                     Value="True">
+                                            <Setter Property="Background" Value="{Binding Path=Row, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='Focused'}" />
+                                        </DataTrigger>
+                                        <Trigger Property="dxg:GridViewBase.IsFocusedRow" Value="True">
+                                            <Setter Property="Background" Value="{Binding Path=Row, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='Focused'}" />
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{Binding Path=Row, Converter={StaticResource OrderToBackBrushConverter}, ConverterParameter='MouseOver'}" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </dxg:GridControl.Resources>
+
+                            <dxg:GridControl.View>
+                                <dxg:TableView AutoWidth="True"
+                                               FadeSelectionOnLostFocus="False"
+                                               RowStyle="{StaticResource LegRowStyle}"
+                                               ShowGroupPanel="False"
+                                               ShowIndicator="True"
+                                               VerticalScrollbarVisibility="Auto">
+                                    <dxg:TableView.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Height="25"
+                                                      Command="{Binding ShowColumnChooserCommand}"
+                                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Header="Show Column Chooser">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Height="25"
+                                                      Command="{Binding ClearColumnsCommand}"
+                                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Header="Hide All Columns">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Height="25"
+                                                      Command="{Binding ShowAllColumnsCommand}"
+                                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Header="Show All Columns">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Height="25"
+                                                      Command="{Binding ShowDefaultColumnsCommand}"
+                                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Header="Show Default Columns">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </dxg:TableView.ContextMenu>
+                                </dxg:TableView>
+                            </dxg:GridControl.View>
+
+                            <dxg:GridColumn FieldName="LastUpdateTime"
+                                            Header="Time"
+                                            ReadOnly="True"
+                                            Visible="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings HorizontalContentAlignment="Right"
+                                                          Mask="hh:mm:ss\\.ffff"
+                                                          MaskType="DateTime"
+                                                          MaskUseAsDisplayFormat="True" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+
+                            <dxg:GridColumn FieldName="Side"
+                                            ReadOnly="True"
+                                            Visible="True" />
+                            <dxg:GridColumn FieldName="Symbol"
+                                            ReadOnly="True"
+                                            Visible="True" />
+                            <dxg:GridColumn FieldName="Quantity"
+                                            ReadOnly="True"
+                                            Visible="True" />
+                            <dxg:GridColumn FieldName="Filled"
+                                            ReadOnly="True"
+                                            Visible="True" />
+                            <dxg:GridColumn FieldName="Leaves"
+                                            ReadOnly="True"
+                                            Visible="True" />
+                            <dxg:GridColumn FieldName="OrderStatus"
+                                            ReadOnly="True"
+                                            Visible="True" />
+                        </dxg:GridControl>
+                    </dxg:DataControlDetailDescriptor.DataControl>
+                </dxg:DataControlDetailDescriptor>
+            </dxg:GridControl.DetailDescriptor>
+        </dxg:GridControl>
+    </Grid>
+</view:ModuleWindow>

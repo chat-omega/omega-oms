@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DnaLibrary Name="ZeroPlus.Oms.AddIn Add-In" RuntimeVersion="v8.0" xmlns="http://schemas.excel-dna.net/addin/2020/07/dnalibrary">
+  <ExternalLibrary Path="ZeroPlus.Oms.AddIn.dll" ExplicitExports="false" ComServer="true" LoadFromBytes="true" Pack="true" IncludePdb="false" UseVersionAsOutputVersion="true"  />
+
+  <Image Name="ZeroPlus_RGB_FullLogo_Black" Path="Images\ZeroPlus_RGB_FullLogo_Black.png" Pack="true" />
+  <Image Name="ZeroPlus_RGB_FullLogo_Full-Color-Reverse" Path="Images\ZeroPlus_RGB_FullLogo_Full-Color-Reverse.png" Pack="true" />
+  <Image Name="ZeroPlus_RGB_FullLogo_Full-Color" Path="Images\ZeroPlus_RGB_FullLogo_Full-Color.png" Pack="true" />
+  <Image Name="ZeroPlus_RGB_FullLogo_White" Path="Images\ZeroPlus_RGB_FullLogo_White.png" Pack="true" />
+  <Image Name="ZeroPlus_RGB_LogoMark_Black" Path="Images\ZeroPlus_RGB_LogoMark_Black.png" Pack="true" />
+  <Image Name="ZeroPlus_RGB_LogoMark_Full-Color-Reverse" Path="Images\ZeroPlus_RGB_LogoMark_Full-Color-Reverse.png" Pack="true" />
+  <Image Name="ZeroPlus_RGB_LogoMark_Full-Color" Path="Images\ZeroPlus_RGB_LogoMark_Full-Color.png" Pack="true" />
+  <Image Name="ZeroPlus_RGB_LogoMark_White" Path="Images\ZeroPlus_RGB_LogoMark_White.png" Pack="true" />
+  <Image Name="ZeroPlus_RGB_WordMark_Black" Path="Images\ZeroPlus_RGB_WordMark_Black.png" Pack="true" />
+  <Image Name="ZeroPlus_RGB_WordMark_Full-Color-Reverse" Path="Images\ZeroPlus_RGB_WordMark_Full-Color-Reverse.png" Pack="true" />
+  <Image Name="ZeroPlus_RGB_WordMark_Full-Color" Path="Images\ZeroPlus_RGB_WordMark_Full-Color.png" Pack="true" />
+  <Image Name="ZeroPlus_RGB_WordMark_White" Path="Images\ZeroPlus_RGB_WordMark_White.png" Pack="true" />
+  <Image Name="Actions_User" Path="Images\Actions_User.png" Pack="true" />
+  <Image Name="Key" Path="Images\Key.png" Pack="true" />
+  <Image Name="WarningCircled" Path="Images\WarningCircled.png" Pack="true" />
+
+  <Reference Path="Fonts/AgencyFB-Regular.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-Black.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-BlackItalic.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-Bold.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-BoldItalic.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-ExtraBold.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-ExtraBoldItalic.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-ExtraLight.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-ExtraLightItalic.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-Italic.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-Light.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-LightItalic.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-Medium.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-MediumItalic.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-Regular.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-SemiBold.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-SemiBoldItalic.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-Thin.ttf" Pack="true" />
+  <Reference Path="Fonts/Montserrat/Montserrat-ThinItalic.ttf" Pack="true" />
+
+  <!-- Don't pack the mixed assembly OTF fonts -->
+  <Reference Path="Fonts/ZP Lufga/ZPLufga-Bold.otf" Pack="false" />
+  <Reference Path="Fonts/ZP Lufga/ZPLufga-Medium.otf" Pack="false" />
+  <Reference Path="Fonts/ZP Lufga/ZPLufga-Regular.otf" Pack="false" />
+
+</DnaLibrary>

@@ -1,0 +1,183 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DrawingBrush x:Key="AngleDown"
+                  x:Shared="true"
+                  Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup>
+                    <DrawingGroup.ClipGeometry>
+                        <RectangleGeometry Rect="0,0,320,512" />
+                    </DrawingGroup.ClipGeometry>
+                    <DrawingGroup.Transform>
+                        <TranslateTransform X="0.05000007152557373" Y="0" />
+                    </DrawingGroup.Transform>
+                    <GeometryDrawing Brush="#FFFFFF">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M143,352.3L7,216.3C-2.4,206.9,-2.4,191.7,7,182.4L29.6,159.8C39,150.4,54.2,150.4,63.5,159.8L159.9,256.2 256.3,159.8C265.7,150.4,280.9,150.4,290.2,159.8L312.8,182.4C322.2,191.8,322.2,207,312.8,216.3L176.8,352.3C167.6,361.7,152.4,361.7,143,352.3z"
+                                          FillRule="Nonzero" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="AngleUp"
+                  x:Shared="true"
+                  Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup>
+                    <DrawingGroup.ClipGeometry>
+                        <RectangleGeometry Rect="0,0,320,512" />
+                    </DrawingGroup.ClipGeometry>
+                    <DrawingGroup.Transform>
+                        <TranslateTransform X="0.05000007152557373" Y="0" />
+                    </DrawingGroup.Transform>
+                    <GeometryDrawing Brush="#FFFFFF">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M177,159.7L313,295.7C322.4,305.1,322.4,320.3,313,329.6L290.4,352.2C281,361.6,265.8,361.6,256.5,352.2L160,255.9 63.6,352.3C54.2,361.7,39,361.7,29.7,352.3L7,329.7C-2.4,320.3,-2.4,305.1,7,295.8L143,159.8C152.4,150.3,167.6,150.3,177,159.7z"
+                                          FillRule="Nonzero" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="CheckSquare"
+                  x:Shared="true"
+                  Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup>
+                    <DrawingGroup.ClipGeometry>
+                        <RectangleGeometry Rect="0,0,448,512" />
+                    </DrawingGroup.ClipGeometry>
+                    <GeometryDrawing Brush="#FFFFFF">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M400,32L48,32C21.49,32,0,53.49,0,80L0,432C0,458.51,21.49,480,48,480L400,480C426.51,480,448,458.51,448,432L448,80C448,53.49,426.51,32,400,32z M400,432L48,432 48,80 400,80 400,432z M364.136,190.276L191.547,361.48C186.842,366.147,179.244,366.117,174.577,361.412L83.796,269.896C79.129,265.191,79.159,257.593,83.865,252.925L106.584,230.389C111.289,225.722,118.887,225.752,123.554,230.458L183.346,290.735 324.698,150.519C329.403,145.852,337.001,145.882,341.668,150.587L364.204,173.305C368.871,178.011,368.841,185.609,364.136,190.276z"
+                                          FillRule="Nonzero" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="ChevronDown"
+                  x:Shared="true"
+                  Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup>
+                    <DrawingGroup.ClipGeometry>
+                        <RectangleGeometry Rect="0,0,448,512" />
+                    </DrawingGroup.ClipGeometry>
+                    <GeometryDrawing Brush="#FFFFFF">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M207.029,381.476L12.686,187.132C3.313,177.759,3.313,162.563,12.686,153.191L35.353,130.524C44.71,121.167,59.875,121.149,69.254,130.484L224,284.505 378.745,130.484C388.124,121.149,403.289,121.167,412.646,130.524L435.313,153.191C444.686,162.564,444.686,177.76,435.313,187.132L240.971,381.476C231.598,390.848,216.402,390.848,207.029,381.476z"
+                                          FillRule="Nonzero" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="ChevronUp"
+                  x:Shared="true"
+                  Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup>
+                    <DrawingGroup.ClipGeometry>
+                        <RectangleGeometry Rect="0,0,448,512" />
+                    </DrawingGroup.ClipGeometry>
+                    <GeometryDrawing Brush="#FFFFFF">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M240.971,130.524L435.314,324.867C444.687,334.24,444.687,349.436,435.314,358.808L412.647,381.475C403.29,390.832,388.125,390.85,378.746,381.515L224,227.495 69.255,381.516C59.876,390.851,44.711,390.833,35.354,381.476L12.687,358.809C3.31399999999999,349.436,3.31399999999999,334.24,12.687,324.868L207.03,130.525C216.402,121.152,231.598,121.152,240.971,130.524z"
+                                          FillRule="Nonzero" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="ExclamationTriangle"
+                  x:Shared="true"
+                  Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup>
+                    <DrawingGroup.ClipGeometry>
+                        <RectangleGeometry Rect="0,0,576,512" />
+                    </DrawingGroup.ClipGeometry>
+                    <DrawingGroup.Transform>
+                        <TranslateTransform X="0.0002864852431230247" Y="4.871224064117996E-06" />
+                    </DrawingGroup.Transform>
+                    <GeometryDrawing Brush="#FFFFFF">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M569.517,440.013C587.975,472.007,564.806,512,527.94,512L48.054,512C11.117,512,-11.945,471.945,6.477,440.013L246.423,23.985C264.89,-8.024,311.143,-7.966,329.577,23.985L569.517,440.013z M288,354C262.595,354 242,374.595 242,400 242,425.405 262.595,446 288,446 313.405,446 334,425.405 334,400 334,374.595 313.405,354 288,354z M244.327,188.654L251.745,324.654C252.092,331.018,257.354,336,263.727,336L312.273,336C318.646,336,323.908,331.018,324.255,324.654L331.673,188.654C332.048,181.78,326.575,176,319.691,176L256.308,176C249.424,176,243.952,181.78,244.327,188.654z"
+                                          FillRule="Nonzero" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="Retweet"
+                  x:Shared="true"
+                  Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup>
+                    <DrawingGroup.ClipGeometry>
+                        <RectangleGeometry Rect="0,0,640,512" />
+                    </DrawingGroup.ClipGeometry>
+                    <GeometryDrawing Brush="#FFFFFF">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M629.657,343.598L528.971,444.284C519.598,453.656,504.403,453.656,495.03,444.284L394.343,343.598C384.97,334.225,384.97,319.029,394.343,309.657L405.166,298.834C414.728,289.272,430.299,289.494,439.585,299.326L480,342.118 480,160 292.451,160A24.005,24.005,0,0,1,275.48,152.971L259.48,136.971C244.361,121.851,255.069,96,276.451,96L520,96C533.255,96,544,106.745,544,120L544,342.118 584.416,299.326C593.701,289.495,609.272,289.272,618.835,298.834L629.658,309.657C639.03,319.029,639.03,334.226,629.657,343.598z M364.519,359.029A23.999,23.999,0,0,0,347.548,352L160,352 160,169.881 200.416,212.673C209.702,222.504,225.272,222.727,234.835,213.164L245.657,202.342C255.03,192.969,255.03,177.773,245.657,168.401L144.971,67.716C135.598,58.343,120.402,58.343,111.03,67.716L10.343,168.402C0.970000000000001,177.775,0.970000000000001,192.971,10.343,202.343L21.165,213.165C30.727,222.727,46.298,222.505,55.584,212.674L96,169.881 96,392C96,405.255,106.745,416,120,416L363.549,416C384.931,416,395.639,390.149,380.52,375.029L364.519,359.029z"
+                                          FillRule="Nonzero" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="Close"
+                  x:Shared="true"
+                  Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup>
+                    <DrawingGroup.ClipGeometry>
+                        <RectangleGeometry Rect="0,0,352,512" />
+                    </DrawingGroup.ClipGeometry>
+                    <GeometryDrawing Brush="#FFFFFF">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M242.72,256L342.79,155.93C355.07,143.65,355.07,123.74,342.79,111.45L320.55,89.21C308.27,76.93,288.36,76.93,276.07,89.21L176,189.28 75.93,89.21C63.65,76.93,43.74,76.93,31.45,89.21L9.21,111.45C-3.07,123.73,-3.07,143.64,9.21,155.93L109.28,256 9.21,356.07C-3.07,368.35,-3.07,388.26,9.21,400.55L31.45,422.79C43.73,435.07,63.65,435.07,75.93,422.79L176,322.72 276.07,422.79C288.35,435.07,308.27,435.07,320.55,422.79L342.79,400.55C355.07,388.27,355.07,368.36,342.79,356.07L242.72,256z"
+                                          FillRule="Nonzero" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="Alert"
+                  x:Shared="true"
+                  Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup>
+                    <DrawingGroup.ClipGeometry>
+                        <RectangleGeometry Rect="0,0,32,32" />
+                    </DrawingGroup.ClipGeometry>
+                    <GeometryDrawing Brush="#FFB115">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M24,18v-6c0-3.7-2.6-6.9-6-7.7c0-0.1,0-0.2,0-0.3c0-1.1-0.9-2-2-2s-2,0.9-2,2c0,0.1,0,0.2,0,0.3  c-3.5,0.9-6,4-6,7.7v6l-4,4v4h24v-4L24,18z M16,30c1.1,0,2-0.9,2-2h-4C14,29.1,14.9,30,16,30z"
+                                          FillRule="Nonzero" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+</ResourceDictionary>

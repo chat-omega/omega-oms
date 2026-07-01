@@ -1,0 +1,30 @@
+﻿namespace ZeroPlus.Models.Data.SpiderRock;
+
+public enum AuctionSource
+{
+    Unspecified = 0,
+    Src = 1,
+    Amex = 2,
+    Box = 3,
+    Cboe = 4,
+    Ise = 5,
+    Nyse = 6,
+    Phlx = 7,
+    Nsdq = 8,
+    Bats = 9,
+    C2 = 10,
+    Nqbx = 11,
+    Miax = 12,
+    Gmni = 13,
+    Edgo = 14,
+    Mcry = 15,
+    Mprl = 16,
+    Emld = 17,
+    Memx = 18,
+    Cme = 19,
+    Cbot = 20,
+    Nymex = 21,
+    Comex = 22,
+    Ice = 23,
+    Eurex = 24,
+}

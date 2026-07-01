@@ -1,0 +1,297 @@
+<UserControl x:Class="ZeroPlus.Oms.Ui.Views.RouteSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+             xmlns:behavior="clr-namespace:ZeroPlus.Oms.Ui.Behaviors"
+             xmlns:controls="clr-namespace:ZeroPlus.Oms.Ui.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             d:DataContext="{d:DesignInstance Type=ViewModels:AutomationSettingsViewModel}"
+             d:Height="auto"
+             d:Width="auto"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <dxmvvm:BooleanNegationConverter x:Key="BooleanNegationConverter" />
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <helper:CamelCaseFormatter x:Key="DisplayTextCamelCaseConverter" />
+        <helper:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <helper:NullToCheckGlyphConverter x:Key="NullToCheckGlyphConverter" />
+        <helper:BoolToCheckGlyphConverter x:Key="BoolToCheckGlyphConverter" />
+        <helper:SizeUpTypeToVisibilityConverter x:Key="SizeUpTypeToVisibilityConverter" />
+        <dxmvvm:BooleanToObjectConverter x:Key="HighlightToColorConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>
+                #1a4c35
+            </dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>
+                Transparent
+            </dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+        <dxmvvm:BooleanToObjectConverter x:Key="BooleanToExpandCollapseConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>
+                3
+            </dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>
+                4
+            </dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+    </UserControl.Resources>
+
+    <dxlc:GroupBox Name="RouteSettingsSubModule"
+                   Margin="5,0,0,0"
+                   Padding="10,5">
+
+        <dxlc:GroupBox.Header>
+            <Grid Height="22">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0"
+                       Padding="0"
+                       VerticalAlignment="Center"
+                       Content="Route"
+                       FontWeight="Bold"
+                       Foreground="#AFAFB0"
+                       IsHitTestVisible="False" />
+
+                <dx:SimpleButton Grid.Column="1"
+                                 Padding="1,3"
+                                 Command="{Binding ReverseLooperRoutesCommand}"
+                                 Content="Reverse"
+                                 Glyph="{dx:DXImage SvgImages/Dashboards/ConvertTo.svg}"
+                                 GlyphHeight="15" />
+
+                <dxe:CheckEdit Grid.Column="2"
+                               Margin="5,0,0,0"
+                               Content="Routes For Single Legs"
+                               EditValue="{Binding AutomationConfig.UseSingleLegSeparateLooperRoutes}"
+                               Visibility="{Binding ShowAdvancedRouteSettings, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </Grid>
+        </dxlc:GroupBox.Header>
+
+        <Grid Margin="0,5,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Row="0"
+                  Grid.RowSpan="3"
+                  Grid.Column="0"
+                  Margin="5,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+                <Grid Grid.ColumnSpan="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Content="Open" />
+
+                    <Label Grid.Column="2"
+                           Margin="0,0,0,0"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Content="Close" />
+                </Grid>
+
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Margin="5,0"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Content="Default" />
+
+                <controls:RoutePicker Grid.Row="1"
+                                      Grid.Column="1"
+                                      Width="95"
+                                      Margin="0,2,2.5,0"
+                                      HorizontalAlignment="Left"
+                                      DmaRoutesList="{Binding DmaRoutesList}"
+                                      EditValue="{Binding AutomationConfig.LooperOpenRoute, UpdateSourceTrigger=PropertyChanged}"
+                                      FontSize="10"
+                                      ItemsSource="{Binding RoutesList}"
+                                      SelectAllOnGotFocus="True"
+                                      SorRoutesList="{Binding SorRoutesList}" />
+
+                <controls:RoutePicker Grid.Row="1"
+                                      Grid.Column="2"
+                                      Width="95"
+                                      Margin="2.5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      DmaRoutesList="{Binding DmaRoutesList}"
+                                      EditValue="{Binding AutomationConfig.LooperCloseRoute, UpdateSourceTrigger=PropertyChanged}"
+                                      FontSize="10"
+                                      ItemsSource="{Binding RoutesList}"
+                                      SelectAllOnGotFocus="True"
+                                      SorRoutesList="{Binding SorRoutesList}" />
+
+                <Label Grid.Row="2"
+                       Grid.Column="0"
+                       Margin="5,0"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Content="Size up" />
+
+                <controls:RoutePicker Grid.Row="2"
+                                      Grid.Column="1"
+                                      Width="95"
+                                      Margin="0,2,2.5,0"
+                                      HorizontalAlignment="Left"
+                                      DmaRoutesList="{Binding DmaRoutesList}"
+                                      EditValue="{Binding AutomationConfig.LooperOpenRouteSize, UpdateSourceTrigger=PropertyChanged}"
+                                      FontSize="10"
+                                      ItemsSource="{Binding RoutesList}"
+                                      SelectAllOnGotFocus="True"
+                                      SorRoutesList="{Binding SorRoutesList}" />
+
+                <controls:RoutePicker Grid.Row="2"
+                                      Grid.Column="2"
+                                      Width="95"
+                                      Margin="2.5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      DmaRoutesList="{Binding DmaRoutesList}"
+                                      EditValue="{Binding AutomationConfig.LooperCloseRouteSize, UpdateSourceTrigger=PropertyChanged}"
+                                      FontSize="10"
+                                      ItemsSource="{Binding RoutesList}"
+                                      SelectAllOnGotFocus="True"
+                                      SorRoutesList="{Binding SorRoutesList}" />
+
+            </Grid>
+
+            <Grid Grid.Row="0"
+                  Grid.RowSpan="3"
+                  Grid.Column="1"
+                  Margin="5,0"
+                  Visibility="{Binding ShowAdvancedRouteSettings, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Content="Open"
+                       IsEnabled="{Binding AutomationConfig.UseSingleLegSeparateLooperRoutes}" />
+
+                <Label Grid.Row="0"
+                       Grid.Column="1"
+                       Margin="5,0,0,0"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Content="Close"
+                       IsEnabled="{Binding AutomationConfig.UseSingleLegSeparateLooperRoutes}" />
+
+                <controls:RoutePicker Grid.Row="1"
+                                      Grid.Column="0"
+                                      Width="95"
+                                      Margin="0,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      DmaRoutesList="{Binding DmaRoutesList}"
+                                      EditValue="{Binding AutomationConfig.LooperOpenRouteSingleLeg, UpdateSourceTrigger=PropertyChanged}"
+                                      FontSize="10"
+                                      IsEnabled="{Binding AutomationConfig.UseSingleLegSeparateLooperRoutes}"
+                                      ItemsSource="{Binding RoutesList}"
+                                      SelectAllOnGotFocus="True"
+                                      SorRoutesList="{Binding SorRoutesList}" />
+
+                <controls:RoutePicker Grid.Row="1"
+                                      Grid.Column="1"
+                                      Width="95"
+                                      Margin="2.5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      DmaRoutesList="{Binding DmaRoutesList}"
+                                      EditValue="{Binding AutomationConfig.LooperCloseRouteSingleLeg, UpdateSourceTrigger=PropertyChanged}"
+                                      FontSize="10"
+                                      IsEnabled="{Binding AutomationConfig.UseSingleLegSeparateLooperRoutes}"
+                                      ItemsSource="{Binding RoutesList}"
+                                      SelectAllOnGotFocus="True"
+                                      SorRoutesList="{Binding SorRoutesList}" />
+
+                <controls:RoutePicker Grid.Row="2"
+                                      Grid.Column="0"
+                                      Width="95"
+                                      Margin="0,2,2.5,0"
+                                      HorizontalAlignment="Left"
+                                      DmaRoutesList="{Binding DmaRoutesList}"
+                                      EditValue="{Binding AutomationConfig.LooperOpenRouteSingleLegSize, UpdateSourceTrigger=PropertyChanged}"
+                                      FontSize="10"
+                                      IsEnabled="{Binding AutomationConfig.UseSingleLegSeparateLooperRoutes}"
+                                      ItemsSource="{Binding RoutesList}"
+                                      SelectAllOnGotFocus="True"
+                                      SorRoutesList="{Binding SorRoutesList}" />
+
+                <controls:RoutePicker Grid.Row="2"
+                                      Grid.Column="1"
+                                      Width="95"
+                                      Margin="2.5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      DmaRoutesList="{Binding DmaRoutesList}"
+                                      EditValue="{Binding AutomationConfig.LooperCloseRouteSingleLegSize, UpdateSourceTrigger=PropertyChanged}"
+                                      FontSize="10"
+                                      IsEnabled="{Binding AutomationConfig.UseSingleLegSeparateLooperRoutes}"
+                                      ItemsSource="{Binding RoutesList}"
+                                      SelectAllOnGotFocus="True"
+                                      SorRoutesList="{Binding SorRoutesList}" />
+
+            </Grid>
+
+            <dx:SimpleButton Grid.Row="0"
+                             Grid.RowSpan="3"
+                             Grid.Column="2"
+                             Width="8"
+                             Padding="-1,0,0,0"
+                             HorizontalAlignment="Center"
+                             ButtonKind="Toggle"
+                             Content="{Binding ShowAdvancedRouteSettings, Converter={StaticResource BooleanToExpandCollapseConverter}}"
+                             CornerRadius="3"
+                             FontFamily="Marlett"
+                             FontSize="10"
+                             IsChecked="{Binding ShowAdvancedRouteSettings}" />
+
+        </Grid>
+    </dxlc:GroupBox>
+
+
+</UserControl>

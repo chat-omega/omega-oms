@@ -1,0 +1,215 @@
+﻿<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.EdgeScanFeedBannedSymbolsListManagerView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 Title="Ban List Manager"
+                 Width="850"
+                 Height="250"
+                 MinWidth="400"
+                 MinHeight="300"
+                 d:DataContext="{d:DesignInstance Type=ViewModels:EdgeScanFeedBannedSymbolsListManagerViewModel}"
+                 DataContext="{startuphelpers:DISource Type=ViewModels:EdgeScanFeedBannedSymbolsListManagerViewModel}"
+                 WindowStartupLocation="CenterScreen"
+                 WindowStyle="ToolWindow"
+                 mc:Ignorable="d">
+
+    <dxmvvm:Interaction.Behaviors>
+        <services:OmsMessageBoxService />
+        <dxmvvm:CurrentWindowService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Grid Grid.Row="0"
+          Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <dxg:GridControl Grid.Row="0"
+                         AllowCollectionView="False"
+                         AllowInitiallyFocusedRow="False"
+                         CurrentItem="{Binding CurrentModel, UpdateSourceTrigger=PropertyChanged}"
+                         CustomColumnDisplayText="GridControl_CustomColumnsDisplayText"
+                         ItemsSource="{Binding Models}">
+            <dxg:GridControl.View>
+                <dxg:TableView x:Name="SymbolsLookupsView"
+                               AllowEditing="False"
+                               AllowGrouping="True"
+                               AllowSorting="True"
+                               AutoWidth="True"
+                               NavigationStyle="Row"
+                               ShowGroupPanel="False"
+                               ShowIndicator="True"
+                               VerticalScrollbarVisibility="Auto">
+                    <dxg:TableView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowColumnChooserCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Column Chooser">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ClearColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Hide All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowAllColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowDefaultColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Default Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </dxg:TableView.ContextMenu>
+                </dxg:TableView>
+            </dxg:GridControl.View>
+
+            <dxg:GridColumn AllowEditing="True"
+                            FieldName="Title"
+                            Header="Title"
+                            HorizontalHeaderContentAlignment="Center"
+                            IsSmart="True">
+                <dxg:GridColumn.CellEditTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit VerticalAlignment="Center"
+                                      BorderBrush="#333337"
+                                      BorderThickness="0"
+                                      Text="{Binding RowData.Row.Title}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellEditTemplate>
+            </dxg:GridColumn>
+
+            <dxg:GridColumn AllowEditing="True"
+                            FieldName="Creator"
+                            HorizontalHeaderContentAlignment="Center"
+                            IsSmart="True"
+                            ReadOnly="True"
+                            SortIndex="0" />
+
+            <dxg:GridColumn AllowEditing="True"
+                            FieldName="LastUpdateTime"
+                            Header="Last Updated"
+                            HorizontalHeaderContentAlignment="Center"
+                            IsSmart="True"
+                            ReadOnly="True"
+                            SortIndex="1" />
+
+            <dxg:GridColumn Width="20"
+                            FieldName="Clone"
+                            Header=""
+                            HorizontalHeaderContentAlignment="Center"
+                            IsSmart="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dx:SimpleButton Height="20"
+                                         Padding="0"
+                                         BorderThickness="0"
+                                         Command="{Binding View.DataContext.CloneCommand}"
+                                         CommandParameter="{Binding RowData.Row}"
+                                         Glyph="{dx:DXImage SvgImages/XAF/Action_CloneMerge_Merge_Object.svg}"
+                                         GlyphWidth="15" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+
+            <dxg:GridColumn Width="20"
+                            FieldName="Edit"
+                            Header=""
+                            HorizontalHeaderContentAlignment="Center"
+                            IsSmart="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dx:SimpleButton Height="20"
+                                         Padding="0"
+                                         BorderThickness="0"
+                                         Command="{Binding View.DataContext.EditCommand}"
+                                         CommandParameter="{Binding RowData.Row}"
+                                         Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Edit.svg}"
+                                         GlyphWidth="15" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+
+            <dxg:GridColumn Width="20"
+                            FieldName="Delete"
+                            Header=""
+                            HorizontalHeaderContentAlignment="Center"
+                            IsSmart="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dx:SimpleButton Height="20"
+                                         Padding="0"
+                                         BorderThickness="0"
+                                         Command="{Binding View.DataContext.DeleteCommand}"
+                                         CommandParameter="{Binding RowData.Row}"
+                                         Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Delete.svg}"
+                                         GlyphWidth="15" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+        </dxg:GridControl>
+
+        <StackPanel Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
+            <dx:SimpleButton Width="80"
+                             Margin="3,1"
+                             Command="{Binding RefreshCommand}"
+                             Content="Refresh"
+                             Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Refresh.svg}"
+                             GlyphHeight="15" />
+
+            <dx:SimpleButton Width="80"
+                             Margin="3,1"
+                             Command="{Binding AddCommand}"
+                             Content="Add"
+                             Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Add.svg}"
+                             GlyphHeight="15" />
+
+            <dx:SimpleButton Width="80"
+                             Margin="3,1"
+                             Command="{Binding LoadCommand}"
+                             Content="Load"
+                             Glyph="{dx:DXImage SvgImages/Dashboards/LoadMap.svg}"
+                             GlyphHeight="15" />
+
+            <dx:SimpleButton Width="80"
+                             Margin="3,1"
+                             Command="{Binding ClearCommand}"
+                             Content="Clear"
+                             Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
+                             GlyphHeight="15" />
+        </StackPanel>
+    </Grid>
+</dx:ThemedWindow>

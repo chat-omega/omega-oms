@@ -1,0 +1,1543 @@
+<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.SpreadHeatmapView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                 xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                 xmlns:dxh="http://schemas.devexpress.com/winfx/2008/xaml/heatmap"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 xmlns:views="clr-namespace:ZeroPlus.Oms.Ui.Views"
+                 Title="{Binding ModuleTitle}"
+                 Width="1200"
+                 Height="800"
+                 MinWidth="400"
+                 MinHeight="300"
+                 d:DataContext="{d:DesignInstance Type=ViewModels:SpreadHeatmapViewModel}"
+                 DataContext="{startuphelpers:DISource Type=ViewModels:SpreadHeatmapViewModel}"
+                 WindowStartupLocation="CenterScreen"
+                 mc:Ignorable="d">
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:DispatcherService />
+        <services:OmsMessageBoxService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Window.Resources>
+        <dx:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <helper:HeatmapColorConverter x:Key="HeatmapColorConverter" />
+        <helper:CamelCaseFormatter x:Key="DisplayTextCamelCaseConverter" />
+        <helper:ChartConstantLineModeToColorConverter x:Key="ChartConstantLineModeToColorConverter" />
+        <helper:ChartConstantLineModeToAlignmentConverter x:Key="ChartConstantLineModeToAlignmentConverter" />
+        <DataTemplate x:Key="expirationTemplate">
+            <TextBlock HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Text="{Binding Value, StringFormat='{}{0}'}"
+                       TextAlignment="Center" />
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="GridSplitterCol"
+                              Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Column="0"
+              Margin="0,0,2,0"
+              Visibility="{Binding HeatmapMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <DockPanel Grid.Row="0"
+                       Margin="0,0,0,2"
+                       VerticalAlignment="Center">
+                <dxe:ButtonEdit Name="SearchBox"
+                                AllowDefaultButton="False"
+                                Background="#171718"
+                                BorderBrush="#171718"
+                                BorderThickness="0"
+                                CharacterCasing="Upper"
+                                EditValue="{Binding UnderlyingQuery, UpdateSourceTrigger=PropertyChanged}"
+                                EditValuePostDelay="0"
+                                SelectAllOnGotFocus="True"
+                                SelectAllOnMouseUp="True"
+                                TabIndex="0">
+                    <dxe:ButtonEdit.Buttons>
+                        <dxe:ButtonInfo Command="{Binding SearchUnderlyingCommand}"
+                                        GlyphKind="Search"
+                                        IsDefaultButton="True" />
+                    </dxe:ButtonEdit.Buttons>
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:KeyToCommand Command="{Binding SearchUnderlyingCommand}"
+                                             KeyGesture="Enter" />
+                        <dxmvvm:KeyToCommand Command="{Binding PasteFromClipboardCommand}"
+                                             KeyGesture="Ctrl+V" />
+                    </dxmvvm:Interaction.Behaviors>
+                    <dxb:BarManager.DXContextMenu>
+                        <dxb:PopupMenu>
+                            <dxb:PopupMenu.Items>
+                                <dxb:BarButtonItem Content="Cut"
+                                                   Glyph="{dx:DXImage SvgImages/DiagramIcons/Cut.svg}"
+                                                   ItemClick="CutSearchBox" />
+                                <dxb:BarButtonItem Content="Copy"
+                                                   Glyph="{dx:DXImage SvgImages/Spreadsheet/Copy.svg}"
+                                                   ItemClick="CopySearchBox" />
+                                <dxb:BarButtonItem Content="Paste"
+                                                   Glyph="{dx:DXImage SvgImages/Edit/Paste.svg}"
+                                                   ItemClick="PasteSearchBox" />
+                            </dxb:PopupMenu.Items>
+                        </dxb:PopupMenu>
+                    </dxb:BarManager.DXContextMenu>
+                </dxe:ButtonEdit>
+            </DockPanel>
+
+            <dxg:GridControl Name="UnderlyingsGrid"
+                             Grid.Row="1"
+                             Grid.Column="0"
+                             MaxHeight="5000"
+                             ItemsSource="{Binding OptionChains}"
+                             SelectionMode="Row">
+                <dxg:GridControl.View>
+                    <dxg:TableView MaxHeight="5000"
+                                   AllowColumnFiltering="False"
+                                   AllowEditing="False"
+                                   AllowGrouping="False"
+                                   AllowSorting="True"
+                                   AutoWidth="True"
+                                   RowDoubleClick="TableView_RowDoubleClick"
+                                   ShowGridMenu="TableView_ShowGridMenu"
+                                   ShowGroupPanel="False"
+                                   ShowIndicator="True"
+                                   ShowTotalSummary="False"
+                                   VerticalScrollbarVisibility="Auto">
+                        <dxg:TableView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Height="25"
+                                          Command="{Binding ShowColumnChooserCommand}"
+                                          CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                          Header="Show Column Chooser">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Command="{Binding ClearColumnsCommand}"
+                                          CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                          Header="Hide All Columns">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Command="{Binding ShowAllColumnsCommand}"
+                                          CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                          Header="Show All Columns">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Command="{Binding ShowDefaultColumnsCommand}"
+                                          CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                          Header="Show Default Columns">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </dxg:TableView.ContextMenu>
+                        <dxg:TableView.RowCellMenuCustomizations>
+                            <dxb:BarButtonItem Command="{Binding View.DataContext.ClearSymbolsCommand}"
+                                               Content="Clear Symbols" />
+                        </dxg:TableView.RowCellMenuCustomizations>
+                    </dxg:TableView>
+                </dxg:GridControl.View>
+
+                <dxg:GridColumn Name="SymbolColumn"
+                                Width="90"
+                                FieldName="Symbol"
+                                HorizontalHeaderContentAlignment="Center"
+                                IsSmart="True" />
+
+                <dxg:GridColumn Width="50"
+                                FieldName="Count"
+                                HorizontalHeaderContentAlignment="Center"
+                                IsSmart="True"
+                                Visible="False" />
+
+                <dxg:GridColumn Width="20"
+                                MinWidth="20"
+                                AllowMoving="False"
+                                AllowResizing="False"
+                                FieldName="Remove"
+                                Header="-"
+                                HorizontalHeaderContentAlignment="Center"
+                                IsSmart="False">
+                    <dxg:GridColumn.CellTemplate>
+                        <DataTemplate>
+                            <dx:SimpleButton Command="{Binding View.DataContext.RemoveOptionChainCommand}"
+                                             CommandParameter="{Binding Path=SelectedItem, ElementName=UnderlyingsGrid}"
+                                             Glyph="{dx:DXImage SvgImages/HybridDemoIcons/BottomPanel/HybridDemo_Close.svg}"
+                                             GlyphWidth="19" />
+                        </DataTemplate>
+                    </dxg:GridColumn.CellTemplate>
+                </dxg:GridColumn>
+            </dxg:GridControl>
+        </Grid>
+
+        <GridSplitter Grid.Column="1"
+                      Width="3"
+                      Margin="0,26,0,0"
+                      HorizontalAlignment="Stretch"
+                      MouseDoubleClick="GridSplitter_MouseDoubleClick"
+                      Visibility="{Binding HeatmapMode, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+        <dx:SimpleButton Name="ExpandCollapseGridButton"
+                         Grid.Column="1"
+                         Width="8"
+                         Height="100"
+                         Padding="-1,0,0,0"
+                         HorizontalAlignment="Center"
+                         Click="ExpandCollapseGrid_Click"
+                         Content="3"
+                         CornerRadius="3"
+                         FontFamily="Marlett"
+                         FontSize="10"
+                         Visibility="{Binding HeatmapMode, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Row="0"
+                  Grid.Column="0"
+                  Grid.ColumnSpan="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="2,2,0,2"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Background="#171718"
+                            Orientation="Horizontal">
+                    <dxe:CheckEdit Width="50"
+                                   Margin="5,0"
+                                   Content="CALL"
+                                   EditValue="{Binding GlobalHeatmapSettingsModel.CallSelected, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="5,0,0,2"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Background="#171718"
+                            Orientation="Horizontal">
+                    <Label Margin="8,0"
+                           HorizontalAlignment="Left"
+                           Content="Days" />
+                    <dxe:SpinEdit Width="55"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="#171718"
+                                  BorderBrush="#171718"
+                                  BorderThickness="0"
+                                  DisplayFormatString="N0"
+                                  EditValue="{Binding GlobalHeatmapSettingsModel.TotalDays, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  Mask="N0"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="0"
+                            Grid.Column="2"
+                            Margin="5,0,0,2"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Background="#171718"
+                            Orientation="Horizontal"
+                            Visibility="{Binding HeatmapMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Label Margin="6,0"
+                           HorizontalAlignment="Left"
+                           VerticalContentAlignment="Center"
+                           Content="Delta -"
+                           FontSize="11" />
+
+                    <dxe:SpinEdit Width="84"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="#171718"
+                                  BorderBrush="#171718"
+                                  BorderThickness="0"
+                                  EditValue="{Binding GlobalHeatmapSettingsModel.Delta, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.01"
+                                  Mask="N4"
+                                  MaskUseAsDisplayFormat="True"
+                                  MaxValue="1"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="0"
+                            Grid.Column="3"
+                            Margin="5,0,0,2"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Background="#171718"
+                            Orientation="Horizontal"
+                            Visibility="{Binding HeatmapMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <dxe:ComboBoxEdit Width="150"
+                                      Margin="2,0"
+                                      HorizontalAlignment="Left"
+                                      Background="#171718"
+                                      BorderBrush="#171718"
+                                      BorderThickness="0"
+                                      DisplayFormatString="Operator - {0}"
+                                      IsTextEditable="False"
+                                      ItemsSource="{Binding Operators}"
+                                      SelectedItem="{Binding GlobalHeatmapSettingsModel.Operator}" />
+                </StackPanel>
+
+                <DockPanel Grid.Row="0"
+                           Grid.Column="3"
+                           Grid.ColumnSpan="4"
+                           Margin="5,0,0,2"
+                           VerticalAlignment="Center"
+                           Background="#171718"
+                           LastChildFill="True"
+                           Visibility="{Binding OrderTallyMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Label Margin="8,0"
+                           HorizontalAlignment="Left"
+                           Content="Underlying -" />
+                    <dxe:TextEdit VerticalAlignment="Center"
+                                  Background="#171718"
+                                  BorderBrush="Transparent"
+                                  BorderThickness="0"
+                                  CharacterCasing="Upper"
+                                  EditValue="{Binding OrderTallySymbol}"
+                                  SelectAllOnGotFocus="True" />
+                </DockPanel>
+
+                <dxe:ToggleSwitch Grid.Row="0"
+                                  Grid.Column="4"
+                                  Margin="5,0,0,2"
+                                  HorizontalAlignment="Left"
+                                  VerticalAlignment="Center"
+                                  AnimationMode="OnToggle"
+                                  Background="#171718"
+                                  CheckedStateContent="All"
+                                  ContentPlacement="Inside"
+                                  IsChecked="{Binding GlobalHeatmapSettingsModel.Enabled}"
+                                  ToggleSwitchWidth="85"
+                                  UncheckedStateContent="Underlying"
+                                  Visibility="{Binding HeatmapMode, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <Grid Grid.Row="0"
+                      Grid.RowSpan="2"
+                      Grid.Column="11"
+                      Margin="5,0,0,2"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+
+                    <dx:SimpleButton Grid.Row="0"
+                                     Grid.Column="0"
+                                     Margin="5,0,0,0"
+                                     Command="{Binding EditAlertsCommand}"
+                                     CommandParameter="{Binding GlobalHeatmapSettingsModel.GlobalAlert}"
+                                     Content="Global Alerts"
+                                     Glyph="{dx:DXImage SvgImages/XAF/Action_Bell.svg}"
+                                     GlyphHeight="15" />
+                    <StackPanel Grid.Row="0"
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal">
+                        <dx:SimpleButton Width="22"
+                                         Height="22"
+                                         Margin="5,0,0,0"
+                                         Click="LayoutSettings"
+                                         Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Settings.svg}"
+                                         GlyphHeight="15" />
+
+                        <dx:SimpleButton Grid.Row="0"
+                                         Grid.Column="2"
+                                         Width="22"
+                                         Height="22"
+                                         Margin="5,0,0,0"
+                                         HorizontalAlignment="Right"
+                                         dxb:BarManager.MenuShowMouseButton="LeftButton"
+                                         Glyph="{dx:DXImage SvgImages/DiagramIcons/Orientation/ListOrientationVertical.svg}"
+                                         GlyphHeight="15">
+                            <dxb:BarManager.DXContextMenu>
+                                <dxb:PopupControlContainer>
+                                    <ItemsControl>
+                                        <StackPanel>
+                                            <MenuItem Height="25"
+                                                      Command="{Binding CloneCommand}"
+                                                      Header="Clone">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage SvgImages/XAF/Action_CloneMerge_Merge_Object.svg}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Height="25"
+                                                      Click="ShareLayout"
+                                                      Header="Share Layout">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage SvgImages/Icon Builder/Actions_Send.svg}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Height="25"
+                                                      Click="SaveLayout"
+                                                      Header="Save Layout">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage SvgImages/Save/Save.svg}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Height="25"
+                                                      Command="{Binding BrowseLayoutsCommand}"
+                                                      Header="Browse Layout">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage SvgImages/Dashboards/ServerMode.svg}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Height="25"
+                                                      Click="LoadLayout"
+                                                      Header="Load Layout">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage SvgImages/Dashboards/LoadMap.svg}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </StackPanel>
+                                    </ItemsControl>
+                                </dxb:PopupControlContainer>
+                            </dxb:BarManager.DXContextMenu>
+                        </dx:SimpleButton>
+                    </StackPanel>
+
+                    <dx:SimpleButton Grid.Row="1"
+                                     Grid.Column="0"
+                                     Width="112"
+                                     Height="22"
+                                     Margin="5,2,0,0"
+                                     Command="{Binding ClearAllAlertsCommand}"
+                                     Content="Clear Alerts"
+                                     Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
+                                     GlyphHeight="15" />
+
+                    <dx:DropDownButton Name="ColorPickerDropDown"
+                                       Grid.Row="1"
+                                       Grid.Column="1"
+                                       Grid.ColumnSpan="2"
+                                       Width="50"
+                                       Height="22"
+                                       Margin="5,2,0,0"
+                                       Padding="3,0,0,0"
+                                       Glyph="{dx:DXImage SvgImages/Dashboards/EditColors.svg}"
+                                       GlyphHeight="15">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+
+                            <dxe:ColorEdit Grid.Column="0"
+                                           ChipSize="Small"
+                                           ColumnCount="8"
+                                           DefaultColor="#84CEE9"
+                                           EditValue="{Binding MinColor}"
+                                           ShowNoColorButton="False" />
+
+                            <dxe:ColorEdit Grid.Column="1"
+                                           ChipSize="Small"
+                                           ColumnCount="8"
+                                           DefaultColor="#030C11"
+                                           EditValue="{Binding MaxColor}"
+                                           ShowNoColorButton="False" />
+
+                            <Border Grid.Row="1"
+                                    Grid.Column="0"
+                                    Height="20"
+                                    Background="{Binding MinColor, Converter={StaticResource ColorToBrushConverter}}" />
+
+                            <Border Grid.Row="1"
+                                    Grid.Column="1"
+                                    Height="20"
+                                    Background="{Binding MaxColor, Converter={StaticResource ColorToBrushConverter}}" />
+                        </Grid>
+                    </dx:DropDownButton>
+                </Grid>
+
+                <StackPanel Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="2,2,0,2"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Background="#171718"
+                            Orientation="Horizontal">
+                    <dxe:CheckEdit Width="50"
+                                   Margin="5,0"
+                                   Content="PUT"
+                                   EditValue="{Binding GlobalHeatmapSettingsModel.PutSelected, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="5,2,0,2"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Background="#171718"
+                            Orientation="Horizontal">
+                    <Label Margin="8,0"
+                           HorizontalAlignment="Left"
+                           Content="Mins" />
+                    <dxe:SpinEdit Width="55"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="#171718"
+                                  BorderBrush="#171718"
+                                  BorderThickness="0"
+                                  DisplayFormatString="N0"
+                                  EditValue="{Binding GlobalHeatmapSettingsModel.TotalMins, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  Mask="N0"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="1"
+                            Grid.Column="2"
+                            Margin="5,2,0,2"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Background="#171718"
+                            Orientation="Horizontal"
+                            Visibility="{Binding HeatmapMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <dxe:ComboBoxEdit Width="125"
+                                      Margin="2,0"
+                                      HorizontalAlignment="Left"
+                                      ApplyItemTemplateToSelectedItem="True"
+                                      Background="#171718"
+                                      BorderBrush="#171718"
+                                      BorderThickness="0"
+                                      IsTextEditable="False"
+                                      ItemsSource="{Binding HeatMapModes}"
+                                      SelectedItem="{Binding GlobalHeatmapSettingsModel.HeatMapMode}">
+                        <dxe:ComboBoxEdit.ItemTemplate>
+                            <DataTemplate>
+                                <Label Padding="0,0.5"
+                                       HorizontalAlignment="Center"
+                                       Content="{Binding Converter={StaticResource DisplayTextCamelCaseConverter}}"
+                                       ContentStringFormat="Field - {0}"
+                                       FontSize="11" />
+                            </DataTemplate>
+                        </dxe:ComboBoxEdit.ItemTemplate>
+                    </dxe:ComboBoxEdit>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1"
+                            Grid.Column="3"
+                            Margin="5,2,0,2"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Background="#171718"
+                            Orientation="Horizontal">
+                    <dxe:ComboBoxEdit Width="150"
+                                      Margin="2,0"
+                                      HorizontalAlignment="Left"
+                                      Background="#171718"
+                                      BorderBrush="#171718"
+                                      BorderThickness="0"
+                                      DisplayFormatString="Display - {0}"
+                                      IsTextEditable="False"
+                                      ItemsSource="{Binding Outputs}"
+                                      SelectedItem="{Binding Output}" />
+                </StackPanel>
+
+                <dx:SimpleButton Grid.Row="1"
+                                 Grid.Column="4"
+                                 Width="85"
+                                 Margin="5,2,0,2"
+                                 HorizontalAlignment="Left"
+                                 Background="#171718"
+                                 Command="{Binding RefreshCommand}"
+                                 Content="Refresh"
+                                 Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Refresh.svg}"
+                                 GlyphHeight="15"
+                                 IsDefault="True"
+                                 IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
+
+                <dx:SimpleButton Grid.Row="1"
+                                 Grid.Column="4"
+                                 Width="85"
+                                 Margin="5,2,0,2"
+                                 HorizontalAlignment="Left"
+                                 Background="#171718"
+                                 Command="{Binding CancelCommand}"
+                                 Content="Cancel"
+                                 IsCancel="True"
+                                 Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+            </Grid>
+
+            <Grid Grid.Row="1"
+                  Grid.Column="0"
+                  Grid.ColumnSpan="3">
+                <Grid Visibility="{Binding HeatmapMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="525*" />
+                        <ColumnDefinition Width="247*" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition x:Name="TopListSplitterColumn"
+                                          Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <dxg:GridControl Name="HeatmapGrid"
+                                     Grid.Row="1"
+                                     Grid.Column="0"
+                                     Grid.ColumnSpan="2"
+                                     MaxHeight="5000"
+                                     Margin="2,0,0,0"
+                                     CustomColumnSortCommand="{Binding CustomColumnSortCommand}"
+                                     ItemsSource="{Binding HeatmapRows}"
+                                     SelectionMode="Cell">
+                        <dxg:GridControl.View>
+                            <dxg:TableView MaxHeight="5000"
+                                           AllowColumnFiltering="False"
+                                           AllowEditing="False"
+                                           AllowGrouping="False"
+                                           AllowMoveColumnToDropArea="False"
+                                           AllowSorting="False"
+                                           AutoWidth="False"
+                                           RowStyle="{StaticResource HeatmapRowStyle}"
+                                           ShowGridMenu="TableView_ShowGridMenu"
+                                           ShowGroupPanel="False"
+                                           ShowIndicator="True"
+                                           ShowTotalSummary="False"
+                                           VerticalScrollbarVisibility="Auto">
+                                <dxg:TableView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowColumnChooserCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show Column Chooser">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ClearColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Hide All Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowAllColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show All Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowDefaultColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show Default Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </dxg:TableView.ContextMenu>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+                        <dxg:GridControl.Resources>
+                            <Style TargetType="dxg:GridColumn">
+                                <Setter Property="Visible" Value="False" />
+                                <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                                <Setter Property="AllowMoving" Value="False" />
+                            </Style>
+
+                            <Style TargetType="dxg:LightweightCellEditor">
+                                <Setter Property="Background" Value="{Binding Path=RowData.Row.SpreadHeatmapCellCol2.HeatPercent, Converter={StaticResource HeatmapColorConverter}}" />
+                                <Setter Property="Foreground" Value="#FFFFFF" />
+                            </Style>
+                        </dxg:GridControl.Resources>
+                        <dxg:GridColumn FieldName="Expiration"
+                                        IsSmart="True"
+                                        SortIndex="0"
+                                        SortMode="Custom"
+                                        Visible="True" />
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol1"
+                                        Header="{Binding HeaderCol1}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible1}">
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol1}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol2"
+                                        Header="{Binding HeaderCol2}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible2}">
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol2}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol3"
+                                        Header="{Binding HeaderCol3}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible3}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol3}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol4"
+                                        Header="{Binding HeaderCol4}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible4}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol4}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol5"
+                                        Header="{Binding HeaderCol5}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible5}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol5}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol6"
+                                        Header="{Binding HeaderCol6}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible6}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol6}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol7"
+                                        Header="{Binding HeaderCol7}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible7}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol7}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol8"
+                                        Header="{Binding HeaderCol8}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible8}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol8}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol9"
+                                        Header="{Binding HeaderCol9}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible9}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol9}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol10"
+                                        Header="{Binding HeaderCol10}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible10}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol10}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol11"
+                                        Header="{Binding HeaderCol11}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible11}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol11}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol12"
+                                        Header="{Binding HeaderCol12}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible12}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol12}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol13"
+                                        Header="{Binding HeaderCol13}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible13}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol13}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol14"
+                                        Header="{Binding HeaderCol14}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible14}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol14}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol15"
+                                        Header="{Binding HeaderCol15}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible15}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol15}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol16"
+                                        Header="{Binding HeaderCol16}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible16}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol16}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol17"
+                                        Header="{Binding HeaderCol17}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible17}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol17}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol18"
+                                        Header="{Binding HeaderCol18}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible18}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol18}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol19"
+                                        Header="{Binding HeaderCol19}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible19}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol19}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol20"
+                                        Header="{Binding HeaderCol20}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible20}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol20}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol21"
+                                        Header="{Binding HeaderCol21}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible21}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol21}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol22"
+                                        Header="{Binding HeaderCol22}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible22}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol22}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol23"
+                                        Header="{Binding HeaderCol23}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible23}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol23}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol24"
+                                        Header="{Binding HeaderCol24}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible24}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol24}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol25"
+                                        Header="{Binding HeaderCol25}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible25}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol25}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol26"
+                                        Header="{Binding HeaderCol26}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible26}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol26}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol27"
+                                        Header="{Binding HeaderCol27}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible27}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol27}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol28"
+                                        Header="{Binding HeaderCol28}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible28}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol28}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol29"
+                                        Header="{Binding HeaderCol29}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible29}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol29}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol30"
+                                        Header="{Binding HeaderCol30}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible30}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol30}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol31"
+                                        Header="{Binding HeaderCol31}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible31}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol31}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol32"
+                                        Header="{Binding HeaderCol32}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible32}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol32}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol33"
+                                        Header="{Binding HeaderCol33}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible33}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol33}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol34"
+                                        Header="{Binding HeaderCol34}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible34}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol34}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol35"
+                                        Header="{Binding HeaderCol35}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible35}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol35}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol36"
+                                        Header="{Binding HeaderCol36}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible36}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol36}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol37"
+                                        Header="{Binding HeaderCol37}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible37}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol37}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol38"
+                                        Header="{Binding HeaderCol38}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible38}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol38}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol39"
+                                        Header="{Binding HeaderCol39}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible39}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol39}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol40"
+                                        Header="{Binding HeaderCol40}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible40}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol40}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol41"
+                                        Header="{Binding HeaderCol41}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible41}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol41}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol42"
+                                        Header="{Binding HeaderCol42}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible42}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol42}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol43"
+                                        Header="{Binding HeaderCol43}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible43}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol43}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol44"
+                                        Header="{Binding HeaderCol44}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible44}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol44}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol45"
+                                        Header="{Binding HeaderCol45}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible45}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol45}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol46"
+                                        Header="{Binding HeaderCol46}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible46}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol46}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol47"
+                                        Header="{Binding HeaderCol47}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible47}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol47}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol48"
+                                        Header="{Binding HeaderCol48}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible48}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol48}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol49"
+                                        Header="{Binding HeaderCol49}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible49}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol49}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+
+                        </dxg:GridColumn>
+
+                        <dxg:GridColumn FieldName="SpreadHeatmapCellCol50"
+                                        Header="{Binding HeaderCol50}"
+                                        IsSmart="True"
+                                        Visible="{Binding HeaderColVisible50}">
+
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <views:HeatMapCellView DataContext="{Binding RowData.Row.SpreadHeatmapCellCol50}" />
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+
+                        </dxg:GridColumn>
+                    </dxg:GridControl>
+
+                    <GridSplitter Name="TopListSplitter"
+                                  Grid.Row="1"
+                                  Grid.Column="2"
+                                  Width="3"
+                                  Margin="2,0,2,0"
+                                  HorizontalAlignment="Stretch"
+                                  MouseDoubleClick="GridSplitter_MouseDoubleClick" />
+
+                    <dx:SimpleButton Name="TopExpandCollapseGridButton"
+                                     Grid.Row="1"
+                                     Grid.Column="2"
+                                     Width="8"
+                                     Height="100"
+                                     Margin="0,296,0,320"
+                                     Padding="-1,0,0,0"
+                                     HorizontalAlignment="Center"
+                                     Click="ExpandCollapseGrid_Click"
+                                     Content="3"
+                                     CornerRadius="3"
+                                     FontFamily="Marlett"
+                                     FontSize="10" />
+
+                    <dxg:GridControl Name="TopGrid"
+                                     Grid.Row="1"
+                                     Grid.Column="3"
+                                     MaxHeight="5000"
+                                     ItemsSource="{Binding GlobalHeatmapSettingsModel.TopValues}"
+                                     SelectionMode="Row">
+                        <dxg:GridControl.View>
+                            <dxg:TableView MaxHeight="5000"
+                                           AllowColumnFiltering="False"
+                                           AllowEditing="False"
+                                           AllowGrouping="False"
+                                           AllowSorting="False"
+                                           AutoWidth="True"
+                                           RowDoubleClick="TableView_RowDoubleClick"
+                                           ShowGroupPanel="False"
+                                           ShowIndicator="True"
+                                           ShowTotalSummary="False"
+                                           VerticalScrollbarVisibility="Auto">
+                                <dxg:TableView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowColumnChooserCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show Column Chooser">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ClearColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Hide All Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowAllColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show All Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowDefaultColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show Default Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </dxg:TableView.ContextMenu>
+                                <dxg:TableView.RowCellMenuCustomizations>
+                                    <dxb:BarButtonItem Command="{Binding View.DataContext.ClearSymbolsCommand}"
+                                                       Content="Clear Symbols" />
+                                </dxg:TableView.RowCellMenuCustomizations>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+
+                        <dxg:GridColumn Name="TopSymbolColumn"
+                                        Width="200"
+                                        FieldName="Symbol"
+                                        HorizontalHeaderContentAlignment="Center"
+                                        IsSmart="True" />
+
+                        <dxg:GridColumn Width="70"
+                                        Binding="{Binding Path=RowData.Row.Spread, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                                        FieldName="Spread"
+                                        Header="Value"
+                                        HorizontalHeaderContentAlignment="Center"
+                                        IsSmart="True" />
+
+                    </dxg:GridControl>
+                </Grid>
+
+                <dxh:HeatmapControl x:Name="HeatmapControl"
+                                    EnableAxisXNavigation="True"
+                                    EnableAxisYNavigation="True"
+                                    HighlightMode="Cell"
+                                    MouseDoubleClick="HeatmapControl_MouseDoubleClick"
+                                    SelectedItem="{Binding SelectedTallyCell}"
+                                    SelectionMode="Single"
+                                    ToolTipEnabled="True"
+                                    Visibility="{Binding OrderTallyMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <dxh:HeatmapControl.DataAdapter>
+                        <dxh:HeatmapMatrixAdapter Values="{Binding TallyValues}"
+                                                  XArguments="{Binding XArguments}"
+                                                  YArguments="{Binding YArguments}" />
+                    </dxh:HeatmapControl.DataAdapter>
+                    <dxh:HeatmapControl.ColorProvider>
+                        <dxh:HeatmapRangeColorProvider LegendItemPattern="{}{V1:0}-{V2:0}"
+                                                       Palette="{Binding HeatmapColorPalette}"
+                                                       RangeStops="{Binding HeatmapRangeStops}">
+                            <!--<dxh:HeatmapRangeColorProvider.Palette>
+                                <dxc:CustomPalette>
+                                    <dxc:CustomPalette.Colors>
+                                        <Color>#ff0000</Color>
+                                        <Color>#00ff00</Color>
+                                    </dxc:CustomPalette.Colors>
+                                </dxc:CustomPalette>
+                            </dxh:HeatmapRangeColorProvider.Palette>-->
+                        </dxh:HeatmapRangeColorProvider>
+                    </dxh:HeatmapControl.ColorProvider>
+                    <dxh:HeatmapControl.Legend>
+                        <dxh:HeatmapLegend Margin="0,0,4,10">
+                            <dxh:HeatmapLegend.Title>
+                                <dxc:LegendTitle Content="Submissions" />
+                            </dxh:HeatmapLegend.Title>
+                        </dxh:HeatmapLegend>
+                    </dxh:HeatmapControl.Legend>
+                    <dxh:HeatmapControl.Label>
+                        <dxh:HeatmapLabel Padding="2"
+                                          Foreground="Black" />
+                    </dxh:HeatmapControl.Label>
+                    <dxh:HeatmapControl.AxisX>
+                        <dxh:HeatmapAxis>
+                            <dxh:HeatmapAxis.Title>
+                                <dxc:AxisTitle Content="Strike" />
+                            </dxh:HeatmapAxis.Title>
+                        </dxh:HeatmapAxis>
+                    </dxh:HeatmapControl.AxisX>
+                    <dxh:HeatmapControl.AxisY>
+                        <dxh:HeatmapAxis Reverse="True">
+                            <dxh:HeatmapAxis.Title>
+                                <dxc:AxisTitle Content="Expiration" />
+                            </dxh:HeatmapAxis.Title>
+                        </dxh:HeatmapAxis>
+                    </dxh:HeatmapControl.AxisY>
+                </dxh:HeatmapControl>
+
+                <views:BusyIndicatorView HorizontalAlignment="Center"
+                                         VerticalAlignment="Center" />
+
+            </Grid>
+        </Grid>
+    </Grid>
+</dx:ThemedWindow>

@@ -1,0 +1,79 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Company>ZeroPlus Derivatives, LLC</Company>
+    <Copyright>Copyright © 2025</Copyright>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <Platforms>x64;AnyCPU</Platforms>
+    <AssemblyVersion>9.9.9.9</AssemblyVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Deploy|x64'">
+    <OutputPath>bin\Deploy\</OutputPath>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <OutputPath>bin\x64\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Deploy|x64'">
+    <OutputPath>bin\x64\Deploy\</OutputPath>
+    <Optimize>true</Optimize>
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Public NuGet packages -->
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="10.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="NLog" Version="6.1.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.3" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.3" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="6.0.0" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="10.0.652802" />
+    <PackageReference Include="System.ServiceModel.Federation" Version="10.0.652802" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="7.0.0-preview.2.22152.2" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+    <PackageReference Include="Velopack" Version="0.0.1298" />
+    <PackageReference Include="NLog.Targets.OpenTelemetryProtocol" Version="1.2.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Stub project references (replace internal NuGet packages) -->
+    <ProjectReference Include="..\..\ZeroPlus.Models\ZeroPlus.Models.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.Comms.Helper\ZeroPlus.Comms.Helper.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.Comms.Models\ZeroPlus.Comms.Models.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.AutoTrader.Client\ZeroPlus.AutoTrader.Client.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.Cob.Client\ZeroPlus.Cob.Client.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.Databento.Client\ZeroPlus.Databento.Client.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.EdgeScanner.Client\ZeroPlus.EdgeScanner.Client.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.EdgeScanFeedRunner.Client\ZeroPlus.EdgeScanFeedRunner.Client.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.Ema.Client\ZeroPlus.Ema.Client.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.Hercules.Client\ZeroPlus.Hercules.Client.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.HubTron.Client\ZeroPlus.HubTron.Client.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.IbGateway.Client\ZeroPlus.IbGateway.Client.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.Interpolator.Client\ZeroPlus.Interpolator.Client.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.LiveVol.Client\ZeroPlus.LiveVol.Client.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.Pricing.Client\ZeroPlus.Pricing.Client.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.Raptor.Client\ZeroPlus.Raptor.Client.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.SymbolMap.Client\ZeroPlus.SymbolMap.Client.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.Telemetry.Client\ZeroPlus.Telemetry.Client.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.Theos.Client\ZeroPlus.Theos.Client.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.Trades.Client\ZeroPlus.Trades.Client.csproj" />
+    <ProjectReference Include="..\..\EMAServer.Client\EMAServer.Client.csproj" />
+    <ProjectReference Include="..\..\Middleware\Middleware.csproj" />
+    <ProjectReference Include="..\..\SharedMemory\SharedMemory.csproj" />
+    <ProjectReference Include="..\..\SymbolLib\SymbolLib.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.MessageObjects\ZeroPlus.MessageObjects.csproj" />
+    <ProjectReference Include="..\..\ZeroPlus.TagCodecLib\ZeroPlus.TagCodecLib.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Data\Trading\PositionOwner.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+    <Folder Include="Properties\" />
+  </ItemGroup>
+</Project>

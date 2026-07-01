@@ -1,0 +1,38 @@
+﻿namespace ZeroPlus.Models.Data.Enums;
+
+public enum OrderSubType
+{
+    Ticket,
+    Basket,
+    AutoTrader,
+    EdgeScanFeed,
+    Looper,
+    FreeLook,
+    FreeLookAll,
+    LooperResubmit,
+    AutoLeg,
+    Hedge,
+    HedgeHouse,
+    BasketAutoPerm,
+    Dominator,
+    Synthetic,
+    Scrape,
+    Seeker,
+    Fish,
+    AutoClose,
+    Tracker,
+    ThreeWayCloser,
+    Sweep,
+    StopLoss,
+    Stop,
+    GammaScalp,
+    DeltaHedge,
+    LegOut,
+    VolTrader,
+    Slooper,
+    AutoAggressor,
+    IceBerg,
+    NagBot,
+    ManualAdd,
+    OmtIoiEye
+}

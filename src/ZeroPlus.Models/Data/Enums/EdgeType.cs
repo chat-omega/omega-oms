@@ -1,0 +1,40 @@
+namespace ZeroPlus.Models.Data.Enums
+{
+    public enum EdgeType
+    {
+        None,
+        EdgeToTheo,
+        EdgeToAdjustedTheo,
+        LastFillAdjEdge,
+        EdgeToMid,
+        EdgeToTheoAndMid,
+        EdgeToPercentBidAndLow,
+        EdgeToTheoStopMid,
+        EdgeToEmaStopMid,
+        EdgeToMidStopEma,
+        EdgeToBidPercentStopEma,
+        EdgeToBidPercentStopEmaStopTheo,
+        EdgeToEmaBidPercentStopEmaStopTheo,
+        EdgeToDerivedBidPercentStopEmaStopMid,
+        BidPercent,
+        EdgeToEmaBid,
+        EdgeToBid,
+        PermAdjEdge,
+        CustomEdgeFormula,
+        DomStyleEdge,
+        EdgeToAdjTheoWithOverride,
+        TheoToMarketSpread,
+        EdgeToEma,
+        TheoBidPercent,
+        UseBestOfEdge,
+        #region BestOfMembers
+        BestOfHwAdjTheo,
+        BestOfHwTheo,
+        BestOfV0AdjTheo,
+        BestOfMid,
+        BestOfEma,
+        BestOfBidPercent,
+        BestOfDigBidPercent,
+        #endregion
+    }
+}

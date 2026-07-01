@@ -1,0 +1,29 @@
+﻿<dx:ThemedWindow x:Name="window"
+                 x:Class="ZeroPlus.Oms.Ui.Views.DominatorConfigurationModuleView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 xmlns:views="clr-namespace:ZeroPlus.Oms.Ui.Views"
+                 Title="{Binding ConfigViewModel.Title}"
+                 Width="1200"
+                 Height="800"
+                 MinWidth="400"
+                 MinHeight="300"
+                 d:DataContext="{d:DesignInstance Type=ViewModels:DominatorConfigurationModuleViewModel}"
+                 d:Width="600"
+                 DataContext="{startuphelpers:DISource Type=ViewModels:DominatorConfigurationModuleViewModel}"
+                 WindowStartupLocation="CenterScreen"
+                 mc:Ignorable="d">
+
+    <Grid>
+        <views:DominatorConfigurationView x:Name="ConfigView"
+                                          DataContext="{Binding ConfigViewModel}" />
+    </Grid>
+</dx:ThemedWindow>

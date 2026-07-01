@@ -1,0 +1,152 @@
+<UserControl x:Class="ZeroPlus.Oms.Ui.Views.HeatMapCellView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <helper:HeatmapColorConverter x:Key="HeatmapColorConverter" />
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="3" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="3" />
+        </Grid.ColumnDefinitions>
+        <Rectangle Name="AlertEdgeLeft"
+                   Grid.Row="0"
+                   Grid.RowSpan="3"
+                   Grid.Column="0"
+                   Visibility="{Binding HideAlert, Converter={StaticResource BooleanToVisibilityInverseConverter}}">
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Offset="0.0" Color="Red" />
+                    <GradientStop Offset="0.25" Color="Yellow" />
+                    <GradientStop Offset="0.75" Color="Orange" />
+                    <GradientStop Offset="1.00" Color="Red" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+            <Rectangle.Triggers>
+                <EventTrigger RoutedEvent="Image.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation AutoReverse="True"
+                                             RepeatBehavior="Forever"
+                                             Storyboard.TargetName="AlertEdgeLeft"
+                                             Storyboard.TargetProperty="Opacity"
+                                             From="1.0"
+                                             To="0.2"
+                                             Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Rectangle.Triggers>
+        </Rectangle>
+        <TextBlock Grid.Row="0"
+                   Grid.RowSpan="3"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="3"
+                   Padding="0,1.5,0,0"
+                   Background="{Binding HeatPercent, Converter={StaticResource HeatmapColorConverter}}"
+                   Text="{Binding Spread, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                   TextAlignment="Center" />
+        <Rectangle Name="AlertEdgeTop"
+                   Grid.Row="0"
+                   Grid.Column="1"
+                   Visibility="{Binding HideAlert, Converter={StaticResource BooleanToVisibilityInverseConverter}}">
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Offset="0.0" Color="Red" />
+                    <GradientStop Offset="0.2" Color="Orange" />
+                    <GradientStop Offset="0.6" Color="Red" />
+                    <GradientStop Offset="0.8" Color="Orange" />
+                    <GradientStop Offset="1.0" Color="Red" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+            <Rectangle.Triggers>
+                <EventTrigger RoutedEvent="Image.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation AutoReverse="True"
+                                             RepeatBehavior="Forever"
+                                             Storyboard.TargetName="AlertEdgeTop"
+                                             Storyboard.TargetProperty="Opacity"
+                                             From="1.0"
+                                             To="0.2"
+                                             Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Rectangle.Triggers>
+        </Rectangle>
+        <Rectangle Name="AlertEdgeRight"
+                   Grid.Row="0"
+                   Grid.RowSpan="3"
+                   Grid.Column="2"
+                   Visibility="{Binding HideAlert, Converter={StaticResource BooleanToVisibilityInverseConverter}}">
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Offset="0.0" Color="Red" />
+                    <GradientStop Offset="0.25" Color="Orange" />
+                    <GradientStop Offset="0.75" Color="Yellow" />
+                    <GradientStop Offset="1.00" Color="Red" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+            <Rectangle.Triggers>
+                <EventTrigger RoutedEvent="Image.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation AutoReverse="True"
+                                             RepeatBehavior="Forever"
+                                             Storyboard.TargetName="AlertEdgeRight"
+                                             Storyboard.TargetProperty="Opacity"
+                                             From="1.0"
+                                             To="0.2"
+                                             Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Rectangle.Triggers>
+        </Rectangle>
+        <Rectangle Name="AlertEdgeBottom"
+                   Grid.Row="2"
+                   Grid.Column="1"
+                   Visibility="{Binding HideAlert, Converter={StaticResource BooleanToVisibilityInverseConverter}}">
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Offset="0.0" Color="Red" />
+                    <GradientStop Offset="0.2" Color="Orange" />
+                    <GradientStop Offset="0.6" Color="Red" />
+                    <GradientStop Offset="0.8" Color="Orange" />
+                    <GradientStop Offset="1.0" Color="Red" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+            <Rectangle.Triggers>
+                <EventTrigger RoutedEvent="Image.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation AutoReverse="True"
+                                             RepeatBehavior="Forever"
+                                             Storyboard.TargetName="AlertEdgeBottom"
+                                             Storyboard.TargetProperty="Opacity"
+                                             From="1.0"
+                                             To="0.2"
+                                             Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Rectangle.Triggers>
+        </Rectangle>
+    </Grid>
+</UserControl>

@@ -1,0 +1,113 @@
+﻿<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.ChangeLogView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 Title="{Binding ModuleTitle}"
+                 Width="700"
+                 Height="400"
+                 DataContext="{startuphelpers:DISource Type=ViewModels:ChangeLogViewModel}"
+                 WindowStartupLocation="CenterScreen"
+                 WindowStyle="ToolWindow">
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:CurrentWindowService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Window.Resources>
+        <helper:ChangeTypeToColorConverter x:Key="ChangeTypeToColorConverter" />
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="15" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="15" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="15" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="15" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="1"
+                   Grid.Column="1"
+                   HorizontalAlignment="Center"
+                   FontFamily="{StaticResource AgencyFB}"
+                   FontSize="30"
+                   Foreground="#1D673F"
+                   Text="OMS" />
+
+        <TextBlock Grid.Row="2"
+                   Grid.Column="1"
+                   HorizontalAlignment="Center"
+                   FontFamily="{StaticResource ZPLufga}"
+                   FontSize="14"
+                   Foreground="#C0C0C0"
+                   Text="Change Log" />
+
+        <StackPanel Grid.Row="3"
+                    Grid.Column="1"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
+            <TextBlock VerticalAlignment="Center"
+                       FontFamily="{StaticResource ZPLufga}"
+                       Foreground="#1D673F"
+                       Text="V-" />
+            <ComboBox Width="65"
+                      Margin="2,0,0,0"
+                      FontFamily="{StaticResource ZPLufga}"
+                      FontSize="14"
+                      Foreground="#C0C0C0"
+                      ItemsSource="{Binding Versions}"
+                      SelectedItem="{Binding Version}"
+                      Text="Update Available!" />
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="4"
+                      Grid.Column="1"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto">
+            <ItemsControl Margin="10"
+                          ItemsSource="{Binding ReleaseNotes}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel Margin="5"
+                                   LastChildFill="True">
+                            <Border Padding="4,0,5,0"
+                                    Background="{Binding ChangeType, Converter={StaticResource ChangeTypeToColorConverter}}"
+                                    CornerRadius="2">
+                                <TextBlock VerticalAlignment="Center"
+                                           DockPanel.Dock="Left"
+                                           FontSize="9"
+                                           Foreground="#2D2D30"
+                                           Text="{Binding ChangeType}" />
+                            </Border>
+                            <TextBlock Margin="5,0,0,0"
+                                       Text="{Binding Note}" />
+                        </DockPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="6"
+                    Grid.Column="1"
+                    Margin="0,15,0,0"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
+            <dx:SimpleButton Command="{Binding CloseCommand}"
+                             Content="Close"
+                             FontFamily="{StaticResource ZPLufga}" />
+        </StackPanel>
+    </Grid>
+</dx:ThemedWindow>

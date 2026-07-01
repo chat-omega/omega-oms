@@ -1,0 +1,89 @@
+﻿<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.LoadSymbolView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 xmlns:viewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 Title="Load Symbol"
+                 Width="250"
+                 Height="150"
+                 d:DataContext="{d:DesignInstance Type=viewModels:LoadSymbolViewModel}"
+                 DataContext="{startuphelpers:DISource Type=viewModels:LoadSymbolViewModel}"
+                 WindowStartupLocation="CenterScreen"
+                 mc:Ignorable="d">
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:CurrentWindowService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <dxe:ButtonEdit Grid.Row="0"
+                        Margin="0,15,0,0"
+                        AllowDefaultButton="False"
+                        CharacterCasing="Upper"
+                        EditValue="{Binding Symbol, UpdateSourceTrigger=PropertyChanged}"
+                        EditValuePostDelay="0"
+                        NullText="Symbol"
+                        SelectAllOnGotFocus="True"
+                        SelectAllOnMouseUp="True"
+                        ShowNullTextForEmptyValue="True">
+            <dxmvvm:Interaction.Behaviors>
+                <dxmvvm:KeyToCommand Command="{Binding SearchCommand}"
+                                     KeyGesture="Enter" />
+            </dxmvvm:Interaction.Behaviors>
+            <dxe:ButtonEdit.Buttons>
+                <dxe:ButtonInfo Command="{Binding SearchCommand}"
+                                GlyphKind="Search"
+                                IsDefaultButton="True" />
+            </dxe:ButtonEdit.Buttons>
+        </dxe:ButtonEdit>
+
+        <StackPanel Grid.Row="1"
+                    Margin="0,5"
+                    Orientation="Horizontal">
+
+            <TextBlock Margin="0,0,0,0"
+                       Text="Underlying:" />
+            <TextBlock Margin="3,0"
+                       Text="{Binding Underlying}" />
+
+            <TextBlock Margin="5,0,0,0"
+                       Text="Legs:" />
+            <TextBlock Margin="3,0"
+                       Text="{Binding LegsCount}" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="3"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
+
+            <dx:SimpleButton Width="75"
+                             Margin="5,0"
+                             Command="{Binding AddCommand}"
+                             Content="Add"
+                             Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Add.svg}"
+                             GlyphWidth="13"
+                             IsDefault="True" />
+
+            <dx:SimpleButton Width="75"
+                             Margin="5,0"
+                             Command="{Binding CancelCommand}"
+                             Content="Cancel"
+                             Glyph="{dx:DXImage SvgImages/HybridDemoIcons/BottomPanel/HybridDemo_Cancel.svg}"
+                             GlyphWidth="13"
+                             IsCancel="True" />
+        </StackPanel>
+
+    </Grid>
+</dx:ThemedWindow>

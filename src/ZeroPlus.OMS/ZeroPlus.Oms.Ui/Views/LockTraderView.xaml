@@ -1,0 +1,2958 @@
+<views:ModuleWindow x:Class="ZeroPlus.Oms.Ui.Views.LockTraderView"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                    xmlns:controls="clr-namespace:ZeroPlus.Oms.Ui.Controls"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                    xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+                    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                    xmlns:enums="clr-namespace:ZeroPlus.Oms.Ui.Enums"
+                    xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                    xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xmlns:views="clr-namespace:ZeroPlus.Oms.Ui.Views"
+                    Title="{Binding ModuleTitle}"
+                    Width="1200"
+                    Height="800"
+                    MinWidth="400"
+                    MinHeight="300"
+                    d:DataContext="{d:DesignInstance Type=ViewModels:LockTraderViewModel}"
+                    d:Height="750"
+                    d:Width="auto"
+                    DataContext="{startuphelpers:DISource Type=ViewModels:LockTraderViewModel}"
+                    WindowStartupLocation="CenterScreen"
+                    mc:Ignorable="d">
+
+    <dxmvvm:Interaction.Behaviors>
+        <services:LoadCustomColumnService />
+        <services:GetItemsByVisualOrderService />
+        <services:OmsMessageBoxService />
+        <dxmvvm:WindowService />
+        <dxmvvm:DispatcherService />
+        <dxmvvm:OpenFileDialogService />
+        <dxmvvm:SaveFileDialogService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Window.Resources>
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <helper:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <helper:CamelCaseFormatter x:Key="DisplayTextCamelCaseConverter" />
+        <helper:NullToCheckGlyphConverter x:Key="NullToCheckGlyphConverter" />
+        <helper:StatusModeToColorConverter x:Key="StatusModeToColorConverter" />
+        <helper:EnumToDisplayTextConverter x:Key="EnumToDisplayTextConverter" />
+        <helper:TheoModelToDisplayTextConverter x:Key="TheoModelToDisplayTextConverter" />
+        <helper:SizeUpTypeToVisibilityConverter x:Key="SizeUpTypeToVisibilityConverter" />
+        <helper:SignToBrushConverter x:Key="SignToBrushConverter"
+                                     NegativeBrush="#B73535"
+                                     PositiveBrush="#10e411"
+                                     ZeroBrush="#10e411" />
+        <helper:SignToBrushConverter x:Key="TitleSignToBrushConverter"
+                                     NegativeBrush="#FF0000"
+                                     PositiveBrush="#10e411"
+                                     ZeroBrush="#10e411" />
+        <helper:SignToBrushConverter x:Key="SignToDarkBrushConverter"
+                                     NegativeBrush="#FF2100"
+                                     PositiveBrush="#10e411"
+                                     ZeroBrush="#F1F1F1" />
+
+        <helper:OrderToBackBrushConverter x:Key="SideToColorConverter" />
+        <dxmvvm:BooleanToObjectConverter x:Key="BooleanToGlyphConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>
+                15
+            </dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>
+                0
+            </dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+        <dxmvvm:BooleanToObjectConverter x:Key="BooleanToColorConverterRed">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>
+                #F88F8F
+            </dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>
+                #2D2D30
+            </dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+        <dxmvvm:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <dxmvvm:BooleanToVisibilityConverter x:Key="BooleanToVisibilityInverseConverter"
+                                             Inverse="True" />
+    </Window.Resources>
+
+    <dx:ThemedWindow.HeaderItems>
+        <StackPanel Margin="1,4,2,0"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+            <dx:SimpleButton Margin="5,2,0,0"
+                             Padding="2"
+                             ButtonKind="Toggle"
+                             Command="{Binding ToggleTheoLockCommand}"
+                             CommandParameter="LockTheos"
+                             Content="Lock Theos"
+                             CornerRadius="1"
+                             FontSize="12"
+                             IsChecked="{Binding BasketSettings.LockTheos}"
+                             Style="{StaticResource SubscriptionButtonStyle}"
+                             Visibility="{Binding OmsCore.Config.ShowLockTheosShortcutInBasketHeader, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+            <Image Width="20"
+                   Height="20"
+                   Margin="15,0,0,0"
+                   Source="{dx:DXImage 'SvgImages/Icon Builder/Actions_Clock.svg'}"
+                   ToolTip="Up-Time" />
+            <TextBlock Padding="3,3,5,3"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       FontWeight="Bold"
+                       Text="{Binding UpTime}"
+                       TextAlignment="Right"
+                       ToolTip="Up-Time" />
+
+            <Image Width="20"
+                   Height="20"
+                   Margin="5,0,0,0"
+                   Source="{dx:DXImage 'SvgImages/Icon Builder/Business_DollarCircled.svg'}"
+                   ToolTip="PnL" />
+            <TextBlock Padding="3,3,5,3"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       FontWeight="Bold"
+                       Foreground="{Binding AdjustedPnl, Converter={StaticResource TitleSignToBrushConverter}}"
+                       Text="{Binding AdjustedPnl, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}"
+                       TextAlignment="Right" />
+
+            <views:ModuleHeaderItems />
+        </StackPanel>
+    </dx:ThemedWindow.HeaderItems>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="35" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="3" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3" />
+            <ColumnDefinition x:Name="GridSplitterCol"
+                              Width="*" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="3" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="1"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="3"
+                    Margin="5"
+                    Orientation="Horizontal">
+
+            <dxlc:GroupBox Name="BasketSettingsSubModule"
+                           Margin="5,0,0,0"
+                           Padding="10,5">
+                <dxlc:GroupBox.Header>
+                    <Grid Height="22">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <dxe:TextEdit x:Name="NameEdit"
+                                      Grid.Column="1"
+                                      VerticalAlignment="Center"
+                                      Background="Transparent"
+                                      BorderBrush="Transparent"
+                                      BorderThickness="0"
+                                      EditValue="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                      IsHitTestVisible="False"
+                                      KeyDown="NameKeyDown"
+                                      MouseDoubleClick="ToggleEdit"
+                                      PreviewMouseUp="SelectAll"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+
+                        <dx:SimpleButton x:Name="NameEditButton"
+                                         Grid.Column="2"
+                                         Width="25"
+                                         HorizontalAlignment="Right"
+                                         ButtonKind="Toggle"
+                                         Checked="EditName"
+                                         Glyph="{dx:DXImage SvgImages/Dashboards/RenameQuery.svg}"
+                                         GlyphHeight="15"
+                                         ToolTip="Edit Instance Title"
+                                         Unchecked="SetName" />
+
+                        <dx:SimpleButton x:Name="SetTitleButton"
+                                         Grid.Column="3"
+                                         Width="25"
+                                         HorizontalAlignment="Right"
+                                         Command="{Binding SetInstanceTitleToWindowCommand}"
+                                         Glyph="{dx:DXImage SvgImages/XAF/Action_ResetViewSettings.svg}"
+                                         GlyphHeight="15"
+                                         ToolTip="Set As Basket Title" />
+                    </Grid>
+                </dxlc:GroupBox.Header>
+
+                <Grid Margin="0,5,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <dx:SplitButton Grid.Row="0"
+                                    Grid.Column="0"
+                                    Width="110"
+                                    Height="23"
+                                    Padding="9,3,3,3"
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding SaveConfigOnServerCommand}"
+                                    Content="Save"
+                                    Glyph="{dx:DXImage SvgImages/Save/Save.svg}"
+                                    PopupAutoWidth="True">
+                        <ItemsControl>
+                            <StackPanel Orientation="Vertical">
+                                <MenuItem Command="{Binding SaveCommand}"
+                                          Header="Save Locally" />
+                                <MenuItem Command="{Binding SaveAsCommand}"
+                                          Header="Save As" />
+                                <Separator />
+                                <MenuItem Header="Auto Save"
+                                          IsCheckable="True"
+                                          IsChecked="{Binding AutoSave}"
+                                          IsEnabled="{Binding Loaded}" />
+                            </StackPanel>
+                        </ItemsControl>
+                    </dx:SplitButton>
+
+                    <StackPanel Grid.Row="0"
+                                Grid.Column="1"
+                                Width="145"
+                                Margin="5,0,0,0"
+                                Orientation="Horizontal">
+                        <dx:SimpleButton Width="50"
+                                         Padding="2,2,0,0"
+                                         HorizontalContentAlignment="Stretch"
+                                         Background="Transparent"
+                                         BorderThickness="0"
+                                         ButtonKind="Toggle"
+                                         IsChecked="{Binding InstanceModeLocked}">
+                            <DockPanel HorizontalAlignment="Left">
+                                <Label Width="34"
+                                       Padding="0"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top"
+                                       Content="Mode" />
+                                <dx:DXImage Width="16"
+                                            Height="16"
+                                            Margin="0,0,0,0"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            RenderOptions.BitmapScalingMode="HighQuality"
+                                            Source="{dx:DXImage SvgImages/Icon Builder/Security_Lock.svg}"
+                                            Visibility="{Binding InstanceModeLocked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            </DockPanel>
+                        </dx:SimpleButton>
+
+                        <dxe:ComboBoxEdit Width="90"
+                                          Margin="5,0,0,0"
+                                          Panel.ZIndex="1"
+                                          ApplyItemTemplateToSelectedItem="True"
+                                          EditValue="{Binding InstanceMode, UpdateSourceTrigger=PropertyChanged}"
+                                          IsEnabled="{Binding InstanceModeLocked, Converter={StaticResource BooleanNegationConverter}}"
+                                          IsSynchronizedWithCurrentItem="True"
+                                          IsTextEditable="False"
+                                          ItemsSource="{Binding InstanceModes}">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand Command="{Binding ApplyInstanceModeChangesCommand}"
+                                                       EventName="EditValueChanged" />
+                            </dxmvvm:Interaction.Behaviors>
+                            <dxe:ComboBoxEdit.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Padding="0,0.5"
+                                           HorizontalAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           Content="{Binding Converter={StaticResource EnumToDisplayTextConverter}}" />
+                                </DataTemplate>
+                            </dxe:ComboBoxEdit.ItemTemplate>
+                        </dxe:ComboBoxEdit>
+                    </StackPanel>
+
+                    <dx:DropDownButton Grid.Row="1"
+                                       Grid.Column="0"
+                                       Width="110"
+                                       Margin="0,5,0,0"
+                                       Padding="3,1,7,1"
+                                       HorizontalAlignment="Right"
+                                       Content="Load"
+                                       Glyph="{dx:DXImage SvgImages/Dashboards/ServerMode.svg}"
+                                       GlyphHeight="15">
+                        <ItemsControl>
+                            <StackPanel Orientation="Vertical">
+                                <MenuItem Command="{Binding BrowseConfigsCommand}"
+                                          Header="Load Saved" />
+                                <MenuItem Command="{Binding LoadCommand}"
+                                          Header="Load File" />
+                            </StackPanel>
+                        </ItemsControl>
+                    </dx:DropDownButton>
+
+                    <StackPanel Grid.Row="1"
+                                Grid.Column="1"
+                                Width="145"
+                                Margin="5,0,0,0"
+                                Orientation="Horizontal">
+                        <dx:SimpleButton Width="50"
+                                         Padding="2,2,0,0"
+                                         HorizontalContentAlignment="Stretch"
+                                         Background="Transparent"
+                                         BorderThickness="0"
+                                         ButtonKind="Toggle"
+                                         Command="{Binding BrokerLockedCommand}">
+                            <DockPanel HorizontalAlignment="Left">
+                                <Label Width="34"
+                                       Padding="0"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top"
+                                       Content="Broker" />
+                                <dx:DXImage Width="16"
+                                            Height="16"
+                                            Margin="0,0,0,0"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            RenderOptions.BitmapScalingMode="HighQuality"
+                                            Source="{dx:DXImage SvgImages/Icon Builder/Security_Lock.svg}"
+                                            Visibility="{Binding BrokerLocked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            </DockPanel>
+                        </dx:SimpleButton>
+
+                        <dxe:ComboBoxEdit Width="90"
+                                          Margin="5,3,0,0"
+                                          EditValue="{Binding BrokerOverride, UpdateSourceTrigger=PropertyChanged}"
+                                          IsEnabled="{Binding BrokerLocked, Converter={StaticResource BooleanNegationConverter}}"
+                                          IsTextEditable="False"
+                                          ItemsSource="{Binding OmsCore.Config.AvailableBrokers}"
+                                          NullText="Use global">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand Command="{Binding BrokerChangedCommand}"
+                                                       EventName="EditValueChanged" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:ComboBoxEdit>
+                    </StackPanel>
+
+                    <dx:DropDownButton Grid.Row="2"
+                                       Grid.Column="0"
+                                       Width="110"
+                                       Margin="5,5,0,0"
+                                       Padding="3,1,7,1"
+                                       HorizontalAlignment="Left"
+                                       Content="Settings"
+                                       Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Settings.svg}"
+                                       GlyphHeight="15">
+                        <ItemsControl>
+                            <StackPanel Orientation="Vertical">
+                                <MenuItem Command="{Binding HideCommand}"
+                                          Header="Send To Manager" />
+                                <Separator />
+                                <MenuItem Click="ClearFiltersClick"
+                                          Header="Clear Filters" />
+                                <MenuItem Click="ClearSortingClick"
+                                          Header="Clear Sorting" />
+                                <Separator />
+                                <MenuItem Command="{Binding ExportBasketSettingsCommand}"
+                                          Header="Export Settings" />
+                                <MenuItem Command="{Binding ImportBasketSettingsCommand}"
+                                          Header="Import Settings" />
+                                <Separator />
+                                <MenuItem Header="Reset Volume Change"
+                                          IsCheckable="True"
+                                          IsChecked="{Binding ResetVolumeChange}" />
+                            </StackPanel>
+                        </ItemsControl>
+                    </dx:DropDownButton>
+
+                    <dx:SplitButton Grid.Row="2"
+                                    Grid.Column="1"
+                                    Width="145"
+                                    Margin="5,5,0,0"
+                                    Padding="5,3,3,3"
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding ClearCommand}"
+                                    Content="Remove"
+                                    Glyph="{dx:DXImage SvgImages/Snap/RemoveGroupHeader.svg}"
+                                    GlyphHeight="15"
+                                    PopupAutoWidth="True">
+                        <ItemsControl>
+                            <StackPanel Orientation="Vertical">
+                                <MenuItem Header="Remove on Interval"
+                                          IsCheckable="True"
+                                          IsChecked="{Binding RemoveAllOnInterval}" />
+                            </StackPanel>
+                        </ItemsControl>
+                    </dx:SplitButton>
+
+                </Grid>
+            </dxlc:GroupBox>
+            <dxlc:GroupBox Width="225"
+                           Margin="5,0,0,0">
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:EventToCommand Command="{Binding LockSettingsCommand}"
+                                           EventName="MouseLeave" />
+                </dxmvvm:Interaction.Behaviors>
+
+                <dxlc:GroupBox.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <Label Padding="0"
+                               Content="Lock Settings"
+                               FontWeight="Bold"
+                               Foreground="#AFAFB0" />
+
+                        <dxe:ToggleSwitch Name="LockSettingsMasterLockSwitch"
+                                          Grid.Column="1"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          AnimationMode="Always"
+                                          CheckedStateContent="Locked"
+                                          ContentPlacement="Inside"
+                                          FontSize="11"
+                                          IsChecked="{Binding LockSettingsLocked}"
+                                          ToggleSwitchHeight="16"
+                                          ToggleSwitchWidth="70"
+                                          UncheckedStateContent="Unlocked" />
+                    </Grid>
+                </dxlc:GroupBox.Header>
+
+                <Grid IsEnabled="{Binding LockSettingsLocked, Converter={dx:BoolInverseConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <dx:SimpleButton Name="LockTraderPriceLock"
+                                     Grid.Row="0"
+                                     Grid.Column="0"
+                                     Padding="0,2,0,0"
+                                     HorizontalContentAlignment="Left"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     ButtonKind="Toggle"
+                                     IsChecked="{Binding LockTraderModifyPriceQtyModel.UpdatePrice, UpdateSourceTrigger=PropertyChanged}">
+                        <DockPanel HorizontalAlignment="Left">
+                            <Label Width="25"
+                                   Margin="1,0,0,0"
+                                   Padding="0"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   Content="Price" />
+                            <dx:DXImage Height="14"
+                                        Margin="3,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        RenderOptions.BitmapScalingMode="HighQuality"
+                                        Source="{dx:DXImage SvgImages/Icon Builder/Security_Lock.svg}"
+                                        Visibility="{Binding LockTraderModifyPriceQtyModel.UpdatePrice, Converter={StaticResource BooleanToVisibilityInverseConverter}}" />
+                        </DockPanel>
+                        <dxmvvm:Interaction.Behaviors>
+                            <dxmvvm:EventToCommand Command="{Binding UpdatePriceLimitsCommand}"
+                                                   EventName="Checked" />
+                            <dxmvvm:EventToCommand Command="{Binding UpdatePriceLimitsCommand}"
+                                                   EventName="Unchecked" />
+                        </dxmvvm:Interaction.Behaviors>
+                    </dx:SimpleButton>
+
+                    <dxe:SpinEdit Grid.Row="0"
+                                  Grid.Column="1"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding LockTraderModifyPriceQtyModel.Price, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.01"
+                                  IsEnabled="{Binding LockTraderModifyPriceQtyModel.UpdatePrice}"
+                                  Mask="N2"
+                                  MaxValue="{Binding LockTraderPriceMax}"
+                                  MinValue="{Binding LockTraderPriceMin}"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <dx:SimpleButton Name="LockTraderQtyLock"
+                                     Grid.Row="1"
+                                     Grid.Column="0"
+                                     Padding="0,2,0,0"
+                                     HorizontalContentAlignment="Left"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     ButtonKind="Toggle"
+                                     IsChecked="{Binding LockTraderModifyPriceQtyModel.UpdateQty}">
+                        <DockPanel HorizontalAlignment="Left">
+                            <Label Width="25"
+                                   Margin="1,0,0,0"
+                                   Padding="0"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   Content="Qty" />
+                            <dx:DXImage Height="14"
+                                        Margin="3,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        RenderOptions.BitmapScalingMode="HighQuality"
+                                        Source="{dx:DXImage SvgImages/Icon Builder/Security_Lock.svg}"
+                                        Visibility="{Binding LockTraderModifyPriceQtyModel.UpdateQty, Converter={StaticResource BooleanToVisibilityInverseConverter}}" />
+                        </DockPanel>
+                    </dx:SimpleButton>
+
+                    <dxe:SpinEdit Grid.Row="1"
+                                  Grid.Column="1"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N0"
+                                  EditValue="{Binding LockTraderModifyPriceQtyModel.Qty, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  IsEnabled="{Binding LockTraderModifyPriceQtyModel.UpdateQty}"
+                                  Mask="N0"
+                                  MaxValue="{Binding OmsCore.Config.LockTraderQtyMax}"
+                                  MinValue="{Binding OmsCore.Config.LockTraderQtyMin}"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <dx:SimpleButton Grid.Row="2"
+                                     Grid.Column="0"
+                                     Grid.ColumnSpan="4"
+                                     Margin="0,3,0,0"
+                                     HorizontalAlignment="Center"
+                                     Command="{Binding LockTraderModifyPriceQtyModel.ModifyQtyPxCommand}"
+                                     Content="Modify"
+                                     IsDefault="True" />
+                </Grid>
+            </dxlc:GroupBox>
+
+            <dxlc:GroupBox Width="225"
+                           Margin="5,0,0,0">
+                <dxlc:GroupBox.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0"
+                               Padding="0"
+                               Content="Perm Settings"
+                               FontWeight="Bold"
+                               Foreground="#AFAFB0" />
+
+                        <dxe:ToggleSwitch Name="permNewToggleSwitch"
+                                          Grid.Column="1"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          AnimationMode="Always"
+                                          CheckedStateContent="Self"
+                                          ContentPlacement="Inside"
+                                          FontSize="11"
+                                          IsChecked="{Binding PermSelf}"
+                                          ToggleSwitchHeight="16"
+                                          UncheckedStateContent="New" />
+                    </Grid>
+
+                </dxlc:GroupBox.Header>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="0,3,0,0"
+                                Orientation="Horizontal">
+                        <Label HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Content="Count"
+                               IsEnabled="{Binding Path=IsChecked, ElementName=permNewToggleSwitch, Converter={StaticResource InverseBooleanConverter}}" />
+
+                        <dxe:SpinEdit Width="50"
+                                      Margin="3,0,0,0"
+                                      AllowSpinOnMouseWheel="True"
+                                      EditValue="{Binding Count, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      IsEnabled="{Binding Path=IsChecked, ElementName=permNewToggleSwitch, Converter={StaticResource InverseBooleanConverter}}"
+                                      Mask="d"
+                                      MinValue="0"
+                                      PreviewMouseUp="SelectAll"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+                    </StackPanel>
+
+                    <dx:SimpleButton Grid.Row="0"
+                                     Grid.Column="2"
+                                     Width="50"
+                                     Height="22"
+                                     Margin="5,3,0,0"
+                                     Padding="0,1"
+                                     Command="{Binding ExpirationUpCommand}"
+                                     CommandParameter="{Binding Path=SelectedItem, ElementName=LockTraderGrid}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Exp" />
+                            <TextBlock Margin="0,2,0,0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="Marlett"
+                                       Text="5" />
+                        </StackPanel>
+                    </dx:SimpleButton>
+
+                    <dx:SimpleButton Grid.Row="0"
+                                     Grid.Column="3"
+                                     Width="50"
+                                     Height="22"
+                                     Margin="5,3,0,0"
+                                     Padding="0,1"
+                                     Command="{Binding StrikeUpCommand}"
+                                     CommandParameter="{Binding Path=SelectedItem, ElementName=LockTraderGrid}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Strike" />
+                            <TextBlock Margin="0,2,0,0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="Marlett"
+                                       Text="5" />
+                        </StackPanel>
+                    </dx:SimpleButton>
+
+                    <dxe:CheckEdit Grid.Row="1"
+                                   Grid.Column="1"
+                                   VerticalAlignment="Center"
+                                   Content="No Invalids"
+                                   EditValue="{Binding AvoidInvalid}"
+                                   IsEnabled="{Binding Path=IsChecked, ElementName=permNewToggleSwitch, Converter={StaticResource InverseBooleanConverter}}" />
+
+                    <dx:SimpleButton Grid.Row="1"
+                                     Grid.Column="2"
+                                     Width="50"
+                                     Height="22"
+                                     Margin="5,3,0,0"
+                                     Padding="0,1"
+                                     Command="{Binding ExpirationDownCommand}"
+                                     CommandParameter="{Binding Path=SelectedItem, ElementName=LockTraderGrid}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Exp" />
+                            <TextBlock Margin="0,2,0,0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="Marlett"
+                                       Text="6" />
+                        </StackPanel>
+                    </dx:SimpleButton>
+
+                    <dx:SimpleButton Grid.Row="1"
+                                     Grid.Column="3"
+                                     Width="50"
+                                     Height="22"
+                                     Margin="5,3,0,0"
+                                     Padding="0,1"
+                                     Command="{Binding StrikeDownCommand}"
+                                     CommandParameter="{Binding Path=SelectedItem, ElementName=LockTraderGrid}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Strike" />
+                            <TextBlock Margin="0,2,0,0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="Marlett"
+                                       Text="6" />
+                        </StackPanel>
+                    </dx:SimpleButton>
+
+                    <dxe:CheckEdit Name="DeltaCapCheckEdit"
+                                   Grid.Row="2"
+                                   Grid.Column="1"
+                                   Margin="0,3,0,0"
+                                   Content="Delta Range"
+                                   EditValue="{Binding BasketSettings.DeltaCapEnabled}" />
+
+                    <dxe:SpinEdit Grid.Row="2"
+                                  Grid.Column="2"
+                                  Width="50"
+                                  Margin="5,3,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding BasketSettings.DeltaCapLowerBound, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.01"
+                                  IsEnabled="{Binding Path=IsChecked, ElementName=DeltaCapCheckEdit}"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <dxe:SpinEdit Grid.Row="2"
+                                  Grid.Column="3"
+                                  Width="50"
+                                  Margin="5,3,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding BasketSettings.DeltaCapUpperBound, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.01"
+                                  IsEnabled="{Binding Path=IsChecked, ElementName=DeltaCapCheckEdit}"
+                                  Mask="N2"
+                                  MinValue="{Binding BasketSettings.DeltaCapLowerBound}"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                </Grid>
+            </dxlc:GroupBox>
+
+            <dxlc:GroupBox Name="SubmitWithDelaySettingsSubModule"
+                           Margin="5,0,0,0"
+                           Padding="10,5">
+                <dxlc:GroupBox.Header>
+                    <Grid Height="22">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <Label Padding="0"
+                               VerticalAlignment="Center"
+                               Content="Order Submit"
+                               FontWeight="Bold"
+                               Foreground="#AFAFB0"
+                               IsHitTestVisible="False" />
+
+                        <dxe:ToggleSwitch Grid.Column="1"
+                                          Margin="0,0,5,0"
+                                          HorizontalAlignment="Right"
+                                          VerticalAlignment="Center"
+                                          AnimationMode="Always"
+                                          CheckedStateContent="Enabled"
+                                          ContentPlacement="Inside"
+                                          FontSize="11"
+                                          IsChecked="{Binding BasketSettings.SubmitWithDelayEnabled}"
+                                          ToggleSwitchHeight="16"
+                                          ToggleSwitchWidth="70"
+                                          UncheckedStateContent="Disabled" />
+                    </Grid>
+                </dxlc:GroupBox.Header>
+                <Grid Margin="0,5,0,0"
+                      IsEnabled="{Binding BasketSettings.SubmitWithDelayEnabled}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Row="0"
+                           Grid.Column="0"
+                           Margin="0,0,0,0"
+                           VerticalAlignment="Center"
+                           Content="Submit Delay Range" />
+
+                    <dxe:SpinEdit Grid.Row="0"
+                                  Grid.Column="1"
+                                  Width="60"
+                                  Margin="5,0,0,0"
+                                  HorizontalAlignment="Left"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.SubmitWithDelayInterval, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  MinValue="{Binding OmsCore.Config.SubmitWithDelayIntervalMin}"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <dxe:SpinEdit Grid.Row="0"
+                                  Grid.Column="2"
+                                  Width="60"
+                                  Margin="5,0,0,0"
+                                  HorizontalAlignment="Left"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.SubmitWithDelayIntervalEnd, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  MinValue="{Binding BasketSettings.SubmitWithDelayInterval}"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <dxe:CheckEdit Grid.Row="0"
+                                   Grid.Column="3"
+                                   Margin="5,0,0,0"
+                                   HorizontalAlignment="Left"
+                                   Content="Start from selected row"
+                                   EditValue="{Binding BasketSettings.StartProcessingFromSelectedRow}" />
+
+                    <Label Grid.Row="1"
+                           Grid.Column="0"
+                           Margin="0,0,0,0"
+                           VerticalAlignment="Center"
+                           Content="Cancel On Fills (Sub)" />
+
+                    <dxe:SpinEdit Grid.Row="1"
+                                  Grid.Column="1"
+                                  Grid.ColumnSpan="2"
+                                  Width="130"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.CancelOnAmountOfFillsCount, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  MaxValue="{Binding OmsCore.Config.MaxCancelOnLimitV2}"
+                                  MinValue="1"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <dxe:CheckEdit Grid.Row="1"
+                                   Grid.Column="3"
+                                   Margin="5,0,0,0"
+                                   Content="Randomize on submit"
+                                   EditValue="{Binding BasketSettings.Randomize}" />
+
+                    <dxe:CheckEdit Grid.Row="2"
+                                   Grid.Column="0"
+                                   Margin="0,0,0,0"
+                                   HorizontalAlignment="Left"
+                                   Content="Max Resting"
+                                   EditValue="{Binding BasketSettings.MaxRestingOrdersEnabled}" />
+
+                    <dxe:SpinEdit Grid.Row="2"
+                                  Grid.Column="1"
+                                  Grid.ColumnSpan="2"
+                                  Width="130"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.MaxRestingOrdersCount, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  IsEnabled="{Binding BasketSettings.MaxRestingOrdersEnabled}"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <dxe:CheckEdit Grid.Row="2"
+                                   Grid.Column="3"
+                                   Margin="5,0,0,0"
+                                   Content="Open Ticket on Fill"
+                                   EditValue="{Binding BasketSettings.OpenTicketForFills}" />
+                </Grid>
+            </dxlc:GroupBox>
+
+            <dxlc:GroupBox Name="ResubmitSettingsSubModule"
+                           Margin="5,0,0,0"
+                           Padding="10,5">
+
+                <dxlc:GroupBox.Header>
+                    <Grid Height="22">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                               Padding="0"
+                               VerticalAlignment="Center"
+                               Content="Resubmit On Fill"
+                               FontWeight="Bold"
+                               Foreground="#AFAFB0"
+                               IsHitTestVisible="False" />
+
+                        <dxe:ToggleSwitch Grid.Column="2"
+                                          Margin="0,0,5,0"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          CheckedStateContent="Enabled"
+                                          ContentPlacement="Inside"
+                                          FontSize="11"
+                                          IsChecked="{Binding BasketSettings.AutomationConfig.LockTraderResubmitOnFillEnabled}"
+                                          ToggleSwitchHeight="16"
+                                          ToggleSwitchWidth="70"
+                                          UncheckedStateContent="Disabled" />
+                    </Grid>
+                </dxlc:GroupBox.Header>
+
+                <Grid Margin="0,5,0,0"
+                      IsEnabled="{Binding BasketSettings.AutomationConfig.LockTraderResubmitOnFillEnabled}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+
+                    <StackPanel Grid.Row="0"
+                                Grid.Column="0"
+                                Orientation="Horizontal">
+
+                        <Label Width="125"
+                               VerticalAlignment="Center"
+                               Content="Max Resubmit Count" />
+
+                        <dxe:SpinEdit Width="72"
+                                      Margin="5,0,0,0"
+                                      HorizontalContentAlignment="Right"
+                                      AllowSpinOnMouseWheel="True"
+                                      Background="Transparent"
+                                      EditValue="{Binding BasketSettings.AutomationConfig.LockTraderResubmitOnFillMaxCount, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      Increment="1"
+                                      Mask="N0"
+                                      MaskUseAsDisplayFormat="True"
+                                      MaxValue="10"
+                                      MinValue="0"
+                                      PreviewMouseUp="SelectAll"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+                    </StackPanel>
+
+
+                    <StackPanel Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="0,2,0,0"
+                                Orientation="Horizontal">
+
+                        <Label Width="125"
+                               VerticalAlignment="Center"
+                               Content="Reset Qty On Resubmit" />
+
+                        <dxe:ToggleSwitch Margin="5,0,5,0"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          CheckedStateContent="On"
+                                          ContentPlacement="Inside"
+                                          FontSize="11"
+                                          IsChecked="{Binding BasketSettings.AutomationConfig.LockTraderResetQtyOnResubmit}"
+                                          ToggleSwitchHeight="22"
+                                          ToggleSwitchWidth="72"
+                                          UncheckedStateContent="Off" />
+                    </StackPanel>
+
+                </Grid>
+            </dxlc:GroupBox>
+
+            <dxlc:GroupBox Name="AutomationSettingsSubModule"
+                           Margin="5,0,0,0"
+                           Padding="10,5">
+
+                <dxlc:GroupBox.Header>
+                    <Grid Height="22">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                               Padding="0"
+                               VerticalAlignment="Center"
+                               Content="Auto Close"
+                               FontWeight="Bold"
+                               Foreground="#AFAFB0"
+                               IsHitTestVisible="False" />
+
+                        <dxe:ToggleSwitch Grid.Column="2"
+                                          Margin="0,0,5,0"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          CheckedStateContent="Enabled"
+                                          ContentPlacement="Inside"
+                                          FontSize="11"
+                                          IsChecked="{Binding BasketSettings.AutomationConfig.LockTraderAutoCloseEnabled}"
+                                          ToggleSwitchHeight="16"
+                                          ToggleSwitchWidth="70"
+                                          UncheckedStateContent="Disabled" />
+                    </Grid>
+                </dxlc:GroupBox.Header>
+
+                <Grid Margin="0,5,0,0"
+                      IsEnabled="{Binding BasketSettings.AutomationConfig.LockTraderAutoCloseEnabled}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="5,0,0,0"
+                            Padding="2,1"
+                            CornerRadius="2">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="125" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label Width="55"
+                                   VerticalAlignment="Center"
+                                   Content="Edge" />
+
+                            <dxe:ComboBoxEdit Grid.Column="1"
+                                              Width="75"
+                                              Margin="0,0,0,0"
+                                              HorizontalAlignment="Left"
+                                              ApplyItemTemplateToSelectedItem="True"
+                                              Background="Transparent"
+                                              EditValue="{Binding BasketSettings.AutomationConfig.LoopCloseEdgeType, UpdateSourceTrigger=PropertyChanged}"
+                                              IsTextEditable="False"
+                                              ItemsSource="{Binding LoopCloseEdgeTypes}" />
+
+                            <dxe:SpinEdit Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,0,0,0"
+                                          HorizontalAlignment="Left"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          Background="Transparent"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.ContraFishEdge, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment="0.01"
+                                          Mask="####0.00#"
+                                          MaskUseAsDisplayFormat="True"
+                                          MinValue="{Binding BasketSettings.AutomationConfig.CloseEdgeMinValue}"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True"
+                                          Visibility="{Binding BasketSettings.AutomationConfig.LoopCloseEdgeType, Converter={StaticResource SizeUpTypeToVisibilityConverter}, ConverterParameter='Static'}" />
+
+                            <dx:SimpleButton Grid.Column="2"
+                                             Width="120"
+                                             Margin="5,0,0,0"
+                                             Padding="0,0,7,0"
+                                             HorizontalAlignment="Left"
+                                             HorizontalContentAlignment="Right"
+                                             Background="Transparent"
+                                             Command="{Binding ShowLoopCloseEdgeConfigPanelCommand}"
+                                             Glyph="{Binding BasketSettings.AutomationConfig.DynamicEdgeModel, Converter={StaticResource NullToCheckGlyphConverter}}"
+                                             GlyphWidth="15"
+                                             ToolTip="{Binding BasketSettings.AutomationConfig.DynamicEdgeModel.Title}"
+                                             Visibility="{Binding BasketSettings.AutomationConfig.LoopCloseEdgeType, Converter={StaticResource SizeUpTypeToVisibilityConverter}, ConverterParameter='Dynamic'}">
+                                <TextBlock Width="110"
+                                           HorizontalAlignment="Stretch"
+                                           Text="{Binding BasketSettings.AutomationConfig.DynamicEdgeModel.Title, StringFormat='{}{0}', TargetNullValue='Config'}" />
+                            </dx:SimpleButton>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="0"
+                            Grid.Column="2"
+                            Margin="5,0,0,0"
+                            Padding="2,1"
+                            CornerRadius="2">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Width="40"
+                                   VerticalAlignment="Center"
+                                   Content="Mode" />
+
+                            <dxe:ComboBoxEdit Width="97"
+                                              ApplyItemTemplateToSelectedItem="True"
+                                              Background="Transparent"
+                                              EditValue="{Binding BasketSettings.AutomationConfig.ClosingMode}"
+                                              IsSynchronizedWithCurrentItem="True"
+                                              IsTextEditable="False"
+                                              ItemsSource="{Binding ClosingTypes}">
+                                <dxe:ComboBoxEdit.ItemTemplate>
+                                    <DataTemplate>
+                                        <Label Padding="0,0.5"
+                                               HorizontalAlignment="Center"
+                                               Content="{Binding Converter={StaticResource DisplayTextCamelCaseConverter}}"
+                                               FontSize="11" />
+                                    </DataTemplate>
+                                </dxe:ComboBoxEdit.ItemTemplate>
+                            </dxe:ComboBoxEdit>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="5,2,0,0"
+                            Padding="2,1"
+                            CornerRadius="2">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="125" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label Width="55"
+                                   VerticalAlignment="Center"
+                                   Content="Interval" />
+
+                            <dxe:ComboBoxEdit Grid.Column="1"
+                                              Width="75"
+                                              Margin="0,0,0,0"
+                                              HorizontalAlignment="Left"
+                                              ApplyItemTemplateToSelectedItem="True"
+                                              Background="Transparent"
+                                              EditValue="{Binding BasketSettings.AutomationConfig.LoopIntervalType, UpdateSourceTrigger=PropertyChanged}"
+                                              IsTextEditable="False"
+                                              ItemsSource="{Binding LoopIntervalTypes}" />
+
+                            <dxe:SpinEdit Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,0,0,0"
+                                          HorizontalAlignment="Left"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          Background="Transparent"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.ContraFishInterval, UpdateSourceTrigger=PropertyChanged}"
+                                          EditValueType="{x:Type sys:Int32}"
+                                          Increment="1"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True"
+                                          Visibility="{Binding BasketSettings.AutomationConfig.LoopIntervalType, Converter={StaticResource SizeUpTypeToVisibilityConverter}, ConverterParameter='Static'}" />
+
+                            <dx:SimpleButton Grid.Column="2"
+                                             Width="120"
+                                             Margin="5,0,0,0"
+                                             Padding="0,0,7,0"
+                                             HorizontalAlignment="Left"
+                                             HorizontalContentAlignment="Right"
+                                             Background="Transparent"
+                                             Command="{Binding ShowDynamicIntervalConfigPanelCommand}"
+                                             Content="Config"
+                                             Glyph="{Binding BasketSettings.AutomationConfig.DynamicIntervalModel, Converter={StaticResource NullToCheckGlyphConverter}}"
+                                             GlyphWidth="15"
+                                             ToolTip="{Binding BasketSettings.AutomationConfig.DynamicIntervalModel.Title}"
+                                             Visibility="{Binding BasketSettings.AutomationConfig.LoopIntervalType, Converter={StaticResource SizeUpTypeToVisibilityConverter}, ConverterParameter='Dynamic'}" />
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="1"
+                            Grid.Column="2"
+                            Margin="5,2,0,0"
+                            Padding="2,1"
+                            CornerRadius="2">
+                        <StackPanel Orientation="Horizontal">
+
+                            <Label Width="65"
+                                   VerticalAlignment="Center"
+                                   Content="Max Loss" />
+
+                            <dxe:SpinEdit Width="72"
+                                          Margin="0,0,0,0"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          Background="Transparent"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.LoopMaxLoss, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment="0.01"
+                                          Mask="####0.00#"
+                                          MaskUseAsDisplayFormat="True"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="2"
+                            Grid.Column="0"
+                            Margin="5,2,0,0"
+                            Padding="2,1"
+                            CornerRadius="2">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="125" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label Width="55"
+                                   VerticalAlignment="Center"
+                                   Content="Px Inc" />
+
+                            <dxe:ComboBoxEdit Grid.Column="1"
+                                              Width="75"
+                                              Margin="0,0,0,0"
+                                              HorizontalAlignment="Left"
+                                              ApplyItemTemplateToSelectedItem="True"
+                                              Background="Transparent"
+                                              EditValue="{Binding BasketSettings.AutomationConfig.LoopIncrementType, UpdateSourceTrigger=PropertyChanged}"
+                                              IsTextEditable="False"
+                                              ItemsSource="{Binding LoopIncrementTypes}" />
+
+                            <dxe:SpinEdit Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,0,0,0"
+                                          HorizontalAlignment="Left"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          Background="Transparent"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.ContraFishPriceIncrement, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment="0.01"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True"
+                                          Visibility="{Binding BasketSettings.AutomationConfig.LoopIncrementType, Converter={StaticResource SizeUpTypeToVisibilityConverter}, ConverterParameter='Static'}" />
+
+                            <dx:SimpleButton Grid.Column="2"
+                                             Width="120"
+                                             Margin="5,0,0,0"
+                                             Padding="0,0,7,0"
+                                             HorizontalContentAlignment="Right"
+                                             Background="Transparent"
+                                             Command="{Binding ShowLoopIncrementConfigPanelCommand}"
+                                             Glyph="{Binding BasketSettings.AutomationConfig.LoopIncrementConfigModel, Converter={StaticResource NullToCheckGlyphConverter}}"
+                                             GlyphWidth="15"
+                                             ToolTip="{Binding BasketSettings.AutomationConfig.LoopIncrementConfigModel.Title}"
+                                             Visibility="{Binding BasketSettings.AutomationConfig.LoopIncrementType, Converter={StaticResource SizeUpTypeToVisibilityConverter}, ConverterParameter='Dynamic'}">
+                                <TextBlock Width="110"
+                                           HorizontalAlignment="Stretch"
+                                           Text="{Binding BasketSettings.AutomationConfig.LoopIncrementConfigModel.Title, StringFormat='{}{0}', TargetNullValue='Config'}" />
+                            </dx:SimpleButton>
+                        </Grid>
+                    </Border>
+
+                    <dxe:CheckEdit Grid.Row="2"
+                                   Grid.Column="2"
+                                   Margin="5,2,0,0"
+                                   HorizontalAlignment="Left"
+                                   Content="Leave Resting"
+                                   EditValue="{Binding BasketSettings.AutomationConfig.LeaveAutoCloseResting}" />
+
+                </Grid>
+            </dxlc:GroupBox>
+
+            <dxlc:GroupBox Name="AutoCancelSettingsSubModule"
+                           Margin="5,0,0,0"
+                           Padding="10,5">
+
+                <dxlc:GroupBox.Header>
+                    <Grid Height="22">
+                        <Label Padding="0"
+                               VerticalAlignment="Center"
+                               Content="Auto Cancel"
+                               FontWeight="Bold"
+                               Foreground="#AFAFB0"
+                               IsHitTestVisible="False" />
+                    </Grid>
+                </dxlc:GroupBox.Header>
+
+                <Grid Margin="0,5,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Row="0"
+                                Grid.Column="0"
+                                Background="{Binding BasketSettings.CancelWithEdgeToTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}">
+                        <dx:SimpleButton Width="65"
+                                         Margin="5,5,5,2"
+                                         Background="{Binding BasketSettings.CancelWithEdgeToTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                         Command="{Binding ToggleCancelWithEdgeToTheoCommand}"
+                                         Content="Theo"
+                                         Style="{StaticResource CancelButtonStyle}" />
+
+                        <dxe:SpinEdit Width="65"
+                                      Margin="5,0,5,5"
+                                      HorizontalContentAlignment="Right"
+                                      AllowSpinOnMouseWheel="True"
+                                      Background="{Binding BasketSettings.CancelWithEdgeToTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                      EditValue="{Binding BasketSettings.CancelWithTheoEdge, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                      EditValueType="{x:Type sys:Double}"
+                                      Increment="0.01"
+                                      Mask="####0.00#"
+                                      MaskUseAsDisplayFormat="True"
+                                      MinValue="0"
+                                      PreviewMouseUp="SelectAll"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand Command="{Binding CheckForAutoCancelCommand}"
+                                                       EventName="EditValueChanged" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:SpinEdit>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0"
+                                Grid.Column="1"
+                                Background="{Binding BasketSettings.CancelWithEdgeToAdjTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}">
+                        <dx:SimpleButton Width="65"
+                                         Margin="5,5,5,2"
+                                         Padding="0,3"
+                                         Background="{Binding BasketSettings.CancelWithEdgeToAdjTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                         Command="{Binding ToggleCancelWithEdgeToAdjTheoCommand}"
+                                         Content="Adj Theo"
+                                         Style="{StaticResource CancelButtonStyle}" />
+
+                        <dxe:SpinEdit Width="65"
+                                      Margin="5,0,5,5"
+                                      HorizontalContentAlignment="Right"
+                                      AllowSpinOnMouseWheel="True"
+                                      Background="{Binding BasketSettings.CancelWithEdgeToAdjTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                      EditValue="{Binding BasketSettings.CancelWithAdjTheoEdge, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                      EditValueType="{x:Type sys:Double}"
+                                      Increment="0.01"
+                                      Mask="####0.00#"
+                                      MaskUseAsDisplayFormat="True"
+                                      MinValue="0"
+                                      PreviewMouseUp="SelectAll"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand Command="{Binding CheckForAutoCancelCommand}"
+                                                       EventName="EditValueChanged" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:SpinEdit>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0"
+                                Grid.Column="2"
+                                Background="{Binding BasketSettings.CancelWithMaxSizeEnabled, Converter={StaticResource BooleanToColorConverterRed}}">
+                        <dx:SimpleButton Width="65"
+                                         Height="24"
+                                         Margin="5,5,5,2"
+                                         Padding="0,3"
+                                         Background="{Binding BasketSettings.CancelWithMaxSizeEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                         Command="{Binding ToggleCancelWithMaxSizeCommand}"
+                                         Content="Max Size"
+                                         Style="{StaticResource CancelButtonStyle}" />
+
+                        <dxe:SpinEdit Width="65"
+                                      Margin="5,0,5,5"
+                                      HorizontalContentAlignment="Right"
+                                      AllowSpinOnMouseWheel="True"
+                                      Background="{Binding BasketSettings.CancelWithMaxSizeEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                      EditValue="{Binding BasketSettings.CancelWithMaxSizeLimit, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      Increment="1"
+                                      Mask="N0"
+                                      MaskUseAsDisplayFormat="True"
+                                      MinValue="0"
+                                      PreviewMouseUp="SelectAll"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand Command="{Binding CheckForAutoCancelCommand}"
+                                                       EventName="EditValueChanged" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:SpinEdit>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0"
+                                Grid.Column="3"
+                                Background="{Binding BasketSettings.CancelWithUnderlyingPxEnabled, Converter={StaticResource BooleanToColorConverterRed}}">
+                        <dx:SimpleButton Width="65"
+                                         Margin="5,5,5,2"
+                                         Background="{Binding BasketSettings.CancelWithUnderlyingPxEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                         Command="{Binding ToggleCancelWithUnderlyingPxCommand}"
+                                         Content="Under"
+                                         Style="{StaticResource CancelButtonStyle}" />
+
+                        <dxe:SpinEdit Width="65"
+                                      Margin="5,0,5,5"
+                                      HorizontalContentAlignment="Right"
+                                      AllowSpinOnMouseWheel="True"
+                                      Background="{Binding BasketSettings.CancelWithUnderlyingPxEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                      EditValue="{Binding BasketSettings.CancelWithUnderlyingPx, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                      EditValueType="{x:Type sys:Double}"
+                                      Increment="0.01"
+                                      Mask="####0.00#"
+                                      MaskUseAsDisplayFormat="True"
+                                      MinValue="0"
+                                      PreviewMouseUp="SelectAll"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand Command="{Binding CheckForAutoCancelCommand}"
+                                                       EventName="EditValueChanged" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:SpinEdit>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0"
+                                Grid.Column="4"
+                                Background="{Binding BasketSettings.CancelWithUnderlyingDeltaPxEnabled, Converter={StaticResource BooleanToColorConverterRed}}">
+                        <dx:SimpleButton Width="65"
+                                         Margin="5,5,5,2"
+                                         Padding="0,4.3"
+                                         Background="{Binding BasketSettings.CancelWithUnderlyingDeltaPxEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                         Command="{Binding ToggleCancelWithUnderlyingDeltaPxCommand}"
+                                         Content="Under X Delta"
+                                         FontSize="10"
+                                         Style="{StaticResource CancelButtonStyle}" />
+
+                        <dxe:SpinEdit Width="65"
+                                      Margin="5,0,5,5"
+                                      HorizontalContentAlignment="Right"
+                                      AllowSpinOnMouseWheel="True"
+                                      Background="{Binding BasketSettings.CancelWithUnderlyingDeltaPxEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                      EditValue="{Binding BasketSettings.CancelWithUnderlyingDeltaPx, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Double}"
+                                      Increment="0.01"
+                                      Mask="####0.00#"
+                                      MaskUseAsDisplayFormat="True"
+                                      MinValue="0"
+                                      PreviewMouseUp="SelectAll"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand Command="{Binding CheckForAutoCancelCommand}"
+                                                       EventName="EditValueChanged" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:SpinEdit>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0"
+                                Grid.Column="5"
+                                Background="{Binding BasketSettings.CancelWithEdgeToMidEnabled, Converter={StaticResource BooleanToColorConverterRed}}">
+                        <dx:SimpleButton Width="65"
+                                         Margin="5,5,5,2"
+                                         Background="{Binding BasketSettings.CancelWithEdgeToMidEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                         Command="{Binding ToggleCancelWithEdgeToMidCommand}"
+                                         Content="Mid"
+                                         Style="{StaticResource CancelButtonStyle}" />
+
+                        <dxe:SpinEdit Width="65"
+                                      Margin="5,0,5,5"
+                                      HorizontalContentAlignment="Right"
+                                      AllowSpinOnMouseWheel="True"
+                                      Background="{Binding BasketSettings.CancelWithEdgeToMidEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                      EditValue="{Binding BasketSettings.CancelWithMidEdge, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                      EditValueType="{x:Type sys:Double}"
+                                      Increment="0.01"
+                                      Mask="####0.00#"
+                                      MaskUseAsDisplayFormat="True"
+                                      MinValue="0"
+                                      PreviewMouseUp="SelectAll"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand Command="{Binding CheckForAutoCancelCommand}"
+                                                       EventName="EditValueChanged" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:SpinEdit>
+                    </StackPanel>
+
+
+                    <StackPanel Grid.Row="0"
+                                Grid.Column="6"
+                                Background="{Binding BasketSettings.CancelWithOrderPriceEdgeToTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}">
+                        <dx:SimpleButton Width="65"
+                                         Height="24"
+                                         Margin="5,5,5,2"
+                                         Padding="0,3"
+                                         Background="{Binding BasketSettings.CancelWithOrderPriceEdgeToTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                         Command="{Binding ToggleAutoCancelCommand}"
+                                         CommandParameter="{x:Static enums:AutoCancel.EdgeToTheo}"
+                                         Content="Edge 2 Theo"
+                                         FontSize="11"
+                                         Style="{StaticResource CancelButtonStyle}" />
+
+                        <dxe:SpinEdit Width="65"
+                                      Margin="5,0,5,5"
+                                      HorizontalContentAlignment="Right"
+                                      AllowSpinOnMouseWheel="True"
+                                      Background="{Binding BasketSettings.CancelWithOrderPriceEdgeToTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                      EditValue="{Binding BasketSettings.CancelWithOrderPriceEdgeToTheo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                      EditValueType="{x:Type sys:Double}"
+                                      Increment="0.01"
+                                      Mask="####0.00#"
+                                      MaskUseAsDisplayFormat="True"
+                                      MinValue="0"
+                                      PreviewMouseUp="SelectAll"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand Command="{Binding CheckForAutoCancelCommand}"
+                                                       EventName="EditValueChanged" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:SpinEdit>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0"
+                                Grid.RowSpan="2"
+                                Grid.Column="7"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                Background="{Binding BasketSettings.CancelWithOrderPriceEdgeToModelTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}">
+                        <dx:SimpleButton Width="65"
+                                         Height="24"
+                                         Margin="5,5,5,2"
+                                         Padding="0,4"
+                                         Background="{Binding BasketSettings.CancelWithOrderPriceEdgeToModelTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                         Command="{Binding ToggleAutoCancelCommand}"
+                                         CommandParameter="{x:Static enums:AutoCancel.EdgeToModelTheo}"
+                                         Content="{Binding BasketSettings.AutoCancelTheoModel, Converter={StaticResource TheoModelToDisplayTextConverter}, ConverterParameter='Edge 2'}"
+                                         FontSize="10"
+                                         Style="{StaticResource CancelButtonStyle}" />
+
+                        <dxe:SpinEdit Width="65"
+                                      Margin="5,0,5,0"
+                                      HorizontalContentAlignment="Right"
+                                      AllowSpinOnMouseWheel="True"
+                                      Background="{Binding BasketSettings.CancelWithOrderPriceEdgeToModelTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                      EditValue="{Binding BasketSettings.CancelWithOrderPriceEdgeToModelTheo, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Double}"
+                                      Increment="0.01"
+                                      Mask="####0.00#"
+                                      MaskUseAsDisplayFormat="True"
+                                      PreviewMouseUp="SelectAll"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand Command="{Binding CheckForAutoCancelCommand}"
+                                                       EventName="EditValueChanged" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:SpinEdit>
+
+                        <dxe:ComboBoxEdit Width="65"
+                                          Margin="5,2,5,5"
+                                          ApplyItemTemplateToSelectedItem="True"
+                                          Background="{Binding BasketSettings.CancelWithOrderPriceEdgeToModelTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                          EditValue="{Binding BasketSettings.AutoCancelTheoModel, UpdateSourceTrigger=PropertyChanged}"
+                                          IsTextEditable="False"
+                                          ItemsSource="{Binding TheoModels}">
+                            <dxe:ComboBoxEdit.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Padding="0,0.5"
+                                           HorizontalAlignment="Center"
+                                           Content="{Binding Converter={StaticResource DisplayTextCamelCaseConverter}}"
+                                           FontSize="11" />
+                                </DataTemplate>
+                            </dxe:ComboBoxEdit.ItemTemplate>
+                        </dxe:ComboBoxEdit>
+                    </StackPanel>
+
+
+                    <StackPanel Grid.Row="0"
+                                Grid.Column="8"
+                                Background="{Binding BasketSettings.CancelWithTimerEnabled, Converter={StaticResource BooleanToColorConverterRed}}">
+                        <dx:SimpleButton Width="65"
+                                         Margin="5,5,5,2"
+                                         Background="{Binding BasketSettings.CancelWithTimerEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                         Command="{Binding ToggleCancelWithTimerCommand}"
+                                         Content="Timer"
+                                         Style="{StaticResource CancelButtonStyle}" />
+
+                        <dxe:SpinEdit Width="65"
+                                      Margin="5,0,5,5"
+                                      HorizontalContentAlignment="Right"
+                                      AllowSpinOnMouseWheel="True"
+                                      Background="{Binding BasketSettings.CancelWithTimerEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                      EditValue="{Binding BasketSettings.CancelWithTimer, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                      EditValueType="{x:Type sys:Double}"
+                                      MaxValue="{Binding BasketSettings.MaxCancelDelay}"
+                                      MinValue="0"
+                                      PreviewMouseUp="SelectAll"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+                    </StackPanel>
+
+                    <Grid Grid.Row="1"
+                          Grid.Column="0"
+                          Grid.ColumnSpan="6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <dxe:CheckEdit Grid.Column="0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Content="Resubmit After Cancel"
+                                       IsChecked="{Binding BasketSettings.ResubmitAfterCancel}" />
+
+                        <dxe:CheckEdit Grid.Column="1"
+                                       Margin="5,0,0,0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Content="Use Hedge Under"
+                                       IsChecked="{Binding BasketSettings.UseHedgeUnderlyingForAutoCancel}" />
+
+                        <dxe:CheckEdit Grid.Column="2"
+                                       Margin="5,0,0,0"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Center"
+                                       Content="Cancel On Close"
+                                       IsChecked="{Binding BasketSettings.CancelOnClose}" />
+
+                        <dxe:CheckEdit Grid.Column="3"
+                                       Margin="5,0,0,0"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Center"
+                                       Content="Queue Cancels"
+                                       IsChecked="{Binding BasketSettings.QueueCancel}" />
+                    </Grid>
+                </Grid>
+            </dxlc:GroupBox>
+
+            <dxlc:GroupBox Name="SubscriptionManagerSettingsSubModule"
+                           Width="325"
+                           Margin="5,0,0,0"
+                           Padding="10,5">
+                <dxlc:GroupBox.Header>
+                    <Grid Height="22">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                               Padding="0"
+                               VerticalAlignment="Center"
+                               Content="Subscription Manager"
+                               FontWeight="Bold"
+                               Foreground="#AFAFB0"
+                               IsHitTestVisible="False" />
+                    </Grid>
+                </dxlc:GroupBox.Header>
+                <Grid Margin="0,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <dx:SimpleButton Grid.Row="0"
+                                     Grid.Column="0"
+                                     Margin="5,5,5,2"
+                                     ButtonKind="Toggle"
+                                     Command="{Binding SubscriptionManagerChangedCommand}"
+                                     CommandParameter="Market Data"
+                                     Content="Quote"
+                                     IsChecked="{Binding BasketSettings.SubscribeToMarketData}"
+                                     Style="{StaticResource SubscriptionButtonStyle}" />
+                    <dx:SimpleButton Grid.Row="0"
+                                     Grid.Column="1"
+                                     Margin="5,5,5,0"
+                                     VerticalAlignment="Top"
+                                     ButtonKind="Toggle"
+                                     Command="{Binding SubscriptionManagerChangedCommand}"
+                                     CommandParameter="Underlying"
+                                     Content="Under"
+                                     IsChecked="{Binding BasketSettings.SubscribeToUnderlying}"
+                                     Style="{StaticResource SubscriptionButtonStyle}" />
+                    <dx:SimpleButton Grid.Row="0"
+                                     Grid.Column="2"
+                                     Margin="5,5,5,2"
+                                     ButtonKind="Toggle"
+                                     Command="{Binding SubscriptionManagerChangedCommand}"
+                                     CommandParameter="EMA"
+                                     Content="EMA"
+                                     IsChecked="{Binding BasketSettings.SubscribeToEma}"
+                                     Style="{StaticResource SubscriptionButtonStyle}" />
+                    <dx:SimpleButton Grid.Row="1"
+                                     Grid.Column="0"
+                                     Margin="5,5,5,2"
+                                     VerticalAlignment="Top"
+                                     ButtonKind="Toggle"
+                                     Command="{Binding SubscriptionManagerChangedCommand}"
+                                     CommandParameter="Hanweck"
+                                     Content="Greeks"
+                                     IsChecked="{Binding BasketSettings.SubscribeToHanweck}"
+                                     Style="{StaticResource SubscriptionButtonStyle}" />
+                    <dx:SimpleButton Grid.Row="1"
+                                     Grid.Column="1"
+                                     Margin="5,5,5,2"
+                                     VerticalAlignment="Top"
+                                     ButtonKind="Toggle"
+                                     Command="{Binding SubscriptionManagerChangedCommand}"
+                                     CommandParameter="Derivatives"
+                                     Content="Adj Theo"
+                                     IsChecked="{Binding BasketSettings.SubscribeToDerivatives}"
+                                     Style="{StaticResource SubscriptionButtonStyle}" />
+
+                    <dx:SimpleButton Grid.Row="1"
+                                     Grid.Column="2"
+                                     Margin="5,5,5,2"
+                                     ButtonKind="Toggle"
+                                     Command="{Binding ToggleTheoLockCommand}"
+                                     CommandParameter="LockTheos"
+                                     Content="Lock Theos"
+                                     IsChecked="{Binding BasketSettings.LockTheos}"
+                                     Style="{StaticResource SubscriptionButtonStyle}" />
+                </Grid>
+            </dxlc:GroupBox>
+        </StackPanel>
+        <Grid Grid.Row="2"
+              Grid.Column="1"
+              Grid.ColumnSpan="3"
+              Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0"
+                        Margin="2,0,0,0"
+                        HorizontalAlignment="Left"
+                        Orientation="Horizontal">
+                <dx:SimpleButton Name="ExpandCollapseButton"
+                                 Click="LockTraderGrid_ExpandCollapse"
+                                 Glyph="{dx:DXImage SvgImages/Spreadsheet/FillDown.svg}"
+                                 GlyphHeight="20"
+                                 GlyphWidth="20" />
+                <dx:SimpleButton Margin="5,0,0,0"
+                                 Command="{Binding ReverseSidesCommand}"
+                                 Content="Reverse Sides"
+                                 Glyph="{dx:DXImage SvgImages/Spreadsheet/SortFields.svg}"
+                                 GlyphHeight="15" />
+                <dx:SimpleButton Margin="5,0,0,0"
+                                 Command="{Binding FlipCPCommand}"
+                                 Content="Flip C/P" />
+                <dx:SimpleButton Margin="5,0,0,0"
+                                 Command="{Binding OppCPCommand}"
+                                 Content="Opp C/P" />
+                <dx:SimpleButton Margin="5,0,0,0"
+                                 Command="{Binding ModifyStagedOrdersCommand}"
+                                 Content="Modify Staged Orders" />
+                <dx:SimpleButton Margin="5,0,0,0"
+                                 Command="{Binding ModifyStagedPxQtyCommand}"
+                                 Content="Modify Staged Px/Qty" />
+                <dx:SimpleButton Margin="5,0,0,0"
+                                 Command="{Binding CleanCommand}"
+                                 Content="Clean Basket"
+                                 Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
+                                 GlyphHeight="15" />
+                <dx:SimpleButton Margin="5,0,0,0"
+                                 Command="{Binding ClearQtyCommand}"
+                                 Content="Clear Qty"
+                                 Glyph="{dx:DXImage SvgImages/Spreadsheet/Bottom10Items.svg}"
+                                 GlyphHeight="15" />
+                <dx:SimpleButton Margin="5,0,0,0"
+                                 Command="{Binding ClearStatusCommand}"
+                                 Content="Clear Status"
+                                 Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
+                                 GlyphHeight="15" />
+
+            </StackPanel>
+
+            <StackPanel Grid.Column="2"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                <dx:SimpleButton Width="100"
+                                 Command="{Binding SubmitAllCommand}"
+                                 Content="Submit All"
+                                 Glyph="{dx:DXImage SvgImages/Spreadsheet/Time.svg}"
+                                 GlyphHeight="{Binding BasketSettings.SubmitWithDelayEnabled, Converter={StaticResource BooleanToGlyphConverter}}"
+                                 GlyphWidth="{Binding BasketSettings.SubmitWithDelayEnabled, Converter={StaticResource BooleanToGlyphConverter}}"
+                                 IsEnabled="{Binding BasketSettings.SubmitWithDelayEnabled}" />
+                <dx:SimpleButton Width="100"
+                                 Margin="5,0,0,0"
+                                 Command="{Binding ModifyAllCommand}"
+                                 Content="Modify All"
+                                 Glyph="{dx:DXImage SvgImages/Spreadsheet/Time.svg}"
+                                 GlyphHeight="{Binding BasketSettings.SubmitWithDelayEnabled, Converter={StaticResource BooleanToGlyphConverter}}"
+                                 GlyphWidth="{Binding BasketSettings.SubmitWithDelayEnabled, Converter={StaticResource BooleanToGlyphConverter}}"
+                                 IsEnabled="{Binding BasketSettings.SubmitWithDelayEnabled}" />
+                <dx:SimpleButton Width="90"
+                                 Margin="5,0,0,0"
+                                 Command="{Binding CancelAllCommand}"
+                                 Content="Cancel All" />
+            </StackPanel>
+        </Grid>
+
+        <Slider x:Name="LockTraderGridScale"
+                Grid.Row="3"
+                Grid.Column="1"
+                Maximum="4"
+                Minimum="0.1"
+                Visibility="Hidden"
+                Value="1" />
+
+        <dxg:GridControl Name="LockTraderGrid"
+                         Grid.Row="3"
+                         Grid.Column="1"
+                         Grid.ColumnSpan="3"
+                         dx:DXSerializer.StoreLayoutMode="All"
+                         dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                         AutoGenerateColumns="AddNew"
+                         AutoGeneratedColumns="Grid_ColumnsPopulated"
+                         CurrentItem="{Binding SelectedItem}"
+                         CustomColumnDisplayText="GridControl_CustomColumnsDisplayText"
+                         EnableSmartColumnsGeneration="True"
+                         ItemsSource="{Binding BasketItems}"
+                         PreviewMouseWheel="OnZoomMouseWheel"
+                         SelectionMode="Row">
+            <dxg:GridControl.LayoutTransform>
+                <ScaleTransform CenterX="0" CenterY="0" ScaleX="{Binding ElementName=LockTraderGridScale, Path=Value}" ScaleY="{Binding ElementName=LockTraderGridScale, Path=Value}" />
+            </dxg:GridControl.LayoutTransform>
+            <dxg:GridControl.Resources>
+                <Style TargetType="dxg:GridColumn">
+                    <Setter Property="Visible" Value="False" />
+                    <Setter Property="AllowCellMerge" Value="False" />
+                    <Setter Property="IsSmart" Value="True" />
+                    <Setter Property="ReadOnly" Value="True" />
+                    <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                </Style>
+            </dxg:GridControl.Resources>
+            <dxmvvm:Interaction.Behaviors>
+                <services:UiUpdateService />
+            </dxmvvm:Interaction.Behaviors>
+            <dxg:GridControl.View>
+                <dxg:TableView Name="BasketTable"
+                               AllowDragDrop="True"
+                               AllowEditing="False"
+                               AutoWidth="True"
+                               CompleteRecordDragDrop="OnCompleteRecordDragDrop"
+                               DragRecordOver="TableView_DragRecordOver"
+                               DropRecord="TableView_DropRecord"
+                               EditorShowMode="MouseUp"
+                               EnableSelectedRowAppearance="True"
+                               FadeSelectionOnLostFocus="False"
+                               RowStyle="{StaticResource BasketGridStyle}"
+                               ShowGridMenu="TableView_ShowGridMenu"
+                               ShowGroupPanel="False"
+                               ShowIndicator="True"
+                               StartRecordDrag="OnStartRecordDrag">
+                    <dxg:TableView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowColumnChooserCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Column Chooser">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ClearColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Hide All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowAllColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowDefaultColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Default Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </dxg:TableView.ContextMenu>
+                    <dxg:TableView.RowCellMenuCustomizations>
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.OpenInComplexOrderTicketCommand}"
+                                           CommandParameter="{Binding Path=SelectedItem, ElementName=LockTraderGrid}"
+                                           Content="Open in Complex Order Ticket" />
+                        <dxb:BarItemSeparator />
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.RemoveSelectedCommand}"
+                                           CommandParameter="{Binding Path=SelectedItems, ElementName=LockTraderGrid}"
+                                           Content="Remove Selected" />
+                        <dxb:BarItemSeparator />
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.DuplicateOrderCommand}"
+                                           CommandParameter="{Binding Path=SelectedItem, ElementName=LockTraderGrid}"
+                                           Content="Create Duplicate Order" />
+                        <dxb:BarItemSeparator />
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.CheckAllCommand}"
+                                           Content="Check All" />
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.UncheckAllCommand}"
+                                           Content="Uncheck All" />
+                    </dxg:TableView.RowCellMenuCustomizations>
+                    <dxg:TableView.GroupValueTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="10,0,0,0"
+                                       Text="{Binding Value}" />
+                        </DataTemplate>
+                    </dxg:TableView.GroupValueTemplate>
+                </dxg:TableView>
+            </dxg:GridControl.View>
+
+            <!--  Details Grid  -->
+            <dxg:GridControl.DetailDescriptor>
+                <dxg:DataControlDetailDescriptor ItemsSourceBinding="{Binding Legs}">
+                    <dxg:DataControlDetailDescriptor.DataControl>
+                        <dxg:GridControl Name="DetailsGrid"
+                                         AutoGenerateColumns="AddNew"
+                                         CustomColumnDisplayText="GridControl_CustomColumnsDisplayText"
+                                         EnableSmartColumnsGeneration="True"
+                                         SelectionMode="Row">
+                            <dxg:GridControl.Resources>
+                                <dxe:TextEditSettings x:Key="numeric"
+                                                      Mask="##0.00"
+                                                      MaskType="Numeric"
+                                                      MaskUseAsDisplayFormat="True" />
+                                <Style TargetType="dxg:GridColumn">
+                                    <Setter Property="Visible" Value="False" />
+                                    <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                                </Style>
+                                <Style x:Key="LegRowStyle"
+                                       TargetType="dxg:RowControl">
+                                    <Style.Setters>
+                                        <Setter Property="Background" Value="{Binding Path=Row.Side, Converter={StaticResource SideToColorConverter}, ConverterParameter='BACKGROUND'}" />
+                                        <Setter Property="Foreground" Value="{Binding Path=Row.Side, Converter={StaticResource SideToColorConverter}, ConverterParameter='FOREGROUND'}" />
+                                    </Style.Setters>
+                                </Style>
+                            </dxg:GridControl.Resources>
+
+                            <dxg:GridControl.View>
+                                <dxg:TableView AutoWidth="True"
+                                               FadeSelectionOnLostFocus="False"
+                                               RowStyle="{StaticResource LegRowStyle}"
+                                               ShowGroupPanel="False"
+                                               ShowIndicator="True"
+                                               VerticalScrollbarVisibility="Auto">
+                                    <dxg:TableView.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Height="25"
+                                                      Command="{Binding ShowColumnChooserCommand}"
+                                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Header="Show Column Chooser">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Height="25"
+                                                      Command="{Binding ClearColumnsCommand}"
+                                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Header="Hide All Columns">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Height="25"
+                                                      Command="{Binding ShowAllColumnsCommand}"
+                                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Header="Show All Columns">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Height="25"
+                                                      Command="{Binding ShowDefaultColumnsCommand}"
+                                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Header="Show Default Columns">
+                                                <MenuItem.Icon>
+                                                    <Image Width="15"
+                                                           Height="15"
+                                                           Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </dxg:TableView.ContextMenu>
+                                </dxg:TableView>
+                            </dxg:GridControl.View>
+
+                            <dxg:GridColumn FieldName="Symbol"
+                                            IsSmart="True"
+                                            Visible="True">
+                                <dxg:GridColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Margin="0,0,2,0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding Data.Symbol}" />
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellTemplate>
+                            </dxg:GridColumn>
+
+                            <dxg:GridColumn FieldName="Description"
+                                            IsSmart="True"
+                                            Visible="True">
+                                <dxg:GridColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Margin="0,0,2,0"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="#F3A202"
+                                                   Text="{Binding Data.Description}" />
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellTemplate>
+                            </dxg:GridColumn>
+
+                            <dxg:GridColumn FieldName="Side"
+                                            IsSmart="True"
+                                            Visible="True">
+                                <dxg:GridColumn.CellEditTemplate>
+                                    <DataTemplate>
+                                        <dxe:ComboBoxEdit AllowUpdateTwoWayBoundPropertiesOnSynchronization="False"
+                                                          IsTextEditable="False"
+                                                          ItemsSource="{Binding Data.Sides}"
+                                                          SelectedItem="{Binding Data.Side, UpdateSourceTrigger=PropertyChanged}">
+                                            <dxmvvm:Interaction.Behaviors>
+                                                <dxmvvm:EventToCommand Command="{Binding View.DataContext.SideChangedCommand}"
+                                                                       CommandParameter="{Binding View.FocusedView.DataControl.CurrentItem, ElementName=LockTraderGrid}"
+                                                                       EventName="EditValueChanged" />
+                                            </dxmvvm:Interaction.Behaviors>
+                                        </dxe:ComboBoxEdit>
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellEditTemplate>
+                            </dxg:GridColumn>
+
+                            <dxg:GridColumn FieldName="Ratio"
+                                            IsSmart="True"
+                                            Visible="True">
+                                <dxg:GridColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Padding="0"
+                                                VerticalAlignment="Center"
+                                                HorizontalContentAlignment="Stretch"
+                                                Background="Transparent"
+                                                BorderBrush="Transparent"
+                                                BorderThickness="0"
+                                                Command="{Binding View.DataContext.LockRatioCommand}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Image Height="15"
+                                                       MinWidth="15"
+                                                       HorizontalAlignment="Left"
+                                                       Source="{dx:DXImage SvgImages/Icon Builder/Security_Lock.svg}"
+                                                       Visibility="{Binding View.DataContext.RatioLocked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                <TextBlock Grid.Column="1"
+                                                           Margin="3,0"
+                                                           HorizontalAlignment="Right"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Button}}}"
+                                                           Text="{Binding Data.Ratio, UpdateSourceTrigger=PropertyChanged}" />
+                                            </Grid>
+                                        </Button>
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellTemplate>
+                            </dxg:GridColumn>
+
+                            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Quantity, Converter={StaticResource DoubleFormatter}}"
+                                            FieldName="Quantity"
+                                            Header="Qty"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="True"
+                                            ReadOnly="True"
+                                            Visible="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Bid, Converter={StaticResource DoubleFormatter}}"
+                                            FieldName="Bid"
+                                            Header="Bid"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="True"
+                                            ReadOnly="True"
+                                            Visible="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Ask, Converter={StaticResource DoubleFormatter}}"
+                                            FieldName="Ask"
+                                            Header="Ask"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="True"
+                                            ReadOnly="True"
+                                            Visible="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Delta, Converter={StaticResource DoubleFormatter}}"
+                                            FieldName="Delta"
+                                            Header="Delta"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="True"
+                                            ReadOnly="True"
+                                            Visible="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn AllowCellMerge="False"
+                                            Header="Net Qty"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="True"
+                                            ReadOnly="True"
+                                            Visible="True">
+                                <dxg:GridColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Margin="0,0,2,0"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   FontSize="14"
+                                                   FontWeight="ExtraBold"
+                                                   Foreground="#00A8FF"
+                                                   Text="{Binding RowData.Row.NetQty}"
+                                                   Visibility="{Binding RowData.Row.NetQtyInitialized, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellTemplate>
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Theo, Converter={StaticResource DoubleFormatter}}"
+                                            FieldName="Theo"
+                                            Header="Theo"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="False"
+                                            ReadOnly="True"
+                                            Visible="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn FieldName="HanweckTime"
+                                            Header="HW Time"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="False"
+                                            ReadOnly="True"
+                                            Visible="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                        </dxg:GridControl>
+                    </dxg:DataControlDetailDescriptor.DataControl>
+                </dxg:DataControlDetailDescriptor>
+            </dxg:GridControl.DetailDescriptor>
+            <!--  End Details Grid  -->
+
+            <dxg:GridColumn FieldName="Active"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:CheckEdit HorizontalAlignment="Center"
+                                       Background="Transparent"
+                                       EditValue="{Binding RowData.Row.Active}">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand Command="{Binding View.DataContext.ActiveStateChangedCommand}"
+                                                       CommandParameter="{Binding RowData.Row}"
+                                                       EventName="Checked" />
+                                <dxmvvm:EventToCommand Command="{Binding View.DataContext.ActiveStateChangedCommand}"
+                                                       CommandParameter="{Binding RowData.Row}"
+                                                       EventName="Unchecked" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:CheckEdit>
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="Account"
+                            Header="Account"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <Grid Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <dxe:CheckEdit Grid.Column="0"
+                                           Margin="1,-1"
+                                           HorizontalAlignment="Center"
+                                           Background="Transparent"
+                                           EditValue="{Binding RowData.Row.AccountLocked, UpdateSourceTrigger=PropertyChanged}" />
+                            <dxe:ComboBoxEdit Grid.Column="1"
+                                              Margin="0,-1,-1,-1"
+                                              AllowUpdateTwoWayBoundPropertiesOnSynchronization="False"
+                                              Background="Transparent"
+                                              BorderThickness="0"
+                                              IsEnabled="{Binding RowData.Row.AccountLocked, Converter={StaticResource BooleanNegationConverter}}"
+                                              IsTextEditable="False"
+                                              ItemsSource="{Binding RowData.Row.AccountsList}"
+                                              SelectedItem="{Binding RowData.Row.Account}">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding RowData.Row.AccountOrRouteChangedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:ComboBoxEdit>
+                        </Grid>
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="Symbol"
+                            Header="Symbol">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="2,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding RowData.Row.Underlying}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="500"
+                            FieldName="Description"
+                            Header="Description">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="2,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Foreground="#F3A202"
+                                   Text="{Binding RowData.Row.Description}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="500"
+                            FieldName="SpreadIdV2"
+                            Header="Spread Description"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="2,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Foreground="#F3A202"
+                                   Text="{Binding RowData.Row.SpreadId}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="500"
+                            d:Visible="False"
+                            FieldName="Reason">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="2,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Foreground="#288CF4"
+                                   Text="{Binding RowData.Row.Reason}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Price, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="Price"
+                            Header="Price"
+                            Visible="True">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Low, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="Bid"
+                            Header="Bid"
+                            Visible="True">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.High, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="Ask"
+                            Header="Ask"
+                            Visible="True">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Mid, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="Mark"
+                            Header="Mark"
+                            Visible="True">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Ema, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="Ema"
+                            Header="Ema">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.AdjEma, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="AdjEma"
+                            Header="Adj Ema">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.FullEma, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="FullEma"
+                            Header="Full Ema">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Last, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="Last"
+                            Header="Last">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.TotalDelta, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.Greek}}"
+                            FieldName="Delta"
+                            Header="Delta"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Padding="4,3,3,3"
+                                   Foreground="{Binding Path=RowData.Row.TotalDeltaDirection, Converter={StaticResource SignToDarkBrushConverter}}"
+                                   Text="{Binding Path=RowData.Row.TotalDelta, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.Greek}}"
+                                   TextAlignment="Right" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn d:Visible="True"
+                            Binding="{Binding Path=RowData.Row.TheoBid, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="TheoBid"
+                            HorizontalHeaderContentAlignment="Center"
+                            IsSmart="False"
+                            ReadOnly="True"
+                            Visible="True">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn d:Visible="True"
+                            Binding="{Binding Path=RowData.Row.TheoAsk, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="TheoAsk"
+                            HorizontalHeaderContentAlignment="Center"
+                            IsSmart="False"
+                            ReadOnly="True"
+                            Visible="True">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn d:Visible="True"
+                            Binding="{Binding Path=RowData.Row.LockedTheo, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N3}}"
+                            FieldName="LockedTheo"
+                            HorizontalHeaderContentAlignment="Center"
+                            IsSmart="False"
+                            ReadOnly="True"
+                            Visible="False">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn d:Visible="True"
+                            Binding="{Binding Path=RowData.Row.LockedDeltaAdjTheo, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N3}}"
+                            FieldName="LockedDeltaAdjTheo"
+                            Header="Locked Adj Theo"
+                            HorizontalHeaderContentAlignment="Center"
+                            IsSmart="False"
+                            ReadOnly="True"
+                            Visible="False">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.NetDelta, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.Greek}}"
+                            FieldName="NetDelta"
+                            Header="Net Delta">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="Route"
+                            Header="Route"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <controls:RoutePicker Margin="-1"
+                                              AllowUpdateTwoWayBoundPropertiesOnSynchronization="False"
+                                              Background="Transparent"
+                                              BorderThickness="0"
+                                              DmaRoutesList="{Binding RowData.Row.DmaRoutesList}"
+                                              ItemsSource="{Binding RowData.Row.RoutesList}"
+                                              SelectedItem="{Binding RowData.Row.Route}"
+                                              SorRoutesList="{Binding RowData.Row.SorRoutesList}">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand Command="{Binding RowData.Row.AccountOrRouteChangedCommand}"
+                                                       EventName="EditValueChanged" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </controls:RoutePicker>
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="Status"
+                            Header="Status"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Height="23"
+                                   Margin="0,0,2,0"
+                                   Padding="2,4,0,0"
+                                   VerticalAlignment="Center"
+                                   Background="{Binding RowData.Row.StatusMode, Converter={StaticResource StatusModeToColorConverter}, ConverterParameter='BACKGROUND'}"
+                                   Foreground="{Binding RowData.Row.StatusMode, Converter={StaticResource StatusModeToColorConverter}, ConverterParameter='FOREGROUND'}"
+                                   Text="{Binding RowData.Row.Status}"
+                                   TextAlignment="Center" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Filled}"
+                            FieldName="Filled"
+                            Header="Filled"
+                            Visible="True">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.TotalVolume, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                            FieldName="TotalVolume"
+                            Header="Volume">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.OpenInterest, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                            FieldName="OpenInterest">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.StrikeSpacing, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                            FieldName="StrikeSpacing"
+                            Header="Strike Spacing">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.VolumeAtFill, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                            FieldName="VolumeAtFill">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.ChangeInVolume, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                            FieldName="ChangeInVolume">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.FirmLastBuyAttempt, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="FirmLastBuyAttempt">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.FirmLastBuyAttemptUnderlying, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="FirmLastBuyAttemptUnderlying">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.FirmLastSellAttempt, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="FirmLastSellAttempt">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.FirmLastSellAttemptUnderlying, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="FirmLastSellAttemptUnderlying">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="SpreadRawPosition"
+                            Header="Raw Pos"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,2,0"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="14"
+                                   FontWeight="ExtraBold"
+                                   Text="{Binding RowData.Row.SpreadRawPosition}"
+                                   Visibility="{Binding RowData.Row.SpreadPositionInitialized, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="SpreadPosition"
+                            Header="Spread Position"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,2,0"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="14"
+                                   FontWeight="ExtraBold"
+                                   Foreground="#00A8FF"
+                                   Text="{Binding RowData.Row.SpreadPosition}"
+                                   Visibility="{Binding RowData.Row.SpreadPositionInitialized, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="LcdPosition"
+                            Header="Lcd Pos">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,2,0"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="14"
+                                   FontWeight="ExtraBold"
+                                   Foreground="#00A8FF"
+                                   Text="{Binding RowData.Row.LcdPosition}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="AdjustedPnl"
+                            Header="A. PnL"
+                            ToolTip="Adjusted PnL of Spread"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,5,0"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontWeight="DemiBold"
+                                   Foreground="{Binding RowData.Row.AdjustedPnl, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.AdjustedPnl, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="NotionalLastEdge">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,5,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{Binding RowData.Row.NotionalLastEdge, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.NotionalLastEdge, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="FirmLastEdge">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,5,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{Binding RowData.Row.FirmLastEdge, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.FirmLastEdge, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="FirmLastBuyEdge">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,5,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{Binding RowData.Row.FirmLastBuyEdge, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.FirmLastBuyEdge, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="FirmLastSellEdge">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,5,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{Binding RowData.Row.FirmLastSellEdge, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.FirmLastSellEdge, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="FirmLastTradeSide" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.BuyLastAttemptPx, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="BuyLastAttemptPx">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.BuyLastAttemptUnderPx, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="BuyLastAttemptUnderPx">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="BuyLastAttemptTime">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.BuyLastFillPx, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="BuyLastFillPx">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.BuyLastFillUnderPx, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="BuyLastFillUnderPx">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="BuyLastFillTime">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SellLastAttemptPx, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SellLastAttemptPx">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SellLastAttemptUnderPx, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SellLastAttemptUnderPx">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="SellLastAttemptTime">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SellLastFillPx, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SellLastFillPx">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SellLastFillUnderPx, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SellLastFillUnderPx">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="SellLastFillTime">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SellLowestAttemptedEdgeToTheo, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SellLowestAttemptedEdgeToTheo">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.SellHighestFilledEdgeToTheo, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="SellHighestFilledEdgeToTheo">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="LastBuyEdge">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,5,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{Binding RowData.Row.LastBuyEdge, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.LastBuyEdge, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="LastSellEdge">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,5,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{Binding RowData.Row.LastSellEdge, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.LastSellEdge, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="LastEdge">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,5,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{Binding RowData.Row.LastEdge, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.LastEdge, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="DeltaAdjLastEdge"
+                            Header="^ Edge"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,2,0"
+                                   Padding="2"
+                                   HorizontalAlignment="Right"
+                                   FontWeight="DemiBold"
+                                   Foreground="{Binding RowData.Row.DeltaAdjLastEdge, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.DeltaAdjLastEdge, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="TagEdgeToTheo"
+                            Header="E2 Theo"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,2,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   FontWeight="DemiBold"
+                                   Foreground="{Binding RowData.Row.TagEdgeToTheo, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.TagEdgeToTheo, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="DeltaAdjLastEdgeNotional">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,2,0"
+                                   Padding="2"
+                                   HorizontalAlignment="Right"
+                                   FontWeight="DemiBold"
+                                   Foreground="{Binding RowData.Row.DeltaAdjLastEdgeNotional, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.DeltaAdjLastEdgeNotional, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="UnrealizedPnl"
+                            Header="U. PnL"
+                            ToolTip="Unrealized PnL of Spread"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,5,0"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontWeight="DemiBold"
+                                   Foreground="{Binding RowData.Row.UnrealizedPnl, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.UnrealizedPnl, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Tag}"
+                            FieldName="Tag"
+                            Header="Tag"
+                            ReadOnly="False" />
+            <dxg:GridColumn Binding="{Binding Path=RowData.Row.Last}"
+                            FieldName="UnderLast"
+                            Header="Under Last">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="Underlying" />
+            <dxg:GridColumn FieldName="LastFilledOrderEdgeToTheo"
+                            Header="Last Filled Order Edge To Theo">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Padding="2,2,4,2"
+                                   FontWeight="DemiBold"
+                                   Foreground="{Binding RowData.Row.LastFilledOrderEdgeToTheo, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.LastFilledOrderEdgeToTheo, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                                   TextAlignment="Right" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="LastFilledClosingOrderEdgeToTheo"
+                            Header="Last Filled Closing Order Edge To Theo">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Padding="2,2,4,2"
+                                   FontWeight="DemiBold"
+                                   Foreground="{Binding RowData.Row.LastFilledClosingOrderEdgeToTheo, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.LastFilledClosingOrderEdgeToTheo, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                                   TextAlignment="Right" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="FirmLastBuyOrderEdgeToTheo"
+                            Header="Firm Last Buy Order Edge To Theo">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Padding="2,2,4,2"
+                                   FontWeight="DemiBold"
+                                   Foreground="{Binding RowData.Row.FirmLastBuyOrderEdgeToTheo, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.FirmLastBuyOrderEdgeToTheo, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                                   TextAlignment="Right" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="FirmLastSellOrderEdgeToTheo"
+                            Header="Firm Last Sell Order Edge To Theo">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Padding="2,2,4,2"
+                                   FontWeight="DemiBold"
+                                   Foreground="{Binding RowData.Row.FirmLastSellOrderEdgeToTheo, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.FirmLastSellOrderEdgeToTheo, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                                   TextAlignment="Right" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="72"
+                            MinWidth="72"
+                            MaxWidth="72"
+                            AllowSorting="False"
+                            FieldName="Submit"
+                            Header=""
+                            IsSmart="False">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <dx:SimpleButton Background="Transparent"
+                                             BorderThickness="0"
+                                             Command="{Binding RowData.Row.SubmitAsyncCommand}"
+                                             Content="Send"
+                                             Foreground="#02F302"
+                                             IsEnabled="{Binding RowData.Row.IsSubmitEnabled}" />
+                        </Grid>
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="72"
+                            MinWidth="72"
+                            MaxWidth="72"
+                            AllowSorting="False"
+                            FieldName="Cancel"
+                            Header=""
+                            IsSmart="False">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dx:SimpleButton Background="Transparent"
+                                         BorderThickness="0"
+                                         Command="{Binding RowData.Row.CancelAsyncCommand}"
+                                         Content="Cancel"
+                                         Foreground="#FFFFFF"
+                                         IsEnabled="{Binding RowData.Row.IsCancelEnabled}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="40"
+                            MinWidth="40"
+                            MaxWidth="40"
+                            AllowSorting="False"
+                            FieldName="Remove"
+                            Header="X"
+                            IsSmart="False"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dx:SimpleButton Width="40"
+                                         Background="Transparent"
+                                         BorderThickness="0"
+                                         Command="{Binding View.DataContext.RemoveCommand}"
+                                         CommandParameter="{Binding Path=SelectedItem, ElementName=LockTraderGrid}"
+                                         Glyph="{dx:DXImage SvgImages/HybridDemoIcons/BottomPanel/HybridDemo_Close.svg}"
+                                         GlyphWidth="20" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+        </dxg:GridControl>
+        <Grid Grid.Row="4"
+              Grid.Column="1"
+              Grid.ColumnSpan="3"
+              Height="22">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0"
+                       Margin="5,0,0,0"
+                       VerticalAlignment="Center"
+                       Text="Rows:" />
+            <TextBlock Grid.Column="1"
+                       Margin="3,0"
+                       VerticalAlignment="Center"
+                       Text="{Binding BasketItems.Count}" />
+            <TextBlock Grid.Column="2"
+                       Margin="5,0"
+                       VerticalAlignment="Center"
+                       Text="{Binding Status}" />
+            <dxe:ProgressBarEdit Grid.Column="2"
+                                 ContentDisplayMode="Value"
+                                 DisplayFormatString="{}{0}%"
+                                 Visibility="{Binding ShowProgressBar, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                 Value="{Binding ProgressValue}" />
+            <TextBlock Grid.Column="2"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Foreground="#F26543"
+                       Text="{Binding Message}" />
+        </Grid>
+    </Grid>
+</views:ModuleWindow>

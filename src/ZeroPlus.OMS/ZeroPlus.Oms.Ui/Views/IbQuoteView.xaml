@@ -1,0 +1,153 @@
+<UserControl x:Class="ZeroPlus.Oms.Ui.Views.IbQuoteView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <dxmvvm:BooleanToObjectConverter x:Key="BidLiveToColorConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>
+                <SolidColorBrush Color="#3aa573" />
+            </dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>
+                <SolidColorBrush Color="#2b4b3d" />
+            </dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+        <dxmvvm:BooleanToObjectConverter x:Key="AskLiveToColorConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>
+                <SolidColorBrush Color="#F55762" />
+            </dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>
+                <SolidColorBrush Color="#78393e" />
+            </dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+    </UserControl.Resources>
+
+    <Grid Width="250"
+          Margin="0,0,0,4"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Bottom"
+          Panel.ZIndex="1"
+          Visibility="{Binding OmsCore.Config.ShowCobOnTicketsV2, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Border Grid.Column="0"
+                Padding="5,2"
+                d:Background="#3aa573"
+                d:BorderBrush="#3aa573"
+                Background="{Binding TwsBidLive, Converter={StaticResource BidLiveToColorConverter}}"
+                BorderBrush="{Binding TwsBidLive, Converter={StaticResource BidLiveToColorConverter}}"
+                BorderThickness="1,1,0,1"
+                CornerRadius="1.5,0,0,1.5"
+                Opacity="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0"
+                       Padding="0"
+                       HorizontalContentAlignment="Right"
+                       d:Content="999"
+                       Content="{Binding TwsBidSize, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.NonZero}}"
+                       FontSize="10"
+                       Foreground="#f1f1f1" />
+                <Label Grid.Column="1"
+                       Padding="1,0,1,0"
+                       HorizontalContentAlignment="Center"
+                       Content="@"
+                       FontSize="10"
+                       FontWeight="DemiBold"
+                       Foreground="#cacacc" />
+                <Label Grid.Column="2"
+                       Padding="0"
+                       HorizontalContentAlignment="Left"
+                       d:Content="999.99"
+                       Content="{Binding TwsPrice, Converter={StaticResource DoubleFormatter}}"
+                       FontSize="10"
+                       FontWeight="DemiBold"
+                       Foreground="#f1f1f1" />
+                <Label Grid.Column="3"
+                       Padding="0,-1,0,0"
+                       HorizontalContentAlignment="Center"
+                       Content="|"
+                       FontSize="10"
+                       FontWeight="DemiBold"
+                       Foreground="#cacacc" />
+                <Label Grid.Column="4"
+                       Padding="0"
+                       HorizontalContentAlignment="Center"
+                       d:Content="EXCH"
+                       Content="{Binding TwsBidExch}"
+                       FontSize="10"
+                       Foreground="#f1f1f1" />
+            </Grid>
+        </Border>
+        <Border Grid.Column="1"
+                Padding="5,2"
+                d:Background="#F55762"
+                d:BorderBrush="#F55762"
+                Background="{Binding TwsAskLive, Converter={StaticResource AskLiveToColorConverter}}"
+                BorderBrush="{Binding TwsAskLive, Converter={StaticResource AskLiveToColorConverter}}"
+                BorderThickness="0,1,1,1"
+                CornerRadius="0,1.5,1.5,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0"
+                       Padding="0"
+                       HorizontalContentAlignment="Right"
+                       d:Content="999"
+                       Content="{Binding TwsAskSize, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.NonZero}}"
+                       FontSize="10"
+                       Foreground="#f1f1f1" />
+                <Label Grid.Column="1"
+                       Padding="1,0,1,0"
+                       HorizontalContentAlignment="Center"
+                       Content="@"
+                       FontSize="10"
+                       FontWeight="DemiBold"
+                       Foreground="#cacacc" />
+                <Label Grid.Column="2"
+                       Padding="0"
+                       HorizontalContentAlignment="Left"
+                       d:Content="999.99"
+                       Content="{Binding TwsContraPrice, Converter={StaticResource DoubleFormatter}}"
+                       FontSize="10"
+                       FontWeight="DemiBold"
+                       Foreground="#f1f1f1" />
+                <Label Grid.Column="3"
+                       Padding="0,-1,0,0"
+                       HorizontalContentAlignment="Center"
+                       Content="|"
+                       FontSize="10"
+                       FontWeight="DemiBold"
+                       Foreground="#cacacc" />
+                <Label Grid.Column="4"
+                       Padding="0"
+                       HorizontalContentAlignment="Center"
+                       d:Content="EXCH"
+                       Content="{Binding TwsAskExch}"
+                       FontSize="10"
+                       Foreground="#f1f1f1" />
+            </Grid>
+        </Border>
+    </Grid>
+
+</UserControl>

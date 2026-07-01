@@ -1,0 +1,847 @@
+﻿<view:ModuleWindow x:Class="ZeroPlus.Oms.Ui.Views.CobFeedView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                   xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                   xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                   xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                   xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+                   xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                   xmlns:view="clr-namespace:ZeroPlus.Oms.Ui.Views"
+                   xmlns:viewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                   Title="{Binding ModuleTitle}"
+                   Width="1800"
+                   Height="1200"
+                   MinWidth="520"
+                   MinHeight="300"
+                   d:DataContext="{d:DesignInstance Type=viewModels:CobFeedViewModel}"
+                   DataContext="{startuphelpers:DISource Type=viewModels:CobFeedViewModel}"
+                   WindowStartupLocation="CenterScreen"
+                   mc:Ignorable="d">
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:SaveFileDialogService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <dx:ThemedWindow.HeaderItems>
+        <dx:SimpleButton Margin="2"
+                         Padding="0"
+                         ButtonKind="Toggle"
+                         Glyph="{dx:DXImage 'SvgImages/PDF Viewer/EnableScrolling.svg'}"
+                         GlyphHeight="20"
+                         IsChecked="{Binding AutoScroll}"
+                         ToolTip="Auto Scroll" />
+        <view:ModuleHeaderItems />
+    </dx:ThemedWindow.HeaderItems>
+
+    <Grid Margin="5,2">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <dx:SimpleButton Margin="2,0,0,0"
+                         HorizontalAlignment="Right"
+                         Command="{Binding ClearAllCommand}"
+                         Content="Clear All"
+                         Glyph="{dx:DXImage 'Images/RichEdit/DeleteTable_16x16.png'}"
+                         GlyphHeight="15" />
+
+        <StackPanel Grid.Row="0"
+                    Orientation="Horizontal">
+            <dxe:ButtonEdit Width="132"
+                            HorizontalAlignment="Left"
+                            AllowDefaultButton="False"
+                            CharacterCasing="Upper"
+                            EditValue="{Binding UnderlyingInput, UpdateSourceTrigger=PropertyChanged}"
+                            EditValuePostDelay="0"
+                            IsEnabled="{Binding IsSubscribed, Converter={StaticResource BooleanNegationConverter}}"
+                            NullText="Underlying"
+                            SelectAllOnGotFocus="True"
+                            SelectAllOnMouseUp="True"
+                            ShowNullTextForEmptyValue="True"
+                            TabIndex="1">
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:KeyToCommand Command="{Binding SearchUnderlyingCommand}"
+                                         KeyGesture="Enter" />
+                </dxmvvm:Interaction.Behaviors>
+                <dxe:ButtonEdit.Buttons>
+                    <dxe:ButtonInfo Command="{Binding SearchUnderlyingCommand}"
+                                    GlyphKind="Search"
+                                    IsDefaultButton="True" />
+                </dxe:ButtonEdit.Buttons>
+            </dxe:ButtonEdit>
+
+            <dx:SimpleButton Width="25"
+                             Margin="2,0,0,0"
+                             Padding="0,1"
+                             Command="{Binding UnsubscribeCommand}"
+                             Glyph="{dx:DXImage 'SvgImages/Arrows/Stop.svg'}"
+                             GlyphHeight="15"
+                             Visibility="{Binding IsSubscribed, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+            <dxe:ComboBoxEdit x:Name="CallPutSelector"
+                              MinWidth="110"
+                              Margin="2,0,0,0"
+                              CustomDisplayText="SelectedCallPutSummary"
+                              EditValue="{Binding SelectedCallPut, UpdateSourceTrigger=PropertyChanged}"
+                              IsTextEditable="False"
+                              ItemsSource="{Binding CallPut}">
+                <dxe:ComboBoxEdit.StyleSettings>
+                    <dxe:CheckedComboBoxStyleSettings />
+                </dxe:ComboBoxEdit.StyleSettings>
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:EventToCommand Command="{Binding StrategiesUpdatedCommand}"
+                                           EventName="EditValueChanged" />
+                </dxmvvm:Interaction.Behaviors>
+            </dxe:ComboBoxEdit>
+
+            <dxe:ComboBoxEdit x:Name="StrategySelector"
+                              MinWidth="120"
+                              Margin="2,0,0,0"
+                              CustomDisplayText="SelectedStrategiesSummary"
+                              EditValue="{Binding SelectedStrategies, UpdateSourceTrigger=PropertyChanged}"
+                              IsTextEditable="False"
+                              ItemsSource="{Binding Strategies}">
+                <dxe:ComboBoxEdit.StyleSettings>
+                    <dxe:CheckedComboBoxStyleSettings />
+                </dxe:ComboBoxEdit.StyleSettings>
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:EventToCommand Command="{Binding StrategiesUpdatedCommand}"
+                                           EventName="EditValueChanged" />
+                </dxmvvm:Interaction.Behaviors>
+            </dxe:ComboBoxEdit>
+
+            <dxe:CheckEdit Margin="2,0,0,0"
+                           Content="Include Trades From Prior Days"
+                           IsChecked="{Binding IncludeTradesFromPriorDays}" />
+        </StackPanel>
+
+        <Grid Grid.Row="1"
+              Margin="0,2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <dxlc:LayoutGroup IsCollapsible="True"
+                              Orientation="Vertical"
+                              View="GroupBox">
+                <dxlc:LayoutGroup.HeaderTemplate>
+                    <DataTemplate>
+                        <dxlc:LayoutItem HorizontalAlignment="Center"
+                                         VerticalAlignment="Center">
+                            <TextBlock FontWeight="Bold"
+                                       Text="Spread Quotes" />
+                        </dxlc:LayoutItem>
+                    </DataTemplate>
+                </dxlc:LayoutGroup.HeaderTemplate>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <dxg:GridControl x:Name="UpdatesGrid"
+                                     Grid.Row="1"
+                                     MinHeight="70"
+                                     MaxHeight="5000"
+                                     Margin="-12,5,-12,-12"
+                                     AutoGenerateColumns="None"
+                                     CurrentItem="{Binding LastUpdate}"
+                                     CustomColumnDisplayText="GridControl_CustomColumnsDisplayText"
+                                     EnableSmartColumnsGeneration="False"
+                                     ItemsSource="{Binding Updates}">
+                        <dxg:GridControl.Resources>
+                            <Style TargetType="dxg:GridColumn">
+                                <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                                <Setter Property="Visible" Value="True" />
+                                <Setter Property="IsSmart" Value="True" />
+                            </Style>
+                        </dxg:GridControl.Resources>
+                        <dxg:GridControl.View>
+                            <dxg:TableView Name="UpdatesTable"
+                                           AllowDragDrop="True"
+                                           AllowEditing="False"
+                                           AutoWidth="False"
+                                           BandSeparatorWidth="1"
+                                           EnableSelectedRowAppearance="True"
+                                           GroupSummaryDisplayMode="AlignByColumns"
+                                           NavigationStyle="Cell"
+                                           RowStyle="{StaticResource RowStyle}"
+                                           ShowGridMenu="TableView_ShowGridMenu"
+                                           ShowGroupPanel="False"
+                                           ShowIndicator="True"
+                                           ShowTotalSummary="False"
+                                           VerticalScrollbarVisibility="Auto">
+                                <dxg:TableView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowColumnChooserCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show Column Chooser">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ClearColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Hide All Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowAllColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show All Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowDefaultColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show Default Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </dxg:TableView.ContextMenu>
+                                <dxg:TableView.RowCellMenuCustomizations>
+                                    <dxb:BarButtonItem Command="{Binding View.DataContext.ClearUpdatesCommand}"
+                                                       Content="Clear Table"
+                                                       Glyph="{dx:DXImage 'SvgImages/Snap/ClearTableStyle.svg'}" />
+                                </dxg:TableView.RowCellMenuCustomizations>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+                        <dxg:GridColumn FieldName="Underlying" />
+                        <dxg:GridColumn FieldName="Symbol" />
+
+                        <dxg:GridColumn FieldName="BaseStrategy" />
+                        <dxg:GridColumn FieldName="SpreadId" />
+                        <dxg:GridColumn FieldName="SpreadDescription"
+                                        Visible="False" />
+
+                        <dxg:GridColumn FieldName="FromCache"
+                                        Header="Cached" />
+                        <dxg:GridColumn FieldName="UpdateType" />
+
+                        <dxg:GridColumn FieldName="BidTime" />
+                        <dxg:GridColumn FieldName="BidExch1" />
+                        <dxg:GridColumn FieldName="BidSize1" />
+                        <dxg:GridColumn FieldName="BidPrice1" />
+                        <dxg:GridColumn FieldName="IsBidPrice1Valid" />
+                        <dxg:GridColumn FieldName="BidSize2" />
+                        <dxg:GridColumn FieldName="BidPrice2" />
+                        <dxg:GridColumn FieldName="IsBidPrice2Valid" />
+
+                        <dxg:GridColumn FieldName="AskTime" />
+                        <dxg:GridColumn FieldName="AskExch1" />
+                        <dxg:GridColumn FieldName="AskSize1" />
+                        <dxg:GridColumn FieldName="AskPrice1" />
+                        <dxg:GridColumn FieldName="IsAskPrice1Valid" />
+                        <dxg:GridColumn FieldName="AskSize2" />
+                        <dxg:GridColumn FieldName="AskPrice2" />
+                        <dxg:GridColumn FieldName="IsAskPrice2Valid" />
+
+                        <dxg:GridColumn FieldName="BidMask1"
+                                        Visible="False" />
+                        <dxg:GridColumn FieldName="AskMask1"
+                                        Visible="False" />
+                        <dxg:GridColumn FieldName="PrintVolume" />
+                        <dxg:GridColumn FieldName="Timestamp" />
+                        <dxg:GridColumn FieldName="SrcTimestamp"
+                                        Visible="False" />
+                        <dxg:GridColumn FieldName="NetTimestamp"
+                                        Visible="False" />
+                        <dxg:GridColumn FieldName="SpreadKey"
+                                        Visible="False" />
+                    </dxg:GridControl>
+                </Grid>
+            </dxlc:LayoutGroup>
+
+            <GridSplitter Grid.Row="1"
+                          Height="2"
+                          HorizontalAlignment="Stretch" />
+
+            <dxlc:LayoutGroup Grid.Row="2"
+                              IsCollapsible="True"
+                              Orientation="Vertical"
+                              View="GroupBox">
+
+                <dxlc:LayoutGroup.HeaderTemplate>
+                    <DataTemplate>
+                        <dxlc:LayoutItem HorizontalAlignment="Center"
+                                         VerticalAlignment="Center">
+                            <TextBlock FontWeight="Bold"
+                                       Text="Spread Exch Orders" />
+                        </dxlc:LayoutItem>
+                    </DataTemplate>
+                </dxlc:LayoutGroup.HeaderTemplate>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <dxg:GridControl x:Name="OrdersGrid"
+                                     Grid.Row="1"
+                                     MinHeight="70"
+                                     MaxHeight="5000"
+                                     Margin="-12,5,-12,-12"
+                                     AutoGenerateColumns="None"
+                                     CurrentItem="{Binding LastOrder}"
+                                     CustomColumnDisplayText="GridControl_CustomColumnsDisplayText"
+                                     EnableSmartColumnsGeneration="False"
+                                     ItemsSource="{Binding Orders}">
+                        <dxg:GridControl.Resources>
+                            <Style TargetType="dxg:GridColumn">
+                                <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                                <Setter Property="Visible" Value="True" />
+                                <Setter Property="IsSmart" Value="True" />
+                            </Style>
+                        </dxg:GridControl.Resources>
+                        <dxg:GridControl.View>
+                            <dxg:TableView Name="OrdersTable"
+                                           AllowDragDrop="True"
+                                           AllowEditing="False"
+                                           AutoWidth="False"
+                                           BandSeparatorWidth="1"
+                                           EnableSelectedRowAppearance="True"
+                                           GroupSummaryDisplayMode="AlignByColumns"
+                                           NavigationStyle="Cell"
+                                           RowStyle="{StaticResource RowStyle}"
+                                           ShowGridMenu="TableView_ShowGridMenu"
+                                           ShowGroupPanel="False"
+                                           ShowIndicator="True"
+                                           ShowTotalSummary="False"
+                                           VerticalScrollbarVisibility="Auto">
+                                <dxg:TableView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowColumnChooserCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show Column Chooser">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ClearColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Hide All Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowAllColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show All Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowDefaultColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show Default Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </dxg:TableView.ContextMenu>
+                                <dxg:TableView.RowCellMenuCustomizations>
+                                    <dxb:BarButtonItem Command="{Binding View.DataContext.ClearOrdersCommand}"
+                                                       Content="Clear Table"
+                                                       Glyph="{dx:DXImage 'SvgImages/Snap/ClearTableStyle.svg'}" />
+                                </dxg:TableView.RowCellMenuCustomizations>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+                        <dxg:GridColumn FieldName="Underlying" />
+                        <dxg:GridColumn FieldName="Symbol" />
+
+                        <dxg:GridColumn FieldName="BaseStrategy" />
+                        <dxg:GridColumn FieldName="SpreadId" />
+                        <dxg:GridColumn FieldName="SpreadDescription"
+                                        Visible="False" />
+
+                        <dxg:GridColumn FieldName="FromCache"
+                                        Header="Cached" />
+
+                        <dxg:GridColumn FieldName="AllOrNone" />
+                        <dxg:GridColumn FieldName="FlipSide" />
+                        <dxg:GridColumn FieldName="IsPriceValid" />
+                        <dxg:GridColumn FieldName="Exch" />
+                        <dxg:GridColumn FieldName="FirmType" />
+                        <dxg:GridColumn FieldName="MarketQualifier" />
+                        <dxg:GridColumn FieldName="OrderStatus" />
+                        <dxg:GridColumn FieldName="OrderType" />
+                        <dxg:GridColumn FieldName="TimeInForce" />
+                        <dxg:GridColumn FieldName="OrigOrderSize" />
+                        <dxg:GridColumn FieldName="OrderSize" />
+                        <dxg:GridColumn FieldName="Price" />
+                        <dxg:GridColumn FieldName="DgwTimestamp" />
+                        <dxg:GridColumn FieldName="SrcTimestamp" />
+                        <dxg:GridColumn FieldName="NetTimestamp" />
+                        <dxg:GridColumn FieldName="Timestamp" />
+                        <dxg:GridColumn FieldName="ClearingAccount" />
+                        <dxg:GridColumn FieldName="ClearingFirm" />
+                        <dxg:GridColumn FieldName="OrderID" />
+                        <dxg:GridColumn FieldName="SpreadKey" />
+
+                    </dxg:GridControl>
+                </Grid>
+            </dxlc:LayoutGroup>
+
+            <GridSplitter Grid.Row="3"
+                          Height="2"
+                          HorizontalAlignment="Stretch" />
+
+            <dxlc:LayoutGroup Grid.Row="4"
+                              IsCollapsible="True"
+                              Orientation="Vertical"
+                              View="GroupBox">
+
+                <dxlc:LayoutGroup.HeaderTemplate>
+                    <DataTemplate>
+                        <dxlc:LayoutItem HorizontalAlignment="Center"
+                                         VerticalAlignment="Center">
+                            <TextBlock FontWeight="Bold"
+                                       Text="Spread Prints" />
+                        </dxlc:LayoutItem>
+                    </DataTemplate>
+                </dxlc:LayoutGroup.HeaderTemplate>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <dxg:GridControl x:Name="PrintsGrid"
+                                     Grid.Row="1"
+                                     MinHeight="70"
+                                     MaxHeight="5000"
+                                     Margin="-12,5,-12,-12"
+                                     AutoGenerateColumns="None"
+                                     CurrentItem="{Binding LastPrint}"
+                                     CustomColumnDisplayText="GridControl_CustomColumnsDisplayText"
+                                     EnableSmartColumnsGeneration="False"
+                                     ItemsSource="{Binding Prints}">
+                        <dxg:GridControl.Resources>
+                            <Style TargetType="dxg:GridColumn">
+                                <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                                <Setter Property="Visible" Value="True" />
+                                <Setter Property="IsSmart" Value="True" />
+                            </Style>
+                        </dxg:GridControl.Resources>
+                        <dxg:GridControl.View>
+                            <dxg:TableView Name="PrintsTable"
+                                           AllowDragDrop="True"
+                                           AllowEditing="False"
+                                           AutoWidth="False"
+                                           BandSeparatorWidth="1"
+                                           EnableSelectedRowAppearance="True"
+                                           GroupSummaryDisplayMode="AlignByColumns"
+                                           NavigationStyle="Cell"
+                                           RowStyle="{StaticResource RowStyle}"
+                                           ShowGridMenu="TableView_ShowGridMenu"
+                                           ShowGroupPanel="False"
+                                           ShowIndicator="True"
+                                           ShowTotalSummary="False"
+                                           VerticalScrollbarVisibility="Auto">
+                                <dxg:TableView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowColumnChooserCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show Column Chooser">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ClearColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Hide All Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowAllColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show All Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowDefaultColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show Default Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </dxg:TableView.ContextMenu>
+                                <dxg:TableView.RowCellMenuCustomizations>
+                                    <dxb:BarButtonItem Command="{Binding View.DataContext.ClearPrintsCommand}"
+                                                       Content="Clear Table"
+                                                       Glyph="{dx:DXImage 'SvgImages/Snap/ClearTableStyle.svg'}" />
+                                </dxg:TableView.RowCellMenuCustomizations>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+                        <dxg:GridColumn FieldName="Underlying" />
+                        <dxg:GridColumn FieldName="Symbol" />
+
+                        <dxg:GridColumn FieldName="BaseStrategy" />
+                        <dxg:GridColumn FieldName="SpreadId" />
+                        <dxg:GridColumn FieldName="SpreadDescription"
+                                        Visible="False" />
+
+                        <dxg:GridColumn FieldName="FromCache"
+                                        Header="Cached" />
+
+                        <dxg:GridColumn FieldName="Side" />
+                        <dxg:GridColumn FieldName="PrtExch" />
+                        <dxg:GridColumn FieldName="PrtSize" />
+                        <dxg:GridColumn FieldName="PrtPrice" />
+                        <dxg:GridColumn FieldName="SrcTimestamp" />
+                        <dxg:GridColumn FieldName="NetTimestamp" />
+                        <dxg:GridColumn FieldName="Timestamp" />
+
+                    </dxg:GridControl>
+                </Grid>
+            </dxlc:LayoutGroup>
+
+            <GridSplitter Grid.Row="5"
+                          Height="2"
+                          HorizontalAlignment="Stretch" />
+
+            <dxlc:LayoutGroup Grid.Row="6"
+                              IsCollapsible="True"
+                              Orientation="Vertical"
+                              View="GroupBox">
+
+                <dxlc:LayoutGroup.HeaderTemplate>
+                    <DataTemplate>
+                        <dxlc:LayoutItem HorizontalAlignment="Center"
+                                         VerticalAlignment="Center">
+                            <TextBlock FontWeight="Bold"
+                                       Text="Auction Prints" />
+                        </dxlc:LayoutItem>
+                    </DataTemplate>
+                </dxlc:LayoutGroup.HeaderTemplate>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <dxg:GridControl x:Name="AuctionPrintsGrid"
+                                     Grid.Row="1"
+                                     MinHeight="70"
+                                     MaxHeight="5000"
+                                     Margin="-12,5,-12,-12"
+                                     AutoGenerateColumns="None"
+                                     CurrentItem="{Binding LastAuctionPrint}"
+                                     CustomColumnDisplayText="GridControl_CustomColumnsDisplayText"
+                                     EnableSmartColumnsGeneration="False"
+                                     ItemsSource="{Binding AuctionPrints}">
+                        <dxg:GridControl.Resources>
+                            <Style TargetType="dxg:GridColumn">
+                                <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                                <Setter Property="Visible" Value="True" />
+                                <Setter Property="IsSmart" Value="True" />
+                            </Style>
+                        </dxg:GridControl.Resources>
+                        <dxg:GridControl.View>
+                            <dxg:TableView Name="AuctionPrintsTable"
+                                           AllowDragDrop="True"
+                                           AllowEditing="False"
+                                           AutoWidth="False"
+                                           BandSeparatorWidth="1"
+                                           EnableSelectedRowAppearance="True"
+                                           GroupSummaryDisplayMode="AlignByColumns"
+                                           NavigationStyle="Cell"
+                                           RowStyle="{StaticResource RowStyle}"
+                                           ShowGridMenu="TableView_ShowGridMenu"
+                                           ShowGroupPanel="False"
+                                           ShowIndicator="True"
+                                           ShowTotalSummary="False"
+                                           VerticalScrollbarVisibility="Auto">
+                                <dxg:TableView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowColumnChooserCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show Column Chooser">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ClearColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Hide All Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowAllColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show All Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Height="25"
+                                                  Command="{Binding ShowDefaultColumnsCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  Header="Show Default Columns">
+                                            <MenuItem.Icon>
+                                                <Image Width="15"
+                                                       Height="15"
+                                                       Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </dxg:TableView.ContextMenu>
+                                <dxg:TableView.RowCellMenuCustomizations>
+                                    <dxb:BarButtonItem Command="{Binding View.DataContext.ClearAuctionPrintsCommand}"
+                                                       Content="Clear Table"
+                                                       Glyph="{dx:DXImage 'SvgImages/Snap/ClearTableStyle.svg'}" />
+                                </dxg:TableView.RowCellMenuCustomizations>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+                        <dxg:GridColumn FieldName="Underlying" />
+                        <dxg:GridColumn FieldName="Symbol" />
+
+                        <dxg:GridColumn FieldName="BaseStrategy" />
+                        <dxg:GridColumn FieldName="SpreadId" />
+                        <dxg:GridColumn FieldName="SpreadDescription"
+                                        Visible="False" />
+
+                        <dxg:GridColumn FieldName="FromCache"
+                                        Header="Cached" />
+
+                        <dxg:GridColumn FieldName="CustAgentMPID"
+                                        Header="Cust Agent MPID" />
+                        <dxg:GridColumn FieldName="Industry" />
+                        <dxg:GridColumn FieldName="BidMask" />
+                        <dxg:GridColumn FieldName="AskMask" />
+                        <dxg:GridColumn FieldName="BidSz" />
+                        <dxg:GridColumn FieldName="AskSz" />
+                        <dxg:GridColumn FieldName="PrtSize" />
+                        <dxg:GridColumn FieldName="PrtSize2" />
+                        <dxg:GridColumn FieldName="CustQty" />
+                        <dxg:GridColumn FieldName="NumOptLegs" />
+                        <dxg:GridColumn FieldName="ExchBidSz" />
+                        <dxg:GridColumn FieldName="ExchAskSz" />
+                        <dxg:GridColumn FieldName="BidPrc" />
+                        <dxg:GridColumn FieldName="AskPrc" />
+                        <dxg:GridColumn FieldName="BidPrc10M" />
+                        <dxg:GridColumn FieldName="AskPrc10M" />
+                        <dxg:GridColumn FieldName="BidPrc1M" />
+                        <dxg:GridColumn FieldName="AskPrc1M" />
+                        <dxg:GridColumn FieldName="UAvgDailyVlm" />
+                        <dxg:GridColumn FieldName="UPrc10M" />
+                        <dxg:GridColumn FieldName="UPrc1M" />
+                        <dxg:GridColumn FieldName="PrtSurfPrc" />
+                        <dxg:GridColumn FieldName="PrtSurfVol" />
+                        <dxg:GridColumn FieldName="CommEnhancement" />
+                        <dxg:GridColumn FieldName="NetDe" />
+                        <dxg:GridColumn FieldName="NetGa" />
+                        <dxg:GridColumn FieldName="NetTh" />
+                        <dxg:GridColumn FieldName="NetVe" />
+                        <dxg:GridColumn FieldName="ExchAskPrc" />
+                        <dxg:GridColumn FieldName="ExchBidPrc" />
+                        <dxg:GridColumn FieldName="SurfVol1M" />
+                        <dxg:GridColumn FieldName="SurfVol10M" />
+                        <dxg:GridColumn FieldName="SurfPrc1M" />
+                        <dxg:GridColumn FieldName="SurfPrc10M" />
+                        <dxg:GridColumn FieldName="PkgAskPrc" />
+                        <dxg:GridColumn FieldName="PkgBidPrc" />
+                        <dxg:GridColumn FieldName="PkgSurfPrc" />
+                        <dxg:GridColumn FieldName="UBid" />
+                        <dxg:GridColumn FieldName="UAsk" />
+                        <dxg:GridColumn FieldName="PrtUBid" />
+                        <dxg:GridColumn FieldName="PrtUAsk" />
+                        <dxg:GridColumn FieldName="PrtUPrc" />
+                        <dxg:GridColumn FieldName="PrtPrice" />
+                        <dxg:GridColumn FieldName="PrtPrice2" />
+                        <dxg:GridColumn FieldName="CustPrc" />
+                        <dxg:GridColumn FieldName="PrtType" />
+                        <dxg:GridColumn FieldName="AuctionSource" />
+                        <dxg:GridColumn FieldName="AuctionType" />
+                        <dxg:GridColumn FieldName="CustFirmType" />
+                        <dxg:GridColumn FieldName="SpreadClass" />
+                        <dxg:GridColumn FieldName="SpreadFlavor" />
+                        <dxg:GridColumn FieldName="CustSide" />
+                        <dxg:GridColumn FieldName="ContainsFlex" />
+                        <dxg:GridColumn FieldName="ContainsHedge" />
+                        <dxg:GridColumn FieldName="ContainsMultiHedge" />
+                        <dxg:GridColumn FieldName="HasCustPrc" />
+                        <dxg:GridColumn FieldName="IsTestAuction" />
+                        <dxg:GridColumn FieldName="Pkey" />
+                        <dxg:GridColumn FieldName="PrtTime" />
+                        <dxg:GridColumn FieldName="Timestamp" />
+                        <dxg:GridColumn FieldName="NoticeTime" />
+                        <dxg:GridColumn FieldName="TradeDate" />
+
+                        <dxg:GridControl.DetailDescriptor>
+                            <dxg:DataControlDetailDescriptor ItemsSourceBinding="{Binding Legs}">
+                                <dxg:DataControlDetailDescriptor.DataControl>
+                                    <dxg:GridControl Name="DetailsGrid"
+                                                     AutoGenerateColumns="None"
+                                                     CustomColumnDisplayText="GridControl_CustomColumnsDisplayText"
+                                                     EnableSmartColumnsGeneration="False"
+                                                     SelectionMode="Row">
+                                        <dxg:GridControl.Resources>
+                                            <dxe:TextEditSettings x:Key="numeric"
+                                                                  Mask="##0.00"
+                                                                  MaskType="Numeric" />
+                                            <Style TargetType="dxg:GridColumn">
+                                                <Setter Property="AllowCellMerge" Value="False" />
+                                                <Setter Property="IsSmart" Value="True" />
+                                                <Setter Property="ReadOnly" Value="True" />
+                                                <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                                            </Style>
+                                        </dxg:GridControl.Resources>
+
+                                        <dxg:GridControl.View>
+                                            <dxg:TableView AutoWidth="True"
+                                                           FadeSelectionOnLostFocus="False"
+                                                           RowStyle="{StaticResource RowStyle}"
+                                                           ShowGroupPanel="False"
+                                                           ShowIndicator="True"
+                                                           VerticalScrollbarVisibility="Auto">
+                                                <dxg:TableView.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Height="25"
+                                                                  Command="{Binding ShowColumnChooserCommand}"
+                                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                                  Header="Show Column Chooser">
+                                                            <MenuItem.Icon>
+                                                                <Image Width="15"
+                                                                       Height="15"
+                                                                       Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Height="25"
+                                                                  Command="{Binding ClearColumnsCommand}"
+                                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                                  Header="Hide All Columns">
+                                                            <MenuItem.Icon>
+                                                                <Image Width="15"
+                                                                       Height="15"
+                                                                       Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Height="25"
+                                                                  Command="{Binding ShowAllColumnsCommand}"
+                                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                                  Header="Show All Columns">
+                                                            <MenuItem.Icon>
+                                                                <Image Width="15"
+                                                                       Height="15"
+                                                                       Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Height="25"
+                                                                  Command="{Binding ShowDefaultColumnsCommand}"
+                                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                                  Header="Show Default Columns">
+                                                            <MenuItem.Icon>
+                                                                <Image Width="15"
+                                                                       Height="15"
+                                                                       Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+                                                </dxg:TableView.ContextMenu>
+                                            </dxg:TableView>
+                                        </dxg:GridControl.View>
+
+                                        <dxg:GridColumn FieldName="LegSymbol" />
+                                        <dxg:GridColumn FieldName="LegSecType" />
+                                        <dxg:GridColumn FieldName="LegSide" />
+                                        <dxg:GridColumn FieldName="LegExpType" />
+                                        <dxg:GridColumn FieldName="LegBidMask" />
+                                        <dxg:GridColumn FieldName="LegAskMask" />
+                                        <dxg:GridColumn FieldName="LegRatio" />
+                                        <dxg:GridColumn FieldName="LegBidSz" />
+                                        <dxg:GridColumn FieldName="LegAskSz" />
+                                        <dxg:GridColumn FieldName="LegUndPerCn" />
+                                        <dxg:GridColumn FieldName="LegPointValue" />
+                                        <dxg:GridColumn FieldName="LegYears" />
+                                        <dxg:GridColumn FieldName="LegRate" />
+                                        <dxg:GridColumn FieldName="LegAtmVol" />
+                                        <dxg:GridColumn FieldName="LegDdivPv" />
+                                        <dxg:GridColumn FieldName="LegTVol" />
+                                        <dxg:GridColumn FieldName="LegSVol" />
+                                        <dxg:GridColumn FieldName="LegSDiv" />
+                                        <dxg:GridColumn FieldName="LegSPrc" />
+                                        <dxg:GridColumn FieldName="LegDe" />
+                                        <dxg:GridColumn FieldName="LegGa" />
+                                        <dxg:GridColumn FieldName="LegTh" />
+                                        <dxg:GridColumn FieldName="LegVe" />
+                                        <dxg:GridColumn FieldName="LegBid" />
+                                        <dxg:GridColumn FieldName="LegAsk" />
+                                        <dxg:GridColumn FieldName="LegSVolOk" />
+
+                                    </dxg:GridControl>
+                                </dxg:DataControlDetailDescriptor.DataControl>
+                            </dxg:DataControlDetailDescriptor>
+                        </dxg:GridControl.DetailDescriptor>
+                    </dxg:GridControl>
+                </Grid>
+            </dxlc:LayoutGroup>
+        </Grid>
+    </Grid>
+</view:ModuleWindow>

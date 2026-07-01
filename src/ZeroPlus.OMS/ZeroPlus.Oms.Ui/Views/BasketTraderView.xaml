@@ -1,0 +1,261 @@
+<views:ModuleWindow x:Class="ZeroPlus.Oms.Ui.Views.BasketTraderView"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                    xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                    xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                    xmlns:views="clr-namespace:ZeroPlus.Oms.Ui.Views"
+                    Title="{Binding ModuleTitle}"
+                    Width="1200"
+                    Height="800"
+                    MinWidth="400"
+                    MinHeight="300"
+                    d:DataContext="{d:DesignInstance Type=ViewModels:BasketTraderViewModel}"
+                    d:Width="7500"
+                    DataContext="{startuphelpers:DISource Type=ViewModels:BasketTraderViewModel}"
+                    WindowStartupLocation="CenterScreen"
+                    mc:Ignorable="d">
+
+    <dxmvvm:Interaction.Behaviors>
+        <services:VerificationService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Window.Resources>
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <helper:SignToBrushConverter x:Key="TitleSignToBrushConverter"
+                                     NegativeBrush="#FF0000"
+                                     PositiveBrush="#10e411"
+                                     ZeroBrush="#10e411" />
+        <dxmvvm:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+
+    <dx:ThemedWindow.HeaderItems>
+        <StackPanel Margin="1,4,2,0"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+            <ItemsControl HorizontalAlignment="Center"
+                          ItemsSource="{Binding BasketLayoutQuickAccess}"
+                          Visibility="{Binding OmsCore.Config.ShowBasketQuickLayoutPanel, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel HorizontalAlignment="Center"
+                                    Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <MenuItem Margin="2,0"
+                                  HorizontalAlignment="Center"
+                                  HorizontalContentAlignment="Center"
+                                  Click="LoadQuickLayout"
+                                  Focusable="False"
+                                  Tag="{Binding Layout}">
+                            <MenuItem.Header>
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Text="{Binding Title}" />
+                            </MenuItem.Header>
+                            <MenuItem.Icon>
+                                <Image Width="15"
+                                       Height="15"
+                                       Source="{dx:DXImage 'SvgImages/Layout/FlowLayout.svg'}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <dxe:ComboBoxEdit MinWidth="200"
+                              Margin="5,2,0,0"
+                              DisplayMember="Title"
+                              EditValue="{Binding Config, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueChanged="LoadQuickConfig"
+                              IsTextEditable="False"
+                              ItemsSource="{Binding UserConfigs}" />
+
+            <dx:SimpleButton Margin="5,2,0,0"
+                             Padding="2"
+                             ButtonKind="Toggle"
+                             Command="{Binding ResetMaxRestingCommand}"
+                             Content="Max Resting 1"
+                             CornerRadius="1"
+                             FontSize="12"
+                             IsChecked="{Binding BasketSettings.MaxRestingSet}"
+                             Style="{StaticResource SubscriptionButtonStyle}" />
+
+            <dx:SimpleButton Margin="5,2,0,0"
+                             Padding="2"
+                             ButtonKind="Toggle"
+                             Command="{Binding ToggleTheoLockCommand}"
+                             CommandParameter="LockTheos"
+                             Content="Lock Theos"
+                             CornerRadius="1"
+                             FontSize="12"
+                             IsChecked="{Binding BasketSettings.LockTheos}"
+                             Style="{StaticResource SubscriptionButtonStyle}"
+                             Visibility="{Binding OmsCore.Config.ShowLockTheosShortcutInBasketHeader, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+            <TextBlock Margin="15,2,0,1"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       FontSize="11"
+                       FontWeight="DemiBold"
+                       Foreground="#039c23"
+                       Text="NET-Δ"
+                       TextAlignment="Right"
+                       ToolTip="Net Delta" />
+
+            <TextBlock Margin="2,0,0,0"
+                       Padding="3,3,5,3"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       FontWeight="Bold"
+                       Foreground="{Binding NetDelta, Converter={StaticResource TitleSignToBrushConverter}}"
+                       Text="{Binding NetDelta, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                       TextAlignment="Right" />
+
+            <TextBlock Margin="5,2,0,1"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       FontSize="11"
+                       FontWeight="DemiBold"
+                       Foreground="#039c23"
+                       Text="HEDGE-Δ"
+                       TextAlignment="Right"
+                       ToolTip="Hedge Net Delta" />
+
+            <TextBlock Margin="2,0,0,0"
+                       Padding="3,3,5,3"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       FontWeight="Bold"
+                       Foreground="{Binding HedgeNetDelta, Converter={StaticResource TitleSignToBrushConverter}}"
+                       Text="{Binding HedgeNetDelta, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                       TextAlignment="Right" />
+
+            <TextBlock Margin="5,2,0,1"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       FontSize="11"
+                       FontWeight="DemiBold"
+                       Foreground="#039c23"
+                       Text="TOTAL-Δ"
+                       TextAlignment="Right"
+                       ToolTip="Total Delta" />
+
+            <TextBlock Margin="2,0,0,0"
+                       Padding="3,3,5,3"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       FontWeight="Bold"
+                       Foreground="{Binding TotalNetDelta, Converter={StaticResource TitleSignToBrushConverter}}"
+                       Text="{Binding TotalNetDelta, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                       TextAlignment="Right" />
+
+            <TextBlock Margin="15,2,0,1"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       FontSize="11"
+                       FontWeight="DemiBold"
+                       Foreground="#039c23"
+                       Text="U-"
+                       TextAlignment="Right"
+                       ToolTip="Unrealized PnL" />
+
+            <Image Width="15"
+                   Height="15"
+                   Margin="0,2.3,0,0"
+                   VerticalAlignment="Center"
+                   Source="{dx:DXImage 'SvgImages/Icon Builder/Business_DollarCircled.svg'}"
+                   ToolTip="Unrealized PnL" />
+
+            <TextBlock Margin="2,0,0,0"
+                       Padding="3,3,5,3"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       FontWeight="Bold"
+                       Foreground="{Binding UnrealizedPnl, Converter={StaticResource TitleSignToBrushConverter}}"
+                       Text="{Binding UnrealizedPnl, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}"
+                       TextAlignment="Right" />
+
+            <TextBlock Margin="5,2,0,1"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       FontSize="11"
+                       FontWeight="DemiBold"
+                       Foreground="#039c23"
+                       Text="R-"
+                       TextAlignment="Right"
+                       ToolTip="Realized PnL" />
+
+            <Image Width="15"
+                   Height="15"
+                   Margin="0,2.3,0,0"
+                   VerticalAlignment="Center"
+                   Source="{dx:DXImage 'SvgImages/Icon Builder/Business_DollarCircled.svg'}"
+                   ToolTip="Realized PnL" />
+
+            <TextBlock Margin="2,1,0,0"
+                       Padding="3,3,5,3"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       FontWeight="Bold"
+                       Foreground="{Binding AdjustedPnl, Converter={StaticResource TitleSignToBrushConverter}}"
+                       Text="{Binding AdjustedPnl, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}"
+                       TextAlignment="Right" />
+
+            <dxe:ToggleSwitch Margin="10,0"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              AnimationMode="Always"
+                              Background="#FF0000"
+                              CheckedStateContent="✅ Risk Check"
+                              ContentPlacement="Inside"
+                              Focusable="False"
+                              FontWeight="Bold"
+                              IsChecked="{Binding BasketSettings.RiskCheckEnabled}"
+                              ToggleSwitchWidth="105"
+                              UncheckedStateContent="⚠ Risk Check" />
+
+            <dxe:ToggleSwitch Margin="10,0"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              AnimationMode="Always"
+                              Background="#FF0000"
+                              CheckedStateContent="✅ Active Uncheck"
+                              ContentPlacement="Inside"
+                              Focusable="False"
+                              FontWeight="Bold"
+                              IsChecked="{Binding BasketSettings.ActiveUncheckEnabled}"
+                              ToggleSwitchWidth="130"
+                              UncheckedStateContent="⚠ Active Uncheck" />
+
+            <Image Width="20"
+                   Height="20"
+                   Margin="5,2,0,1"
+                   Source="{dx:DXImage 'SvgImages/Icon Builder/Actions_Clock.svg'}"
+                   ToolTip="Up Time" />
+            <TextBlock Padding="3,3,5,3"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       FontWeight="Bold"
+                       Text="{Binding UpTime}"
+                       TextAlignment="Right"
+                       ToolTip="Up Time" />
+        </StackPanel>
+    </dx:ThemedWindow.HeaderItems>
+
+    <Border Padding="2"
+            BorderBrush="{Binding BorderBrush}"
+            BorderThickness="4"
+            CornerRadius="4">
+        <views:BasketTraderContentView x:Name="Basket"
+                                       DataContext="{Binding}" />
+    </Border>
+</views:ModuleWindow>

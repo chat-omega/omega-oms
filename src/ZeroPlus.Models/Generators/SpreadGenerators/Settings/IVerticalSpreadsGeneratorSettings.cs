@@ -1,0 +1,88 @@
+﻿using ZeroPlus.Models.Data.Enums;
+
+namespace ZeroPlus.Models.Generators.SpreadGenerators.Settings
+{
+    public interface IVerticalSpreadsGeneratorSettings : ISpreadsGeneratorSettings
+    {
+        double Leg1DeltaRangeCeil { get; set; }
+        bool Leg1DeltaRangeEnabled { get; set; }
+        double Leg1DeltaRangeFloor { get; set; }
+        double Leg1TheoRangeCeil { get; set; }
+        TheoModel TheoModel { get; set; }
+        bool Leg1TheoRangeEnabled { get; set; }
+        double Leg1TheoRangeFloor { get; set; }
+        double Leg1VegaRangeCeil { get; set; }
+        bool Leg1VegaRangeEnabled { get; set; }
+        double Leg1VegaRangeFloor { get; set; }
+        double Leg1WeightedVegaRangeCeil { get; set; }
+        bool Leg1WeightedVegaRangeEnabled { get; set; }
+        double Leg1WeightedVegaRangeFloor { get; set; }
+        double Leg1MarketRangeCeil { get; set; }
+        bool Leg1MarketRangeEnabled { get; set; }
+        double Leg1MarketRangeFloor { get; set; }
+        double Leg1WidthRangeCeil { get; set; }
+        bool Leg1WidthRangeEnabled { get; set; }
+        double Leg1WidthRangeFloor { get; set; }
+        double Leg2DeltaRangeCeil { get; set; }
+        bool Leg2DeltaRangeEnabled { get; set; }
+        double Leg2DeltaRangeFloor { get; set; }
+        double Leg2TheoRangeCeil { get; set; }
+        bool Leg2TheoRangeEnabled { get; set; }
+        double Leg2TheoRangeFloor { get; set; }
+        double Leg2VegaRangeCeil { get; set; }
+        bool Leg2VegaRangeEnabled { get; set; }
+        double Leg2VegaRangeFloor { get; set; }
+        double Leg2WeightedVegaRangeCeil { get; set; }
+        bool Leg2WeightedVegaRangeEnabled { get; set; }
+        double Leg2WeightedVegaRangeFloor { get; set; }
+        double Leg2MarketRangeCeil { get; set; }
+        bool Leg2MarketRangeEnabled { get; set; }
+        double Leg2MarketRangeFloor { get; set; }
+        double Leg2WidthRangeCeil { get; set; }
+        bool Leg2WidthRangeEnabled { get; set; }
+        double Leg2WidthRangeFloor { get; set; }
+        double SpreadDeltaRangeCeil { get; set; }
+        bool SpreadDeltaRangeEnabled { get; set; }
+        double SpreadDeltaRangeFloor { get; set; }
+        double SpreadTheoRangeCeil { get; set; }
+        bool SpreadTheoRangeEnabled { get; set; }
+        double SpreadTheoRangeFloor { get; set; }
+        double SpreadVegaRangeCeil { get; set; }
+        bool SpreadVegaRangeEnabled { get; set; }
+        double SpreadVegaRangeFloor { get; set; }
+        double WeightedVegaRangeCeil { get; set; }
+        bool WeightedVegaRangeEnabled { get; set; }
+        double WeightedVegaRangeFloor { get; set; }
+        double SpreadMarketRangeCeil { get; set; }
+        bool SpreadMarketRangeEnabled { get; set; }
+        double SpreadMarketRangeFloor { get; set; }
+        string? SpreadSpacingList { get; set; }
+        bool SpreadSpacingListEnabled { get; set; }
+        double SpreadSpacingRangeCeil { get; set; }
+        bool SpreadSpacingRangeEnabled { get; set; }
+        double SpreadSpacingRangeFloor { get; set; }
+        double SpreadWidthRangeCeil { get; set; }
+        bool SpreadWidthRangeEnabled { get; set; }
+        double SpreadWidthRangeFloor { get; set; }
+        bool SpreadTheoAboveMidEnabled { get; set; }
+        double SpreadTheoAboveMid { get; set; }
+        bool SpreadTheoBelowMidEnabled { get; set; }
+        double SpreadTheoBelowMid { get; set; }
+        bool SpreadTheoAbsMidEnabled { get; set; }
+        double SpreadTheoAbsMid { get; set; }
+        double Leg1StrikeRangeCeil { get; set; }
+        bool Leg1StrikeRangeEnabled { get; set; }
+        double Leg1StrikeRangeFloor { get; set; }
+        double Leg2StrikeRangeCeil { get; set; }
+        bool Leg2StrikeRangeEnabled { get; set; }
+        double Leg2StrikeRangeFloor { get; set; }
+        bool SpreadEmaToMidRangeEnabled { get; set; }
+        double SpreadEmaToMidRangeFloor { get; set; }
+        double SpreadEmaToMidRangeCeil { get; set; }
+        bool SpreadTheoToMidRangeEnabled { get; set; }
+        double SpreadTheoToMidRangeFloor { get; set; }
+        double SpreadTheoToMidRangeCeil { get; set; }
+        bool SpreadVolaToHanweckDiffEnabled { get; set; }
+        double SpreadVolaToHanweckDiff { get; set; }
+    }
+}

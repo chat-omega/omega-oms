@@ -1,0 +1,92 @@
+<customUI xmlns='http://schemas.microsoft.com/office/2009/07/customui'
+          onLoad='OnRibbonLoad'
+          loadImage='LoadImage'>
+  <ribbon startFromScratch='false'>
+    <tabs>
+      <tab id='OmsTab'
+           getLabel='GetRibbonTitle'>
+
+        <group id='UserGroup'
+               label='HOME'
+               imageMso='BlogHomePage'>
+          <button id='UserButton'
+                  getLabel='GetUsername'
+                  imageMso='InheritPermissions'
+                  size='normal'
+                  getVisible='UsernameEnabled'
+                  onAction='OnLogoutButtonPressed' />
+          <button id='LoginButton'
+                  label='Login'
+                  imageMso='AdpPrimaryKey'
+                  size='normal'
+                  getVisible='LoginEnabled'
+                  onAction='OnLoginButtonPressed' />
+          <button id='ReconnectButton'
+                  label='Reconnect'
+                  imageMso='GroupConnections'
+                  size='normal'
+                  onAction='OnReconnectButtonPressed' />
+          <button id='SettingsButton'
+                  label='Settings'
+                  imageMso='AddInManager'
+                  size='normal'
+                  onAction='OnSettingsButtonPressed' />
+        </group>
+
+        <group id='DomsManagerGroup'
+               label='DOMS MANAGER'>
+          <labelControl id='DomsManagerStatus'
+                        getLabel='GetDomsManagerStatus' />
+        </group>
+
+        <group id='RaptorGroup'
+               label='DERIVATIVE'>
+          <labelControl id='RaptorStatus'
+                        getLabel='GetRaptorStatus' />
+        </group>
+
+        <group id='InterpolatorGroup'
+               label='INTERPOLATOR'>
+          <labelControl id='InterpolatorStatus'
+                        getLabel='GetInterpolatorStatus' />
+        </group>
+
+        <group id='TheosGroup'
+               label='ZP THEOS'>
+          <labelControl id='TheosStatus'
+                        getLabel='GetTheosStatus' />
+        </group>
+
+        <group id='AdjEmaGroup'
+               label='ADJ EMA'>
+          <labelControl id='AdjEmaStatus'
+                        getLabel='GetAdjEmaStatus' />
+        </group>
+
+        <group id='TransactionsGroup'
+               label='TRANSACTIONS'>
+          <labelControl id='TransactionsStatus'
+                        getLabel='GetTransactionsStatus' />
+        </group>
+
+        <group id='AutoTraderGroup'
+               label='AUTO TRADER'>
+          <labelControl id='AutoTraderStatus'
+                        getLabel='GetAutoTraderStatus' />
+        </group>
+
+        <group id='AboutGroup'
+               getLabel='GetVersion'>
+          <button id='AboutButton'
+                  label='OMS AddIn'
+                  image='ZeroPlus_RGB_LogoMark_Full-Color'
+                  size='large'
+                  supertip='ZeroPlus OMS AddIn'
+                  showImage='true'
+                  onAction='OnAboutButtonPressed' />
+        </group>
+
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>

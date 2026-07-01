@@ -1,0 +1,199 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedMemory", "src\SharedMemory\SharedMemory.csproj", "{A0000000-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Pricing.Client", "src\ZeroPlus.Pricing.Client\ZeroPlus.Pricing.Client.csproj", "{A0000001-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Middleware", "src\Middleware\Middleware.csproj", "{A0000002-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Hercules.Client", "src\ZeroPlus.Hercules.Client\ZeroPlus.Hercules.Client.csproj", "{A0000003-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.LiveVol.Client", "src\ZeroPlus.LiveVol.Client\ZeroPlus.LiveVol.Client.csproj", "{A0000004-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.MessageObjects", "src\ZeroPlus.MessageObjects\ZeroPlus.MessageObjects.csproj", "{A0000005-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EMAServer.Client", "src\EMAServer.Client\EMAServer.Client.csproj", "{A0000006-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Ema.Client", "src\ZeroPlus.Ema.Client\ZeroPlus.Ema.Client.csproj", "{A0000007-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Raptor.Client", "src\ZeroPlus.Raptor.Client\ZeroPlus.Raptor.Client.csproj", "{A0000008-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Comms.Helper", "src\ZeroPlus.Comms.Helper\ZeroPlus.Comms.Helper.csproj", "{A0000009-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Models", "src\ZeroPlus.Models\ZeroPlus.Models.csproj", "{A000000A-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Theos.Client", "src\ZeroPlus.Theos.Client\ZeroPlus.Theos.Client.csproj", "{A000000B-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Telemetry.Client", "src\ZeroPlus.Telemetry.Client\ZeroPlus.Telemetry.Client.csproj", "{A000000C-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.HubTron.Client", "src\ZeroPlus.HubTron.Client\ZeroPlus.HubTron.Client.csproj", "{A000000D-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Trades.Client", "src\ZeroPlus.Trades.Client\ZeroPlus.Trades.Client.csproj", "{A000000E-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.EdgeScanner.Client", "src\ZeroPlus.EdgeScanner.Client\ZeroPlus.EdgeScanner.Client.csproj", "{A000000F-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Databento.Client", "src\ZeroPlus.Databento.Client\ZeroPlus.Databento.Client.csproj", "{A0000010-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SymbolLib", "src\SymbolLib\SymbolLib.csproj", "{A0000011-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.AutoTrader.Client", "src\ZeroPlus.AutoTrader.Client\ZeroPlus.AutoTrader.Client.csproj", "{A0000012-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.IbGateway.Client", "src\ZeroPlus.IbGateway.Client\ZeroPlus.IbGateway.Client.csproj", "{A0000013-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Comms.Models", "src\ZeroPlus.Comms.Models\ZeroPlus.Comms.Models.csproj", "{A0000014-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.TagCodecLib", "src\ZeroPlus.TagCodecLib\ZeroPlus.TagCodecLib.csproj", "{A0000015-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Oms.Ui", "src\ZeroPlus.OMS\ZeroPlus.Oms.Ui\ZeroPlus.Oms.Ui.csproj", "{A0000016-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Oms.AddIn", "src\ZeroPlus.OMS\ZeroPlus.Oms.AddIn\ZeroPlus.Oms.AddIn.csproj", "{A0000017-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.OMS.KillSwitch", "src\ZeroPlus.OMS\ZeroPlus.OMS.KillSwitch\ZeroPlus.OMS.KillSwitch.csproj", "{A0000018-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Oms.Generators", "src\ZeroPlus.OMS\ZeroPlus.Oms.Generators\ZeroPlus.Oms.Generators.csproj", "{A0000019-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Oms", "src\ZeroPlus.OMS\ZeroPlus.Oms\ZeroPlus.Oms.csproj", "{A000001A-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.SymbolMap.Client", "src\ZeroPlus.SymbolMap.Client\ZeroPlus.SymbolMap.Client.csproj", "{A000001B-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Interpolator.Client", "src\ZeroPlus.Interpolator.Client\ZeroPlus.Interpolator.Client.csproj", "{A000001C-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.Cob.Client", "src\ZeroPlus.Cob.Client\ZeroPlus.Cob.Client.csproj", "{A000001D-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroPlus.EdgeScanFeedRunner.Client", "src\ZeroPlus.EdgeScanFeedRunner.Client\ZeroPlus.EdgeScanFeedRunner.Client.csproj", "{A000001E-0000-0000-0000-000000000000}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A0000000-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000000-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000000-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000000-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000001-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000001-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000001-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000001-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000002-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000002-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000002-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000002-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000003-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000003-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000003-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000003-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000004-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000004-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000004-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000004-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000005-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000005-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000005-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000005-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000006-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000006-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000006-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000006-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000007-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000007-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000007-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000007-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000008-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000008-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000008-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000008-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000009-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000009-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000009-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000009-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A000000A-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A000000A-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A000000A-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A000000A-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A000000B-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A000000B-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A000000B-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A000000B-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A000000C-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A000000C-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A000000C-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A000000C-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A000000D-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A000000D-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A000000D-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A000000D-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A000000E-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A000000E-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A000000E-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A000000E-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A000000F-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A000000F-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A000000F-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A000000F-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000010-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000010-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000010-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000010-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000011-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000011-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000011-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000011-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000012-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000012-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000012-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000012-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000013-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000013-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000013-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000013-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000014-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000014-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000014-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000014-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000015-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000015-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000015-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000015-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000016-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000016-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000016-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000016-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000017-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000017-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000017-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000017-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000018-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000018-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000018-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000018-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A0000019-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0000019-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0000019-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0000019-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A000001A-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A000001A-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A000001A-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A000001A-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A000001B-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A000001B-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A000001B-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A000001B-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A000001C-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A000001C-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A000001C-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A000001C-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A000001D-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A000001D-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A000001D-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A000001D-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+		{A000001E-0000-0000-0000-000000000000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A000001E-0000-0000-0000-000000000000}.Debug|x64.Build.0 = Debug|Any CPU
+		{A000001E-0000-0000-0000-000000000000}.Release|x64.ActiveCfg = Release|Any CPU
+		{A000001E-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

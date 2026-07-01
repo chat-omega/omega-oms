@@ -1,0 +1,2274 @@
+<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.VolTraderView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                 xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
+                 xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 Title="{Binding ModuleTitle}"
+                 Width="2200"
+                 Height="800"
+                 MinWidth="400"
+                 MinHeight="300"
+                 Padding="0"
+                 d:DataContext="{d:DesignInstance Type=ViewModels:VolTraderViewModel}"
+                 d:Width="3000"
+                 DataContext="{startuphelpers:DISource Type=ViewModels:VolTraderViewModel}"
+                 WindowStartupLocation="CenterScreen"
+                 mc:Ignorable="d">
+
+    <dxmvvm:Interaction.Behaviors>
+        <services:LoadCustomColumnService />
+        <services:OmsMessageBoxService />
+    </dxmvvm:Interaction.Behaviors>
+    <Window.Resources>
+        <helper:LoopPricingModeToDisplayTextConverter x:Key="LoopPricingModeToDisplayTextConverter" />
+        <dxmvvm:BooleanToObjectConverter x:Key="BooleanToColorConverterRed">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>
+                #F88F8F
+            </dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>
+                #2D2D30
+            </dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+        <dxmvvm:BooleanToObjectConverter x:Key="BooleanToExpandCollapseConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>
+                3
+            </dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>
+                4
+            </dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <helper:SignToBrushConverter x:Key="SignToBrushConverter"
+                                     NegativeBrush="#B73535"
+                                     PositiveBrush="#10e411"
+                                     ZeroBrush="#10e411" />
+        <helper:SignToBrushConverter x:Key="CountdownToBrushConverter"
+                                     Limit="3"
+                                     NegativeBrush="#F05126"
+                                     PositiveBrush="#171718"
+                                     ZeroBrush="#F05126" />
+    </Window.Resources>
+
+    <dx:ThemedWindow.HeaderItems>
+        <StackPanel Margin="1,4,2,0"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+
+            <dx:SimpleButton Grid.Row="0"
+                             Grid.Column="3"
+                             Width="100"
+                             Height="22"
+                             Margin="5,0,0,0"
+                             Padding="0,1"
+                             VerticalAlignment="Top"
+                             Command="{Binding CancelAllCommand}"
+                             Content="Cancel All" />
+
+            <dx:SimpleButton Grid.Row="0"
+                             Grid.Column="4"
+                             Width="100"
+                             Height="22"
+                             Margin="5,0,0,0"
+                             Padding="0"
+                             VerticalAlignment="Top"
+                             Command="{Binding StopAllCommand}"
+                             Content="Stop All"
+                             Style="{StaticResource EmergencyStopButtonStyle}" />
+
+            <dxe:ToggleSwitch Margin="10,0"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              AnimationMode="Always"
+                              Background="#FF0000"
+                              CheckedStateContent="✅ Risk Check"
+                              ContentPlacement="Inside"
+                              Focusable="False"
+                              FontWeight="Bold"
+                              IsChecked="{Binding RiskCheckEnabled}"
+                              ToggleSwitchWidth="105"
+                              UncheckedStateContent="⚠ Risk Check">
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:EventToCommand Command="{Binding RiskCheckChangedCommand}"
+                                           EventName="Checked" />
+                    <dxmvvm:EventToCommand Command="{Binding RiskCheckChangedCommand}"
+                                           EventName="Unchecked" />
+                </dxmvvm:Interaction.Behaviors>
+            </dxe:ToggleSwitch>
+
+            <dxe:ToggleSwitch Margin="10,0"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              AnimationMode="Always"
+                              Background="#FF0000"
+                              CheckedStateContent="✅ Active Uncheck"
+                              ContentPlacement="Inside"
+                              Focusable="False"
+                              FontWeight="Bold"
+                              IsChecked="{Binding ActiveUncheckEnabled}"
+                              ToggleSwitchWidth="130"
+                              UncheckedStateContent="⚠ Active Uncheck">
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:EventToCommand Command="{Binding ActiveUncheckChangedCommand}"
+                                           EventName="Checked" />
+                    <dxmvvm:EventToCommand Command="{Binding ActiveUncheckChangedCommand}"
+                                           EventName="Unchecked" />
+                </dxmvvm:Interaction.Behaviors>
+            </dxe:ToggleSwitch>
+
+            <dx:SimpleButton Grid.Row="0"
+                             Grid.Column="5"
+                             Height="22"
+                             Margin="5,0,0,0"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Top"
+                             dxb:BarManager.MenuShowMouseButton="LeftButton"
+                             Glyph="{dx:DXImage SvgImages/DiagramIcons/Orientation/ListOrientationVertical.svg}"
+                             GlyphHeight="18">
+                <dxb:BarManager.DXContextMenu>
+                    <dxb:PopupControlContainer>
+                        <ItemsControl>
+                            <StackPanel>
+                                <MenuItem Height="25"
+                                          Command="{Binding CloneCommand}"
+                                          Header="Clone">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage SvgImages/XAF/Action_CloneMerge_Merge_Object.svg}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Click="ShareLayout"
+                                          Header="Share Layout">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage SvgImages/Icon Builder/Actions_Send.svg}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Click="SaveLayout"
+                                          Header="Save Layout">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage SvgImages/Save/Save.svg}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Command="{Binding BrowseLayoutsCommand}"
+                                          Header="Browse Layout">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage SvgImages/Dashboards/ServerMode.svg}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Click="LoadLayout"
+                                          Header="Load Layout">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage SvgImages/Dashboards/LoadMap.svg}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </StackPanel>
+                        </ItemsControl>
+                    </dxb:PopupControlContainer>
+                </dxb:BarManager.DXContextMenu>
+            </dx:SimpleButton>
+
+        </StackPanel>
+    </dx:ThemedWindow.HeaderItems>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="5" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="1"
+              Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto">
+                <ScrollViewer.ContextMenu>
+                    <ContextMenu>
+                        <ItemsControl>
+                            <MenuItem Header="Show Submit With Delay Settings"
+                                      IsCheckable="True"
+                                      IsChecked="{Binding ShowSubmitWithDelaySettings}" />
+                            <MenuItem Header="Show Route Settings"
+                                      IsCheckable="True"
+                                      IsChecked="{Binding ShowRouteSettings}" />
+                            <MenuItem Header="Show Auto Close Settings"
+                                      IsCheckable="True"
+                                      IsChecked="{Binding ShowAutoCloseSettings}" />
+                            <MenuItem Header="Show Auto Cancel Settings"
+                                      IsCheckable="True"
+                                      IsChecked="{Binding ShowAutoCancelSettings}" />
+                        </ItemsControl>
+                    </ContextMenu>
+                </ScrollViewer.ContextMenu>
+                <StackPanel Orientation="Horizontal">
+                    <dxlc:GroupBox Grid.Row="0"
+                                   Grid.RowSpan="2"
+                                   Grid.Column="0"
+                                   Padding="10,5">
+                        <dxlc:GroupBox.Header>
+                            <Grid Height="22">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <dxe:TextEdit x:Name="NameEdit"
+                                              Grid.Column="0"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                              KeyDown="NameKeyDown"
+                                              MouseDoubleClick="ToggleEdit"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+
+                                <dx:SimpleButton x:Name="NameEditButton"
+                                                 Grid.Column="1"
+                                                 Width="25"
+                                                 HorizontalAlignment="Right"
+                                                 ButtonKind="Toggle"
+                                                 Checked="EditName"
+                                                 Glyph="{dx:DXImage SvgImages/Dashboards/RenameQuery.svg}"
+                                                 GlyphHeight="15"
+                                                 ToolTip="Edit Instance Title"
+                                                 Unchecked="SetName" />
+
+                                <dxe:ButtonEdit Grid.Row="0"
+                                                Grid.Column="2"
+                                                Margin="5,0,0,0"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                AllowDefaultButton="False"
+                                                ShowBorder="False"
+                                                ShowText="False"
+                                                Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <dxe:ButtonEdit.Buttons>
+                                        <dxe:LoadingIndicatorButtonInfo />
+                                    </dxe:ButtonEdit.Buttons>
+                                </dxe:ButtonEdit>
+
+                            </Grid>
+                        </dxlc:GroupBox.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="75" />
+                                <ColumnDefinition Width="75" />
+                                <ColumnDefinition Width="75" />
+                                <ColumnDefinition Width="75" />
+                            </Grid.ColumnDefinitions>
+
+                            <dx:SimpleButton Grid.Row="0"
+                                             Grid.Column="0"
+                                             Padding="0,1"
+                                             Command="{Binding AddNewBasketCommand}"
+                                             Content="Add Basket"
+                                             IsEnabled="{Binding IsBusy, Converter={StaticResource BooleanNegationConverter}}" />
+
+                            <Label Grid.Row="0"
+                                   Grid.Column="1"
+                                   Margin="5,0,0,0"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"
+                                   Content="Perm Count" />
+
+                            <dxe:SpinEdit Grid.Row="0"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,0,0,0"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketCount, UpdateSourceTrigger=PropertyChanged}"
+                                          EditValueType="{x:Type sys:Int32}"
+                                          Mask="d"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True" />
+
+                            <dx:SimpleButton Grid.Row="0"
+                                             Grid.Column="3"
+                                             Width="70"
+                                             Margin="5,0,0,0"
+                                             Padding="0,1"
+                                             Command="{Binding ExpirationDownCommand}"
+                                             CommandParameter="{Binding Path=SelectedItem, ElementName=VolTraderGrid}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Exp" />
+                                    <TextBlock Margin="0,2,0,0"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontFamily="Marlett"
+                                               Text="6" />
+                                </StackPanel>
+                            </dx:SimpleButton>
+
+                            <dx:SimpleButton Grid.Row="0"
+                                             Grid.Column="4"
+                                             Width="70"
+                                             Margin="5,0,0,0"
+                                             Padding="0,1"
+                                             Command="{Binding ExpirationUpCommand}"
+                                             CommandParameter="{Binding Path=SelectedItem, ElementName=VolTraderGrid}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Exp" />
+                                    <TextBlock Margin="0,2,0,0"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontFamily="Marlett"
+                                               Text="5" />
+                                </StackPanel>
+                            </dx:SimpleButton>
+
+                            <dxe:CheckEdit Grid.Row="1"
+                                           Grid.Column="0"
+                                           Margin="0,5,0,0"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           Content="Strike Range"
+                                           EditValue="{Binding StrikeRangeEnabled, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <dxe:SpinEdit Grid.Row="1"
+                                          Grid.Column="1"
+                                          Width="70"
+                                          Margin="5,5,0,0"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding MinStrike, UpdateSourceTrigger=PropertyChanged}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          IsEnabled="{Binding StrikeRangeEnabled}"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True" />
+
+                            <dxe:SpinEdit Grid.Row="1"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,5,0,0"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding MaxStrike, UpdateSourceTrigger=PropertyChanged}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          IsEnabled="{Binding StrikeRangeEnabled}"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True" />
+
+                            <dxe:CheckEdit Grid.Row="1"
+                                           Grid.Column="3"
+                                           Width="70"
+                                           Margin="5,5,0,0"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           Content="Decimal"
+                                           EditValue="{Binding IncludeDecimalStrikes, UpdateSourceTrigger=PropertyChanged}"
+                                           IsEnabled="{Binding StrikeRangeEnabled}" />
+
+                            <dx:SimpleButton Grid.Row="1"
+                                             Grid.Column="4"
+                                             Width="70"
+                                             Margin="5,0,0,0"
+                                             Padding="0,1"
+                                             Command="{Binding CloneAndFlipCallPutCommand}"
+                                             Content="Clone C/P" />
+
+                            <dxe:CheckEdit Grid.Row="2"
+                                           Grid.Column="0"
+                                           Margin="0,5,0,0"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           Content="Delta Range"
+                                           EditValue="{Binding DeltaRangeEnabled, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <dxe:SpinEdit Grid.Row="2"
+                                          Grid.Column="1"
+                                          Width="70"
+                                          Margin="5,5,0,0"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding MinDelta, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment=".01"
+                                          IsEnabled="{Binding DeltaRangeEnabled}"
+                                          Mask="N3"
+                                          MaskUseAsDisplayFormat="True"
+                                          MaxValue="1"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True" />
+
+                            <dxe:SpinEdit Grid.Row="2"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,5,0,0"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding MaxDelta, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment=".01"
+                                          IsEnabled="{Binding DeltaRangeEnabled}"
+                                          Mask="N3"
+                                          MaskUseAsDisplayFormat="True"
+                                          MaxValue="1"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True" />
+
+                            <dx:SimpleButton Grid.Row="2"
+                                             Grid.Column="3"
+                                             Width="70"
+                                             Margin="5,5,0,0"
+                                             Padding="0,1"
+                                             Command="{Binding RefreshRangeCommand}"
+                                             Content="Clean" />
+
+                            <dx:SimpleButton Grid.Row="2"
+                                             Grid.Column="4"
+                                             Width="70"
+                                             Margin="5,5,0,0"
+                                             Padding="0,1"
+                                             Command="{Binding ResetQtyCommand}"
+                                             Content="Reset Qty" />
+                        </Grid>
+                    </dxlc:GroupBox>
+
+                    <dxlc:GroupBox Margin="5,0,0,0"
+                                   Padding="10,5"
+                                   Visibility="{Binding ShowSubmitWithDelaySettings, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <dxlc:GroupBox.Header>
+                            <Grid Height="22">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+                                <Label Padding="0"
+                                       Content="Submit With Delay"
+                                       FontWeight="Bold"
+                                       Foreground="#AFAFB0" />
+
+                                <dxe:CheckEdit Grid.Column="1"
+                                               Margin="0"
+                                               Padding="0"
+                                               HorizontalAlignment="Right"
+                                               CheckBoxHeight="11"
+                                               CheckBoxWidth="11"
+                                               Content="Enable"
+                                               EditValue="{Binding SubmitWithDelayEnabled}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding SubmitWithDelayUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:CheckEdit>
+
+                                <dx:SimpleButton Grid.Column="2"
+                                                 IsChecked="{Binding ShowSubmitWithDelaySettings}"
+                                                 Style="{StaticResource XButtonStyle}" />
+
+                            </Grid>
+                        </dxlc:GroupBox.Header>
+                        <Grid Margin="0,5,0,0"
+                              IsEnabled="{Binding SubmitWithDelayEnabled}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label Grid.Row="0"
+                                   Grid.Column="0"
+                                   Margin="0,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Content="Delay Range" />
+
+                            <dxe:SpinEdit Grid.Row="0"
+                                          Grid.Column="1"
+                                          Width="70"
+                                          Margin="5,0,0,0"
+                                          HorizontalAlignment="Left"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding SubmitWithDelayInterval, UpdateSourceTrigger=PropertyChanged}"
+                                          EditValueType="{x:Type sys:Int32}"
+                                          MinValue="{Binding OmsCore.Config.SubmitWithDelayIntervalMin}"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding SubmitWithDelayUpdatedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:SpinEdit>
+
+                            <dxe:SpinEdit Grid.Row="0"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,0,0,0"
+                                          HorizontalAlignment="Left"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding SubmitWithDelayIntervalEnd, UpdateSourceTrigger=PropertyChanged}"
+                                          EditValueType="{x:Type sys:Int32}"
+                                          MinValue="{Binding SubmitWithDelayInterval}"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding SubmitWithDelayUpdatedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:SpinEdit>
+
+                            <dxe:CheckEdit Grid.Row="0"
+                                           Grid.Column="3"
+                                           Margin="5,0,0,0"
+                                           Content="Adjust Px"
+                                           EditValue="{Binding AdjustPriceBeforeSubmit}">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding SubmitWithDelayUpdatedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:CheckEdit>
+
+                            <dxe:CheckEdit Grid.Row="0"
+                                           Grid.Column="4"
+                                           Margin="5,0,0,0"
+                                           Content="Open Tickets On Fill"
+                                           EditValue="{Binding OpenTicketForFills}">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding SubmitWithDelayUpdatedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:CheckEdit>
+
+                            <Label Grid.Row="1"
+                                   Grid.Column="0"
+                                   Margin="0,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Content="Cancel On" />
+
+                            <dxe:SpinEdit Grid.Row="1"
+                                          Grid.Column="1"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding CancelOnAmountOfFillsCount, UpdateSourceTrigger=PropertyChanged}"
+                                          EditValueType="{x:Type sys:Int32}"
+                                          MaxValue="{Binding OmsCore.Config.MaxCancelOnLimit}"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding SubmitWithDelayUpdatedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:SpinEdit>
+
+                            <dxe:CheckEdit Grid.Row="1"
+                                           Grid.Column="2"
+                                           Grid.ColumnSpan="2"
+                                           Margin="5,0,0,0"
+                                           Content="Randomize On Submit"
+                                           EditValue="{Binding Randomize}">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding SubmitWithDelayUpdatedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:CheckEdit>
+
+                            <dxe:CheckEdit Grid.Row="1"
+                                           Grid.Column="4"
+                                           Margin="5,0,0,0"
+                                           Content="Open Contra Tickets"
+                                           EditValue="{Binding AlsoOpenContraTicketEnabled}">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding SubmitWithDelayUpdatedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:CheckEdit>
+
+                            <dxe:CheckEdit Grid.Row="2"
+                                           Grid.Column="0"
+                                           Margin="0,0,0,0"
+                                           HorizontalAlignment="Left"
+                                           Content="Max Resting"
+                                           EditValue="{Binding MaxRestingOrdersEnabled}">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding SubmitWithDelayUpdatedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:CheckEdit>
+
+                            <dxe:SpinEdit Grid.Row="2"
+                                          Grid.Column="1"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding MaxRestingOrdersCount, UpdateSourceTrigger=PropertyChanged}"
+                                          EditValueType="{x:Type sys:Int32}"
+                                          IsEnabled="{Binding MaxRestingOrdersEnabled}"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding SubmitWithDelayUpdatedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:SpinEdit>
+
+                            <dxe:CheckEdit Grid.Row="2"
+                                           Grid.Column="2"
+                                           Grid.ColumnSpan="2"
+                                           Margin="5,0,0,0"
+                                           HorizontalAlignment="Left"
+                                           Content="Start From Selected Row"
+                                           EditValue="{Binding StartProcessingFromSelectedRow}">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding SubmitWithDelayUpdatedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:CheckEdit>
+
+                            <dxe:CheckEdit Grid.Row="2"
+                                           Grid.Column="4"
+                                           Margin="5,0,0,0"
+                                           Content="Show Contra Columns"
+                                           EditValue="{Binding ContraEnabled}">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding SubmitWithDelayUpdatedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:CheckEdit>
+                        </Grid>
+                    </dxlc:GroupBox>
+
+                    <dxlc:GroupBox Margin="5,0,0,0"
+                                   Padding="10,5"
+                                   Visibility="{Binding ShowRouteSettings, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                        <dxlc:GroupBox.Header>
+                            <Grid Height="22">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0"
+                                       Padding="0"
+                                       Content="Route"
+                                       FontWeight="Bold"
+                                       Foreground="#AFAFB0" />
+                                <dx:SimpleButton Grid.Column="1"
+                                                 Width="15"
+                                                 Height="15"
+                                                 HorizontalAlignment="Center"
+                                                 BorderBrush="Transparent"
+                                                 BorderThickness="0"
+                                                 Command="{Binding RefreshRoutesCommand}"
+                                                 Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Refresh.svg}"
+                                                 GlyphHeight="15"
+                                                 GlyphWidth="15" />
+                                <dx:SimpleButton Grid.Column="2"
+                                                 IsChecked="{Binding ShowRouteSettings}"
+                                                 Style="{StaticResource XButtonStyle}" />
+                            </Grid>
+                        </dxlc:GroupBox.Header>
+                        <Grid Margin="0,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Label Grid.Column="0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Content="Open" />
+
+                                <Label Grid.Column="1"
+                                       Margin="5,0,0,0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Content="Close" />
+
+                                <dxe:ComboBoxEdit Grid.Row="1"
+                                                  Grid.Column="0"
+                                                  Width="75"
+                                                  Margin="0,0,0,0"
+                                                  HorizontalAlignment="Left"
+                                                  FontSize="10"
+                                                  IsTextEditable="False"
+                                                  ItemsSource="{Binding RoutesList}"
+                                                  SelectAllOnGotFocus="True"
+                                                  SelectedItem="{Binding LooperOpenRoute}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderRouteUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:ComboBoxEdit>
+
+                                <dxe:ComboBoxEdit Grid.Row="1"
+                                                  Grid.Column="1"
+                                                  Width="75"
+                                                  Margin="5,0,0,0"
+                                                  HorizontalAlignment="Left"
+                                                  FontSize="10"
+                                                  IsTextEditable="False"
+                                                  ItemsSource="{Binding RoutesList}"
+                                                  SelectAllOnGotFocus="True"
+                                                  SelectedItem="{Binding LooperCloseRoute}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderRouteUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:ComboBoxEdit>
+
+                                <dx:SimpleButton Grid.Row="2"
+                                                 Grid.Column="0"
+                                                 Grid.ColumnSpan="2"
+                                                 Margin="0,5,0,0"
+                                                 Command="{Binding ReverseLooperRoutesCommand}"
+                                                 Content="Reverse" />
+                            </Grid>
+
+                            <Grid Grid.Column="1"
+                                  Margin="5,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Label Grid.Column="0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Content="Open"
+                                       IsEnabled="{Binding UseSingleLegSeparateLooperRoutes}" />
+
+                                <Label Grid.Column="1"
+                                       Margin="5,0,0,0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Content="Close"
+                                       IsEnabled="{Binding UseSingleLegSeparateLooperRoutes}" />
+
+                                <dxe:ComboBoxEdit Grid.Row="1"
+                                                  Grid.Column="0"
+                                                  Width="75"
+                                                  Margin="0,0,0,0"
+                                                  HorizontalAlignment="Left"
+                                                  FontSize="10"
+                                                  IsEnabled="{Binding UseSingleLegSeparateLooperRoutes}"
+                                                  IsTextEditable="False"
+                                                  ItemsSource="{Binding RoutesList}"
+                                                  SelectAllOnGotFocus="True"
+                                                  SelectedItem="{Binding LooperOpenRouteSingleLeg}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderRouteUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:ComboBoxEdit>
+
+                                <dxe:ComboBoxEdit Grid.Row="1"
+                                                  Grid.Column="1"
+                                                  Width="75"
+                                                  Margin="5,0,0,0"
+                                                  HorizontalAlignment="Left"
+                                                  FontSize="10"
+                                                  IsEnabled="{Binding UseSingleLegSeparateLooperRoutes}"
+                                                  IsTextEditable="False"
+                                                  ItemsSource="{Binding RoutesList}"
+                                                  SelectAllOnGotFocus="True"
+                                                  SelectedItem="{Binding LooperCloseRouteSingleLeg}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderRouteUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:ComboBoxEdit>
+
+                                <dxe:CheckEdit Grid.Row="2"
+                                               Grid.Column="0"
+                                               Grid.ColumnSpan="2"
+                                               Margin="0,5,0,0"
+                                               Content="Routes For Single Legs"
+                                               EditValue="{Binding UseSingleLegSeparateLooperRoutes}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderRouteUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:CheckEdit>
+                            </Grid>
+
+                            <dx:SimpleButton Grid.Row="0"
+                                             Grid.RowSpan="3"
+                                             Grid.Column="2"
+                                             Width="8"
+                                             Padding="-1,0,0,0"
+                                             HorizontalAlignment="Center"
+                                             ButtonKind="Toggle"
+                                             Content="{Binding ShowAdvancedRouteSettings, Converter={StaticResource BooleanToExpandCollapseConverter}}"
+                                             CornerRadius="3"
+                                             FontFamily="Marlett"
+                                             FontSize="10"
+                                             IsChecked="{Binding ShowAdvancedRouteSettings}" />
+                        </Grid>
+                    </dxlc:GroupBox>
+
+                    <dxlc:GroupBox Margin="5,0,0,0"
+                                   Padding="10,5"
+                                   Visibility="{Binding ShowAutoCloseSettings, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                        <dxlc:GroupBox.Header>
+                            <Grid Height="22">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Label Padding="0"
+                                       Content="Automation"
+                                       FontWeight="Bold"
+                                       Foreground="#AFAFB0" />
+
+                                <Label Grid.Column="1"
+                                       Padding="0"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Center"
+                                       Content="Auto Close"
+                                       FontWeight="DemiBold"
+                                       Foreground="#AFAFB0" />
+                                <dxe:ToggleSwitch Grid.Column="2"
+                                                  Margin="5,0"
+                                                  HorizontalAlignment="Center"
+                                                  IsChecked="{Binding CloseOrderMode}"
+                                                  IsThreeState="True"
+                                                  ToggleSwitchHeight="18"
+                                                  ToggleSwitchWidth="90">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="Checked" />
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="Unchecked" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:ToggleSwitch>
+                                <Label Grid.Column="3"
+                                       Padding="0"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center"
+                                       Content="Loop"
+                                       FontWeight="DemiBold"
+                                       Foreground="#AFAFB0" />
+
+                                <dx:SimpleButton Grid.Column="5"
+                                                 IsChecked="{Binding ShowAutoCloseSettings}"
+                                                 Style="{StaticResource XButtonStyle}" />
+                            </Grid>
+                        </dxlc:GroupBox.Header>
+
+                        <Grid Margin="0,5,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Row="0"
+                                        Grid.Column="0"
+                                        Margin="5,0,0,0"
+                                        IsEnabled="{Binding GoFishAutoCloseEnabled}"
+                                        Orientation="Horizontal">
+
+                                <dxe:CheckEdit Width="90"
+                                               VerticalAlignment="Center"
+                                               Content="Close Edge"
+                                               EditValue="{Binding UseGlobalCloseEdge, UpdateSourceTrigger=PropertyChanged}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="Checked" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:CheckEdit>
+
+                                <dxe:SpinEdit Width="70"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              EditValue="{Binding ContraFishEdge, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              IsEnabled="{Binding UseGlobalCloseEdge}"
+                                              Mask="N2"
+                                              MaskUseAsDisplayFormat="True"
+                                              MinValue="{Binding CloseEdgeMinValue}"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="0"
+                                        Grid.Column="2"
+                                        Margin="5,2,0,0"
+                                        IsEnabled="{Binding GoFishAutoCloseEnabled}"
+                                        Orientation="Horizontal">
+
+                                <Label Width="90"
+                                       VerticalAlignment="Center"
+                                       Content="Max Loss" />
+
+                                <dxe:SpinEdit Width="70"
+                                              Margin="0,0,0,0"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              EditValue="{Binding LoopMaxLoss, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              Mask="N3"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="0"
+                                        Grid.Column="3"
+                                        Margin="5,0,0,0"
+                                        IsEnabled="{Binding LoopingEnabled}"
+                                        Orientation="Horizontal">
+
+                                <Label Width="80"
+                                       VerticalAlignment="Center"
+                                       Content="Min Edge" />
+
+                                <dxe:SpinEdit Width="70"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              EditValue="{Binding LoopMinEdge, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              Mask="N3"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="0"
+                                        Grid.Column="4"
+                                        Margin="5,0,0,0"
+                                        IsEnabled="{Binding LoopingEnabled}"
+                                        Orientation="Horizontal">
+
+                                <Label Width="90"
+                                       VerticalAlignment="Center"
+                                       Content="Max Loop Count" />
+
+                                <dxe:SpinEdit Width="70"
+                                              Margin="5,0,0,0"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              EditValue="{Binding MaxLoopCount, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="0"
+                                        Grid.Column="5"
+                                        Margin="5,0,0,0"
+                                        IsEnabled="{Binding LoopingEnabled}"
+                                        Orientation="Horizontal">
+
+                                <Label Width="95"
+                                       VerticalAlignment="Center"
+                                       Content="Partial Percentage" />
+
+                                <dxe:SpinEdit Width="70"
+                                              Margin="5,0,0,0"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              EditValue="{Binding AutomationRequiredPartialFillPercentage, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment=".01"
+                                              Mask="N2"
+                                              MaskUseAsDisplayFormat="True"
+                                              MaxValue="1"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="0"
+                                        Grid.Column="6"
+                                        Margin="5,0,0,0"
+                                        IsEnabled="{Binding LoopingEnabled}"
+                                        Orientation="Horizontal">
+
+                                <Label Width="80"
+                                       VerticalAlignment="Center"
+                                       Content="Pricing Mode" />
+
+                                <dxe:ComboBoxEdit Grid.Row="4"
+                                                  Grid.Column="6"
+                                                  Width="150"
+                                                  Margin="5,0,0,0"
+                                                  HorizontalAlignment="Right"
+                                                  ApplyItemTemplateToSelectedItem="True"
+                                                  IsTextEditable="False"
+                                                  ItemsSource="{Binding LoopPricingModes}"
+                                                  SelectedItem="{Binding LoopPricingMode}">
+                                    <dxe:ComboBoxEdit.ItemTemplate>
+                                        <DataTemplate>
+                                            <Label Padding="0,0.5"
+                                                   Content="{Binding Converter={StaticResource LoopPricingModeToDisplayTextConverter}}"
+                                                   FontSize="11" />
+                                        </DataTemplate>
+                                    </dxe:ComboBoxEdit.ItemTemplate>
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:ComboBoxEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1"
+                                        Grid.Column="0"
+                                        Margin="5,2,0,0"
+                                        IsEnabled="{Binding GoFishAutoCloseEnabled}"
+                                        Orientation="Horizontal">
+
+                                <Label Width="90"
+                                       VerticalAlignment="Center"
+                                       Content="Close Interval" />
+
+                                <dxe:SpinEdit Width="70"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              EditValue="{Binding ContraFishInterval, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Increment="1"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1"
+                                        Grid.Column="2"
+                                        Margin="5,2,0,0"
+                                        IsEnabled="{Binding GoFishAutoCloseEnabled}"
+                                        Orientation="Horizontal"
+                                        Visibility="{Binding LoopingEnabled, Converter={StaticResource BooleanToVisibilityInverseConverter}}">
+                                <Label Width="90"
+                                       VerticalAlignment="Center"
+                                       Content="Closing Mode" />
+
+                                <dxe:ComboBoxEdit Width="70"
+                                                  IsSynchronizedWithCurrentItem="True"
+                                                  IsTextEditable="False"
+                                                  ItemsSource="{Binding ClosingTypes}"
+                                                  SelectedItem="{Binding ClosingMode}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:ComboBoxEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1"
+                                        Grid.Column="2"
+                                        Margin="5,2,0,0"
+                                        Orientation="Horizontal"
+                                        Visibility="{Binding LoopingEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                                <Label Width="90"
+                                       VerticalAlignment="Center"
+                                       Content="Loop Interval" />
+
+                                <dxe:SpinEdit Width="70"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              EditValue="{Binding LoopInterval, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Increment="1"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1"
+                                        Grid.Column="3"
+                                        Margin="5,2,0,0"
+                                        IsEnabled="{Binding LoopingEnabled}"
+                                        Orientation="Horizontal">
+
+                                <Label Width="80"
+                                       VerticalAlignment="Center"
+                                       Content="Resubmit All" />
+
+                                <dxe:SpinEdit Width="70"
+                                              Margin="0,0,0,0"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              EditValue="{Binding AttemptResubmit, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Increment="1"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1"
+                                        Grid.Column="4"
+                                        Margin="5,2,0,0"
+                                        IsEnabled="{Binding LoopingEnabled}"
+                                        Orientation="Horizontal">
+
+                                <dxe:CheckEdit Width="90"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Content="Loop Sizeup"
+                                               EditValue="{Binding LoopAutoSizeup}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:CheckEdit>
+
+                                <dxe:SpinEdit Width="70"
+                                              Margin="5,0,0,0"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              EditValue="{Binding LoopSizeupQty, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              IsEnabled="{Binding LoopAutoSizeup}"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1"
+                                        Grid.Column="5"
+                                        Margin="5,2,0,0"
+                                        IsEnabled="{Binding LoopingEnabled}"
+                                        Orientation="Horizontal">
+
+                                <Label Width="95"
+                                       VerticalAlignment="Center"
+                                       Content="Partial Resubmit" />
+
+                                <dxe:SpinEdit Width="70"
+                                              Margin="5,0,0,0"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              EditValue="{Binding AutomationPartialResubmitCount, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <DockPanel Grid.Row="1"
+                                       Grid.Column="6"
+                                       Margin="5,2,0,0"
+                                       IsEnabled="{Binding LoopingEnabled}">
+
+                                <dxe:CheckEdit Width="80"
+                                               HorizontalAlignment="Left"
+                                               Content="Px Backup"
+                                               EditValue="{Binding LoopPriceBackupEnabled}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:CheckEdit>
+
+                                <dx:SimpleButton Width="150"
+                                                 Height="22"
+                                                 Margin="5,0,0,0"
+                                                 Padding="5,1"
+                                                 Content="Px Backup Settings"
+                                                 DockPanel.Dock="Right" />
+                            </DockPanel>
+
+                            <StackPanel Grid.Row="2"
+                                        Grid.Column="0"
+                                        Margin="5,2,0,0"
+                                        IsEnabled="{Binding GoFishAutoCloseEnabled}"
+                                        Orientation="Horizontal">
+
+                                <Label Width="90"
+                                       VerticalAlignment="Center"
+                                       Content="Close Increment" />
+
+                                <dxe:SpinEdit Width="70"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              EditValue="{Binding ContraFishPriceIncrement, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <dxe:CheckEdit Grid.Row="2"
+                                           Grid.Column="2"
+                                           Margin="5,2,0,0"
+                                           HorizontalAlignment="Left"
+                                           Content="Leave Auto Close Resting"
+                                           EditValue="{Binding LeaveAutoCloseResting}"
+                                           IsEnabled="{Binding GoFishAutoCloseEnabled}"
+                                           Visibility="{Binding LoopingEnabled, Converter={StaticResource BooleanToVisibilityInverseConverter}}">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:CheckEdit>
+
+                            <StackPanel Grid.Row="2"
+                                        Grid.Column="2"
+                                        Margin="5,2,0,0"
+                                        IsEnabled="{Binding LoopingEnabled}"
+                                        Orientation="Horizontal"
+                                        Visibility="{Binding LoopingEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                                <Label Width="90"
+                                       VerticalAlignment="Center"
+                                       Content="Resubmit Count" />
+
+                                <dxe:SpinEdit Width="70"
+                                              Margin="0,0,0,0"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              EditValue="{Binding ResubmitCount, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Increment="1"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2"
+                                        Grid.Column="3"
+                                        Margin="5,2,0,0"
+                                        IsEnabled="{Binding LoopingEnabled}"
+                                        Orientation="Horizontal">
+
+                                <Label Width="80"
+                                       VerticalAlignment="Center"
+                                       Content="Resubmit Last" />
+
+                                <dxe:SpinEdit Width="70"
+                                              Margin="0,0,0,0"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              EditValue="{Binding LoopResubmit, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Increment="1"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2"
+                                        Grid.Column="4"
+                                        Margin="5,2,0,0"
+                                        IsEnabled="{Binding LoopingEnabled}"
+                                        Orientation="Horizontal">
+
+                                <Label Width="90"
+                                       VerticalAlignment="Center"
+                                       Content="Loop Before Size" />
+
+                                <dxe:SpinEdit Width="70"
+                                              Margin="5,0,0,0"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              EditValue="{Binding LoopCountBeforeSizeup, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              IsEnabled="{Binding LoopAutoSizeup}"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <dxe:CheckEdit Grid.Row="2"
+                                           Grid.Column="5"
+                                           Margin="5,2,0,0"
+                                           HorizontalAlignment="Left"
+                                           Content="Use Dynamic Routing"
+                                           EditValue="{Binding LooperDynamicRouting}"
+                                           IsEnabled="{Binding LoopingEnabled}">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:CheckEdit>
+                            <DockPanel Grid.Row="2"
+                                       Grid.Column="6"
+                                       Margin="5,2,0,0">
+                                <dxe:CheckEdit Width="80"
+                                               HorizontalAlignment="Left"
+                                               Content="Free Look"
+                                               EditValue="{Binding LoopFreeLook}"
+                                               IsEnabled="{Binding LoopingEnabled}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:CheckEdit>
+
+                                <dxe:CheckEdit Margin="5,0,0,0"
+                                               HorizontalAlignment="Left"
+                                               Content="Free Look All"
+                                               EditValue="{Binding LoopFreeLookOnAll}"
+                                               IsEnabled="{Binding LoopingEnabled}">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:CheckEdit>
+
+                                <dxe:SpinEdit Width="60"
+                                              Margin="2,0,0,0"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              EditValue="{Binding FreeLookOnAllIncrement, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              IsEnabled="{Binding LoopingEnabled}"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding VolTraderAutomationUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </DockPanel>
+                        </Grid>
+                    </dxlc:GroupBox>
+
+                    <dxlc:GroupBox Margin="5,0,0,0"
+                                   Padding="10,5"
+                                   Visibility="{Binding ShowAutoCancelSettings, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                        <dxlc:GroupBox.Header>
+                            <Grid Height="22">
+                                <Label Padding="0"
+                                       Content="Auto Cancel"
+                                       FontWeight="Bold"
+                                       Foreground="#AFAFB0" />
+                                <dx:SimpleButton Grid.Column="1"
+                                                 IsChecked="{Binding ShowAutoCancelSettings}"
+                                                 Style="{StaticResource XButtonStyle}" />
+                            </Grid>
+                        </dxlc:GroupBox.Header>
+
+                        <Grid Margin="0,5,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0"
+                                        Background="{Binding CancelWithEdgeToTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}">
+                                <dx:SimpleButton Width="65"
+                                                 Margin="5,5,5,2"
+                                                 Background="{Binding CancelWithEdgeToTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                                 Command="{Binding ToggleCancelWithEdgeToTheoCommand}"
+                                                 Content="Theo"
+                                                 Style="{StaticResource CancelButtonStyle}" />
+
+                                <dxe:SpinEdit Width="65"
+                                              Margin="5,0,5,5"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="{Binding CancelWithEdgeToTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                              DisplayFormatString="N2"
+                                              EditValue="{Binding CancelWithTheoEdge, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              Mask="N2"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding AutoCancelUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1"
+                                        Background="{Binding CancelWithEdgeToAdjTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}">
+                                <dx:SimpleButton Width="65"
+                                                 Margin="5,5,5,2"
+                                                 Padding="0,3"
+                                                 Background="{Binding CancelWithEdgeToAdjTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                                 Command="{Binding ToggleCancelWithEdgeToAdjTheoCommand}"
+                                                 Content="Adj Theo"
+                                                 Style="{StaticResource CancelButtonStyle}" />
+
+                                <dxe:SpinEdit Width="65"
+                                              Margin="5,0,5,5"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="{Binding CancelWithEdgeToAdjTheoEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                              DisplayFormatString="N2"
+                                              EditValue="{Binding CancelWithAdjTheoEdge, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              Mask="N2"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding AutoCancelUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2"
+                                        Background="{Binding CancelWithUnderlyingPxEnabled, Converter={StaticResource BooleanToColorConverterRed}}">
+                                <dx:SimpleButton Width="65"
+                                                 Margin="5,5,5,2"
+                                                 Background="{Binding CancelWithUnderlyingPxEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                                 Command="{Binding ToggleCancelWithUnderlyingPxCommand}"
+                                                 Content="Under"
+                                                 Style="{StaticResource CancelButtonStyle}" />
+
+                                <dxe:SpinEdit Width="65"
+                                              Margin="5,0,5,5"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="{Binding CancelWithUnderlyingPxEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                              DisplayFormatString="N2"
+                                              EditValue="{Binding CancelWithUnderlyingPx, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              Mask="N2"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding AutoCancelUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="3"
+                                        Background="{Binding CancelWithUnderlyingDeltaPxEnabled, Converter={StaticResource BooleanToColorConverterRed}}">
+                                <dx:SimpleButton Width="65"
+                                                 Margin="5,5,5,2"
+                                                 Padding="0,4.3"
+                                                 Background="{Binding CancelWithUnderlyingDeltaPxEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                                 Command="{Binding ToggleCancelWithUnderlyingDeltaPxCommand}"
+                                                 Content="Under X Delta"
+                                                 FontSize="10"
+                                                 Style="{StaticResource CancelButtonStyle}" />
+
+                                <dxe:SpinEdit Width="65"
+                                              Margin="5,0,5,5"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="{Binding CancelWithUnderlyingDeltaPxEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                              DisplayFormatString="N3"
+                                              EditValue="{Binding CancelWithUnderlyingDeltaPx, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              Mask="N3"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding AutoCancelUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="4"
+                                        Background="{Binding CancelWithEdgeToMidEnabled, Converter={StaticResource BooleanToColorConverterRed}}">
+                                <dx:SimpleButton Width="65"
+                                                 Margin="5,5,5,2"
+                                                 Background="{Binding CancelWithEdgeToMidEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                                 Command="{Binding ToggleCancelWithEdgeToMidCommand}"
+                                                 Content="Mid"
+                                                 Style="{StaticResource CancelButtonStyle}" />
+
+                                <dxe:SpinEdit Width="65"
+                                              Margin="5,0,5,5"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="{Binding CancelWithEdgeToMidEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                              DisplayFormatString="N2"
+                                              EditValue="{Binding CancelWithMidEdge, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              Mask="N2"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding AutoCancelUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="5"
+                                        Background="{Binding CancelWithWidthEnabled, Converter={StaticResource BooleanToColorConverterRed}}">
+                                <dx:SimpleButton Width="65"
+                                                 Margin="5,5,5,2"
+                                                 Background="{Binding CancelWithWidthEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                                 Command="{Binding ToggleCancelWithWidthCommand}"
+                                                 Content="Width"
+                                                 Style="{StaticResource CancelButtonStyle}" />
+
+                                <dxe:SpinEdit Width="65"
+                                              Margin="5,0,5,5"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="{Binding CancelWithWidthEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                              DisplayFormatString="N2"
+                                              EditValue="{Binding CancelWithWidthThreshold, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              Mask="N2"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding AutoCancelUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="6"
+                                        Background="{Binding CancelWithTimerEnabled, Converter={StaticResource BooleanToColorConverterRed}}">
+                                <dx:SimpleButton Width="65"
+                                                 Margin="5,5,5,2"
+                                                 Background="{Binding CancelWithTimerEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                                 Command="{Binding ToggleCancelWithTimerCommand}"
+                                                 Content="Timer"
+                                                 Style="{StaticResource CancelButtonStyle}" />
+
+                                <dxe:SpinEdit Width="65"
+                                              Margin="5,0,5,5"
+                                              HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="{Binding CancelWithTimerEnabled, Converter={StaticResource BooleanToColorConverterRed}}"
+                                              EditValue="{Binding CancelWithTimer, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand Command="{Binding AutoCancelUpdatedCommand}"
+                                                               EventName="EditValueChanged" />
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:SpinEdit>
+                            </StackPanel>
+
+                            <dxe:CheckEdit Grid.Row="1"
+                                           Grid.Column="0"
+                                           Grid.ColumnSpan="2"
+                                           Width="140"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Content="Resubmit After Cancel"
+                                           EditValue="{Binding ResubmitAfterCancel}">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding AutoCancelUpdatedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:CheckEdit>
+
+                            <dxe:CheckEdit Grid.Row="1"
+                                           Grid.Column="2"
+                                           Grid.ColumnSpan="2"
+                                           Width="140"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Content="Use Hedge Underlying"
+                                           EditValue="{Binding UseHedgeUnderlyingForAutoCancel}">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding AutoCancelUpdatedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:CheckEdit>
+
+                            <dxe:CheckEdit Grid.Row="1"
+                                           Grid.Column="4"
+                                           Grid.ColumnSpan="2"
+                                           Width="140"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Content="Cancel On Close"
+                                           EditValue="{Binding CancelOnClose}">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand Command="{Binding AutoCancelUpdatedCommand}"
+                                                           EventName="EditValueChanged" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:CheckEdit>
+                        </Grid>
+                    </dxlc:GroupBox>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <Slider x:Name="VolTraderGridScale"
+                Grid.Row="2"
+                Maximum="4"
+                Minimum="0.1"
+                Visibility="Collapsed"
+                Value="1" />
+
+        <dxg:GridControl Name="VolTraderGrid"
+                         Grid.Row="3"
+                         Grid.Column="1"
+                         Margin="0,2,0,0"
+                         dx:DXSerializer.StoreLayoutMode="All"
+                         dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                         AutoGenerateColumns="None"
+                         AutoGeneratedColumns="Grid_ColumnsPopulated"
+                         EnableSmartColumnsGeneration="True"
+                         ItemsSource="{Binding Baskets}"
+                         PreviewMouseWheel="OnZoomMouseWheel"
+                         SelectionMode="Row">
+            <dxg:GridControl.LayoutTransform>
+                <ScaleTransform CenterX="0" CenterY="0" ScaleX="{Binding ElementName=VolTraderGridScale, Path=Value}" ScaleY="{Binding ElementName=VolTraderGridScale, Path=Value}" />
+            </dxg:GridControl.LayoutTransform>
+            <dxg:GridControl.Resources>
+                <Style TargetType="dxg:GridColumn">
+                    <Setter Property="Visible" Value="False" />
+                    <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                </Style>
+                <ControlTemplate x:Key="{dxgt:GridColumnHeaderThemeKey ResourceKey=ColumnFilterTemplate}"
+                                 TargetType="{x:Type ToggleButton}" />
+            </dxg:GridControl.Resources>
+            <dxmvvm:Interaction.Behaviors>
+                <services:UiUpdateService />
+            </dxmvvm:Interaction.Behaviors>
+            <dxg:GridControl.View>
+                <dxg:TableView AllowEditing="True"
+                               AutoWidth="True"
+                               EnableSelectedRowAppearance="True"
+                               GroupSummaryDisplayMode="AlignByColumns"
+                               NavigationStyle="Row"
+                               RowStyle="{StaticResource BasketGridStyle}"
+                               ShowGridMenu="TableView_ShowGridMenu"
+                               ShowGroupPanel="False"
+                               ShowTotalSummary="False"
+                               VerticalScrollbarVisibility="Auto">
+                    <dxg:TableView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowColumnChooserCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Column Chooser">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ClearColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Hide All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowAllColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowDefaultColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Default Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </dxg:TableView.ContextMenu>
+                    <dxg:TableView.RowCellMenuCustomizations>
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.ActivateWindowCommand}"
+                                           CommandParameter="{Binding ElementName=VolTraderGrid, Path=SelectedItem}"
+                                           Content="Activate Window" />
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.HideWindowCommand}"
+                                           CommandParameter="{Binding ElementName=VolTraderGrid, Path=SelectedItem}"
+                                           Content="Hide Window" />
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.CloseWindowCommand}"
+                                           CommandParameter="{Binding ElementName=VolTraderGrid, Path=SelectedItem}"
+                                           Content="Close Window" />
+                        <dxb:BarItemSeparator />
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.ModifyStagedPxQtyCommand}"
+                                           CommandParameter="{Binding ElementName=VolTraderGrid, Path=SelectedItem}"
+                                           Content="Modify Px/Qty" />
+                    </dxg:TableView.RowCellMenuCustomizations>
+                </dxg:TableView>
+            </dxg:GridControl.View>
+            <dxg:GridColumn Width="300"
+                            AllowCellMerge="False"
+                            FieldName="Name"
+                            IsSmart="True"
+                            ReadOnly="True"
+                            Visible="True" />
+            <dxg:GridColumn Width="300"
+                            AllowCellMerge="False"
+                            FieldName="Underlyings"
+                            Header="Underlyings"
+                            IsSmart="True"
+                            ReadOnly="True"
+                            Visible="True" />
+            <dxg:GridColumn Width="300"
+                            AllowCellMerge="False"
+                            FieldName="ExpirationDescription"
+                            Header="Expirations"
+                            IsSmart="True"
+                            ReadOnly="True"
+                            Visible="True" />
+            <dxg:GridColumn Width="300"
+                            AllowCellMerge="False"
+                            FieldName="Status"
+                            IsSmart="True"
+                            ReadOnly="True"
+                            Visible="True" />
+            <dxg:GridColumn Width="300"
+                            AllowCellMerge="False"
+                            FieldName="Message"
+                            IsSmart="True"
+                            ReadOnly="True"
+                            Visible="True" />
+            <dxg:GridColumn AllowCellMerge="False"
+                            FieldName="Tag"
+                            Header="Tag"
+                            IsSmart="True"
+                            ReadOnly="False"
+                            Visible="True">
+                <dxg:GridColumn.CellEditTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit VerticalAlignment="Center"
+                                      BorderBrush="#333337"
+                                      BorderThickness="0"
+                                      Text="{Binding RowData.Row.Tag}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellEditTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="100"
+                            AllowCellMerge="False"
+                            FieldName="Fills"
+                            Header="Fills"
+                            IsSmart="True"
+                            ReadOnly="True"
+                            Visible="True" />
+            <dxg:GridColumn Width="100"
+                            AllowCellMerge="False"
+                            FieldName="RowCount"
+                            Header="Rows"
+                            IsSmart="True"
+                            ReadOnly="True"
+                            Visible="True" />
+            <dxg:GridColumn Width="200"
+                            FieldName="AdjustedPnl"
+                            Header="A PnL"
+                            IsSmart="True"
+                            ToolTip="Adjusted PnL"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,5,0"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontWeight="DemiBold"
+                                   Foreground="{Binding RowData.Row.AdjustedPnl, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.AdjustedPnl, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+
+            <dxg:GridColumn AllowCellMerge="False"
+                            FieldName="TotalPositions"
+                            Header="Total Pos"
+                            IsSmart="True"
+                            ReadOnly="True"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,2,0"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="14"
+                                   FontWeight="ExtraBold"
+                                   Foreground="#00A8FF"
+                                   Text="{Binding RowData.Row.TotalPositions}"
+                                   Visibility="{Binding RowData.Row.TotalPositionsInitialized, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+
+            <dxg:GridColumn Width="200"
+                            FieldName="UnrealizedPnl"
+                            Header="U PnL"
+                            IsSmart="True"
+                            ToolTip="Unrealized PnL"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,5,0"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontWeight="DemiBold"
+                                   Foreground="{Binding RowData.Row.UnrealizedPnl, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.UnrealizedPnl, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.C2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="105"
+                            FieldName="ResubmitCountDown"
+                            Header="Countdown"
+                            IsSmart="False"
+                            ReadOnly="False"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Height="22"
+                                   Margin="1,0"
+                                   Padding="0,2,0,0"
+                                   VerticalAlignment="Center"
+                                   Background="{Binding RowData.Row.ResubmitCountDown.TotalSeconds, Converter={StaticResource CountdownToBrushConverter}}"
+                                   FontFamily="{StaticResource Technology}"
+                                   FontSize="18"
+                                   Text="{Binding RowData.Row.ResubmitCountDown, Converter={StaticResource DoubleFormatter}}"
+                                   TextAlignment="Center" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="85"
+                            FieldName="ResubmitIntervalSec"
+                            Header="Interval"
+                            IsSmart="False"
+                            ReadOnly="False"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+
+                    <DataTemplate>
+                        <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                      AllowSpinOnMouseWheel="True"
+                                      BorderThickness="0"
+                                      EditValue="{Binding RowData.Row.ResubmitIntervalSec, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueChanged="ResubmitIntervalChanged"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      MinValue="1"
+                                      PreviewMouseUp="SelectAll"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="105"
+                            MinWidth="105"
+                            MaxWidth="105"
+                            FieldName="ResubmitSide"
+                            IsSmart="False"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:ComboBoxEdit BorderThickness="0"
+                                          EditValue="{Binding RowData.Row.ResubmitSide, UpdateSourceTrigger=PropertyChanged}"
+                                          EditValueChanged="ResubmitSideChanged"
+                                          IsTextEditable="False"
+                                          ItemsSource="{Binding RowData.Row.ResubmitSides}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="105"
+                            MinWidth="105"
+                            MaxWidth="105"
+                            FieldName="EdgeType"
+                            Header="Edge Type"
+                            IsSmart="False"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:ComboBoxEdit BorderThickness="0"
+                                          EditValue="{Binding RowData.Row.BasketSettings.EdgeType, UpdateSourceTrigger=PropertyChanged}"
+                                          EditValueChanged="EdgeTypeChanged"
+                                          IsTextEditable="False"
+                                          ItemsSource="{Binding RowData.Row.EdgeTypes}">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand Command="{Binding RowData.Row.EdgeTypeChangedCommand}"
+                                                       EventName="EditValueChanged" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:ComboBoxEdit>
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="75"
+                            MinWidth="75"
+                            MaxWidth="75"
+                            FieldName="BuyEdge"
+                            IsSmart="False"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                      AllowSpinOnMouseWheel="True"
+                                      BorderThickness="0"
+                                      DisplayFormatString="N2"
+                                      EditValue="{Binding RowData.Row.BasketSettings.BuyEdge, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueChanged="BuyEdgeChanged"
+                                      EditValueType="{x:Type sys:Double}"
+                                      Increment="0.01"
+                                      Mask="N2"
+                                      MinValue="{Binding RowData.Row.OmsCore.Config.MinimumVolTraderEdgeLimit}"
+                                      PreviewMouseUp="SelectAll"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand Command="{Binding RowData.Row.BuyEdgeChangedCommand}"
+                                                       EventName="Spin" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:SpinEdit>
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="75"
+                            MinWidth="75"
+                            MaxWidth="75"
+                            FieldName="SubmitBuy"
+                            IsSmart="False"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dx:SimpleButton Padding="0"
+                                         BorderThickness="0"
+                                         Command="{Binding RowData.Row.SubmitBuysWithBuyEdgeCommand}"
+                                         Content="Submit Buy"
+                                         Foreground="#10e411" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="75"
+                            MinWidth="75"
+                            MaxWidth="75"
+                            FieldName="Cancel"
+                            Header="Cancel"
+                            IsSmart="False"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dx:SimpleButton BorderThickness="0"
+                                         Command="{Binding RowData.Row.CancelAllCommand}"
+                                         Content="Cancel" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="75"
+                            MinWidth="75"
+                            MaxWidth="75"
+                            FieldName="SubmitSell"
+                            IsSmart="False"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dx:SimpleButton Padding="0"
+                                         BorderThickness="0"
+                                         Command="{Binding RowData.Row.SubmitSellssWithSellEdgeCommand}"
+                                         Content="Submit Sell"
+                                         Foreground="#B73535" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="75"
+                            MinWidth="75"
+                            MaxWidth="75"
+                            FieldName="SellEdge"
+                            IsSmart="False"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                      AllowSpinOnMouseWheel="True"
+                                      BorderThickness="0"
+                                      DisplayFormatString="N2"
+                                      EditValue="{Binding RowData.Row.BasketSettings.SellEdge, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueChanged="SellEdgeChanged"
+                                      EditValueType="{x:Type sys:Double}"
+                                      Increment="0.01"
+                                      Mask="N2"
+                                      MinValue="{Binding RowData.Row.OmsCore.Config.MinimumVolTraderEdgeLimit}"
+                                      PreviewMouseUp="SelectAll"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand Command="{Binding RowData.Row.SellEdgeChangedCommand}"
+                                                       EventName="Spin" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:SpinEdit>
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="75"
+                            MinWidth="75"
+                            MaxWidth="75"
+                            FieldName="ContraFishEdge"
+                            Header="Close Edge"
+                            IsSmart="False"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                      AllowSpinOnMouseWheel="True"
+                                      BorderThickness="0"
+                                      DisplayFormatString="N2"
+                                      EditValue="{Binding RowData.Row.BasketSettings.AutomationConfig.ContraFishEdge, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Double}"
+                                      Increment="0.01"
+                                      IsEnabled="{Binding View.DataContext.UseGlobalCloseEdge, Converter={StaticResource BooleanNegationConverter}}"
+                                      Mask="N2"
+                                      MinValue="{Binding RowData.Row.BasketSettings.AutomationConfig.CloseEdgeMinValue}"
+                                      PreviewMouseUp="SelectAll"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="75"
+                            MinWidth="75"
+                            MaxWidth="75"
+                            FieldName="Clean"
+                            Header="Clean"
+                            IsSmart="False"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dx:SimpleButton BorderThickness="0"
+                                         Command="{Binding RowData.Row.CleanCommand}"
+                                         Content="Clean" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Width="40"
+                            MinWidth="40"
+                            MaxWidth="40"
+                            FieldName="Remove"
+                            Header="X"
+                            IsSmart="False"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dx:SimpleButton Width="40"
+                                         BorderThickness="0"
+                                         Command="{Binding View.DataContext.RemoveBasketCommand}"
+                                         CommandParameter="{Binding Path=SelectedItems, ElementName=VolTraderGrid}"
+                                         Glyph="{dx:DXImage SvgImages/HybridDemoIcons/BottomPanel/HybridDemo_Close.svg}"
+                                         GlyphWidth="20" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+        </dxg:GridControl>
+    </Grid>
+</dx:ThemedWindow>

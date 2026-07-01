@@ -1,0 +1,433 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:behaviors="clr-namespace:ZeroPlus.Oms.Ui.Behaviors"
+                    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                    xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts"
+                    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                    xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
+                    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                    xmlns:dxprg="http://schemas.devexpress.com/winfx/2008/xaml/propertygrid"
+                    xmlns:dxt="http://schemas.devexpress.com/winfx/2008/xaml/core/themekeys"
+                    xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <Style TargetType="dxc:LegendItemContainer">
+        <Setter Property="ToolTip" Value="{DXBinding Expr='(ChartElement is $dxc:Indicator) ? `Double-click to setup indicator properties` : null'}" />
+        <Setter Property="ToolTipService.InitialShowDelay" Value="100" />
+    </Style>
+    <Style TargetType="dxprg:PropertyGridControl">
+        <Setter Property="ShowGridLines" Value="False" />
+        <Setter Property="ShowMenuButtonInRows" Value="False" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="RowPadding" Value="0,0,8,0" />
+    </Style>
+    <Style x:Key="SeparatorTextBlockStyle"
+           BasedOn="{StaticResource {x:Type TextBlock}}"
+           TargetType="TextBlock">
+        <Setter Property="Padding" Value="1,2,1,4" />
+        <Setter Property="Text" Value="|" />
+    </Style>
+    <Color x:Key="lightGreenColor"
+           A="#7F"
+           B="#66"
+           G="#96"
+           R="#1A" />
+    <Color x:Key="lightRedColor"
+           A="#7F"
+           B="#6B"
+           G="#33"
+           R="#DD" />
+    <SolidColorBrush x:Key="greenBrush"
+                     Color="#33a853" />
+    <SolidColorBrush x:Key="redBrush"
+                     Color="#ea4336" />
+    <SolidColorBrush x:Key="lightRedBrush"
+                     Color="#ff7d39" />
+    <SolidColorBrush x:Key="lightGreenBrush"
+                     Color="#4af478" />
+    <FontFamily x:Key="AgencyFB">
+        pack://application:,,,/Fonts/#Agency FB
+    </FontFamily>
+    <FontFamily x:Key="Technology">
+        pack://application:,,,/Fonts/#Technology
+    </FontFamily>
+    <FontFamily x:Key="ZPLufga">
+        pack://application:,,,/Fonts/ZP Lufga/#ZP Lufga
+    </FontFamily>
+    <FontFamily x:Key="Montserrat">
+        pack://application:,,,/Fonts/Montserrat/#Montserrat
+    </FontFamily>
+    <helper:EnumToDisplayTextConverter x:Key="EnumToDisplayTextConverter" />
+    <BitmapImage x:Key="ZeroPlus_RGB_FullLogo_Black"
+                 UriSource="pack://application:,,,/Images/ZeroPlus_RGB_FullLogo_Black.png" />
+    <BitmapImage x:Key="ZeroPlus_RGB_FullLogo_Full-Color-Reverse"
+                 UriSource="pack://application:,,,/Images/ZeroPlus_RGB_FullLogo_Full-Color-Reverse.png" />
+    <BitmapImage x:Key="ZeroPlus_RGB_FullLogo_Full-Color"
+                 UriSource="pack://application:,,,/Images/ZeroPlus_RGB_FullLogo_Full-Color.png" />
+    <BitmapImage x:Key="ZeroPlus_RGB_FullLogo_White"
+                 UriSource="pack://application:,,,/Images/ZeroPlus_RGB_FullLogo_White.png" />
+    <BitmapImage x:Key="ZeroPlus_RGB_LogoMark_Black"
+                 UriSource="pack://application:,,,/Images/ZeroPlus_RGB_LogoMark_Black.png" />
+    <BitmapImage x:Key="ZeroPlus_RGB_LogoMark_Full-Color-Reverse"
+                 UriSource="pack://application:,,,/Images/ZeroPlus_RGB_LogoMark_Full-Color-Reverse.png" />
+    <BitmapImage x:Key="ZeroPlus_RGB_LogoMark_Full-Color"
+                 UriSource="pack://application:,,,/Images/ZeroPlus_RGB_LogoMark_Full-Color.png" />
+    <BitmapImage x:Key="ZeroPlus_RGB_LogoMark_White"
+                 UriSource="pack://application:,,,/Images/ZeroPlus_RGB_LogoMark_White.png" />
+    <BitmapImage x:Key="ZeroPlus_RGB_WordMark_Black"
+                 UriSource="pack://application:,,,/Images/ZeroPlus_RGB_WordMark_Black.png" />
+    <BitmapImage x:Key="ZeroPlus_RGB_WordMark_Full-Color-Reverse"
+                 UriSource="pack://application:,,,/Images/ZeroPlus_RGB_WordMark_Full-Color-Reverse.png" />
+    <BitmapImage x:Key="ZeroPlus_RGB_WordMark_Full-Color"
+                 UriSource="pack://application:,,,/Images/ZeroPlus_RGB_WordMark_Full-Color.png" />
+    <BitmapImage x:Key="ZeroPlus_RGB_WordMark_White"
+                 UriSource="pack://application:,,,/Images/ZeroPlus_RGB_WordMark_White.png" />
+    <helper:BooleanToStringConverter x:Key="BooleanToStringConverter" />
+    <helper:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    <dxmvvm:BooleanNegationConverter x:Key="BooleanNegationConverter" />
+    <dxmvvm:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <dxmvvm:BooleanToVisibilityConverter x:Key="BooleanToHiddenVisibilityConverter"
+                                         HiddenInsteadOfCollapsed="True" />
+    <dxmvvm:BooleanToVisibilityConverter x:Key="BooleanToVisibilityInverseConverter"
+                                         Inverse="True" />
+    <dxmvvm:BooleanToObjectConverter x:Key="BooleanToStateColorConverter">
+        <dxmvvm:BooleanToObjectConverter.TrueValue>
+            <SolidColorBrush Color="Green" />
+        </dxmvvm:BooleanToObjectConverter.TrueValue>
+        <dxmvvm:BooleanToObjectConverter.FalseValue>
+            <SolidColorBrush Color="Red" />
+        </dxmvvm:BooleanToObjectConverter.FalseValue>
+    </dxmvvm:BooleanToObjectConverter>
+    <ControlTemplate x:Key="{dxgt:GridColumnHeaderThemeKey ResourceKey=ColumnFilterTemplate,
+                                                           ThemeName=VS2019Dark}"
+                     TargetType="{x:Type ToggleButton}">
+        <Viewbox Width="30"
+                 Height="16">
+            <Grid x:Name="Root"
+                  Width="13"
+                  Height="13"
+                  Margin="0,-2,0,0"
+                  Background="Transparent">
+                <Path Width="7"
+                      Height="9"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Data="F1 M 1296.5,759C 1298.43,759 1300,759.896 1300,761.014L 1300,762L 1297,765L 1297,768L 1296,768L 1296,765L 1293,762L 1293,761C 1293,759.896 1294.57,759 1296.5,759 Z M 1296.5,760C 1295.12,760 1294,760.448 1294,761C 1294,761.552 1295.12,762 1296.5,762C 1297.88,762 1299,761.552 1299,761C 1299,760.448 1297.88,760 1296.5,760 Z"
+                      Fill="#FF666666"
+                      Stretch="Fill"
+                      Visibility="{Binding IsMouseOver, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BooleanToVisibilityInverseConverter}}">
+                    <Path.Opacity>
+                        <Binding Path="IsChecked"
+                                 RelativeSource="{RelativeSource TemplatedParent}">
+                            <Binding.Converter>
+                                <dx:BoolToVisibilityViaOpacityConverter Invert="True" />
+                            </Binding.Converter>
+                        </Binding>
+                    </Path.Opacity>
+                </Path>
+                <Path Width="7"
+                      Height="9"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Data="F1 M 1296.5,759C 1298.43,759 1300,759.896 1300,761.014L 1300,762L 1297,765L 1297,768L 1296,768L 1296,765L 1293,762L 1293,761C 1293,759.896 1294.57,759 1296.5,759 Z M 1296.5,760C 1295.12,760 1294,760.448 1294,761C 1294,761.552 1295.12,762 1296.5,762C 1297.88,762 1299,761.552 1299,761C 1299,760.448 1297.88,760 1296.5,760 Z"
+                      Fill="#FFFFFF"
+                      Stretch="Fill"
+                      Visibility="{Binding IsMouseOver, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Path.Opacity>
+                        <Binding Path="IsPressed"
+                                 RelativeSource="{RelativeSource TemplatedParent}">
+                            <Binding.Converter>
+                                <dx:BoolToVisibilityViaOpacityConverter Invert="True" />
+                            </Binding.Converter>
+                        </Binding>
+                    </Path.Opacity>
+                </Path>
+                <Path Width="7"
+                      Height="9"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Data="F1 M 1296.5,759C 1298.43,759 1300,759.896 1300,761.014L 1300,762L 1297,765L 1297,768L 1296,768L 1296,765L 1293,762L 1293,761C 1293,759.896 1294.57,759 1296.5,759 Z M 1296.5,760C 1295.12,760 1294,760.448 1294,761C 1294,761.552 1295.12,762 1296.5,762C 1297.88,762 1299,761.552 1299,761C 1299,760.448 1297.88,760 1296.5,760 Z"
+                      Fill="#FFFFFF"
+                      Stretch="Fill"
+                      Visibility="{Binding IsPressed, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Path Width="7"
+                      Height="9"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Data="F1 M 1296.5,759C 1298.43,759 1300,759.896 1300,761.014L 1300,762L 1297,765L 1297,768L 1296,768L 1296,765L 1293,762L 1293,761C 1293,759.896 1294.57,759 1296.5,759 Z M 1296.5,760C 1295.12,760 1294,760.448 1294,761C 1294,761.552 1295.12,762 1296.5,762C 1297.88,762 1299,761.552 1299,761C 1299,760.448 1297.88,760 1296.5,760 Z"
+                      Fill="#FF0072C6"
+                      Stretch="Fill"
+                      Visibility="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </Grid>
+        </Viewbox>
+        <ControlTemplate.Triggers>
+            <Trigger Property="dx:ThemeManager.IsTouchEnabled" Value="True">
+                <Setter TargetName="Root" Property="Width" Value="26" />
+                <Setter TargetName="Root" Property="Height" Value="26" />
+                <Setter TargetName="Root" Property="Margin" Value="-8" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="{dxgt:ExtendedColumnChooserThemeKey ResourceKey=Template,
+                                                                ThemeName=VS2019Dark}">
+        <dxg:TreeListControl DataContext="{Binding Path=(dxg:ExtendedColumnChooserControl.ViewModel), RelativeSource={RelativeSource Self}}"
+                             ItemsSource="{Binding Path=Columns}"
+                             Style="{DynamicResource ResourceKey={dxgt:ExtendedColumnChooserThemeKey ResourceKey=TreeListControlStyle,
+                                                                                                     ThemeName=VS2019Dark}}">
+            <dxg:TreeListControl.Columns>
+                <dxg:TreeListColumn AllowSearchPanel="False"
+                                    FieldName="IsVisible"
+                                    Style="{DynamicResource ResourceKey={dxgt:ExtendedColumnChooserThemeKey ResourceKey=CheckBoxColumnStyle,
+                                                                                                            ThemeName=VS2019Dark}}" />
+                <dxg:TreeListColumn Width="*"
+                                    AllowSearchPanel="False"
+                                    FieldName="Source"
+                                    Style="{DynamicResource ResourceKey={dxgt:ExtendedColumnChooserThemeKey ResourceKey=ColumnStyle,
+                                                                                                            ThemeName=VS2019Dark}}" />
+                <dxg:TreeListColumn AllowSearchPanel="False"
+                                    FieldName="VisibleIndex"
+                                    Visible="False" />
+                <dxg:TreeListColumn AllowSearchPanel="True"
+                                    FieldName="Header"
+                                    SortOrder="Ascending"
+                                    Visible="False" />
+            </dxg:TreeListControl.Columns>
+            <dxg:TreeListControl.View>
+                <dxg:ExtendedColumnChooserTreeListView KeyFieldName="Source"
+                                                       OriginalDataControl="{Binding DataControl}"
+                                                       ParentFieldName="ParentBand"
+                                                       Style="{DynamicResource ResourceKey={dxgt:ExtendedColumnChooserThemeKey ResourceKey=TreeListViewStyle,
+                                                                                                                               ThemeName=VS2019Dark}}"
+                                                       TreeColumnFieldName="Source">
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:EventToCommand Command="{DXCommand Execute='@s.AssociatedObject.UpdateRowsFixedState()'}"
+                                               EventName="ColumnsFixedStateChanged"
+                                               SourceObject="{Binding}" />
+                        <dxmvvm:EventToCommand Command="{DXCommand Execute='@s.AssociatedObject.UpdateNodeExpandState(@parameter.TargetBand, @parameter.Source)'}"
+                                               EventName="DropInEmptyBand"
+                                               PassEventArgsToCommand="True"
+                                               SourceObject="{Binding DragDropManager}" />
+                    </dxmvvm:Interaction.Behaviors>
+                    <dx:DragManager.DropTargetFactory>
+                        <behaviors:MyExtendedColumnChooserDropTargetFactory />
+                    </dx:DragManager.DropTargetFactory>
+                </dxg:ExtendedColumnChooserTreeListView>
+            </dxg:TreeListControl.View>
+        </dxg:TreeListControl>
+    </ControlTemplate>
+    <helper:OrderToBackBrushConverter x:Key="OrderToBackBrushConverter" />
+    <Style x:Key="RowStyle"
+           TargetType="dxg:RowControl">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=IsSelected}"
+                         Value="True">
+                <Setter Property="Background" Value="#2d313b" />
+            </DataTrigger>
+            <Trigger Property="dxg:GridViewBase.IsFocusedRow" Value="True">
+                <Setter Property="Background" Value="#3b404a" />
+            </Trigger>
+            <Trigger Property="dxg:GridViewBase.IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#4e5563" />
+            </Trigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Path=IsSelected}" Value="True" />
+                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Background" Value="#4d4d4d" />
+            </MultiDataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="BasketGridStyle"
+           TargetType="dxg:RowControl">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=IsSelected}"
+                         Value="True">
+                <Setter Property="Background" Value="#2d313b" />
+            </DataTrigger>
+            <Trigger Property="dxg:GridViewBase.IsFocusedRow" Value="True">
+                <Setter Property="Background" Value="#3b404a" />
+            </Trigger>
+            <Trigger Property="dxg:GridViewBase.IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#4e5563" />
+            </Trigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Path=IsSelected}" Value="True" />
+                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Background" Value="#4d4d4d" />
+            </MultiDataTrigger>
+            <DataTrigger Binding="{Binding Row.AlertTriggered}"
+                         Value="True">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Offset="0.05" Color="#5680c0" />
+                            <GradientStop Offset="0.25" Color="#b7363d" />
+                            <GradientStop Offset="0.45" Color="#ff0000" />
+                            <GradientStop Offset="0.65" Color="#b7363d" />
+                            <GradientStop Offset="1.00" Color="#5680c0" />
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard x:Name="beginAnimation">
+                        <Storyboard>
+                            <DoubleAnimation AutoReverse="True"
+                                             RepeatBehavior="Forever"
+                                             Storyboard.TargetProperty="(Opacity)"
+                                             From="1.0"
+                                             To="0.3"
+                                             Duration="0:0:0.25" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+                <DataTrigger.ExitActions>
+                    <StopStoryboard BeginStoryboardName="beginAnimation" />
+                </DataTrigger.ExitActions>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="HeatmapRowStyle"
+           TargetType="dxg:RowControl">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=IsSelected}"
+                         Value="True">
+                <Setter Property="BorderBrush" Value="#a45e5e" />
+                <Setter Property="FontWeight" Value="Bold" />
+            </DataTrigger>
+            <Trigger Property="dxg:GridViewBase.IsFocusedRow" Value="True">
+                <Setter Property="BorderBrush" Value="#a45e5e" />
+                <Setter Property="FontWeight" Value="Bold" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="SubscriptionButtonStyle"
+           TargetType="dx:SimpleButton">
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="Padding" Value="0,4" />
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="BorderBrush" Value="#2D9E65" />
+                <Setter Property="Background" Value="#2D9E65" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="False">
+                <Setter Property="BorderBrush" Value="#f55762" />
+                <Setter Property="Background" Value="#f55762" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="CancelButtonStyle"
+           TargetType="dx:SimpleButton">
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#c47171" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#a45e5e" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="EmergencyStopButtonStyle"
+           TargetType="dx:SimpleButton">
+        <Setter Property="Background" Value="#d72813" />
+        <Setter Property="BorderBrush" Value="#ffbf18" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#D70000" />
+                <Setter Property="BorderBrush" Value="#ffbf18" />
+            </Trigger>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="Background" Value="#d72813" />
+                <Setter Property="BorderBrush" Value="#ffbf18" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#d72813" />
+                <Setter Property="BorderBrush" Value="#ffbf18" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="XButtonStyle"
+           TargetType="dx:SimpleButton">
+        <Setter Property="Glyph" Value="{dx:DXImage SvgImages/HybridDemoIcons/BottomPanel/HybridDemo_Close.svg}" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="ButtonKind" Value="Toggle" />
+        <Setter Property="IsEnabled" Value="{Binding LayoutLocked, Converter={StaticResource BooleanNegationConverter}}" />
+        <Setter Property="Margin" Value="5,0,0,0" />
+        <Setter Property="Height" Value="15" />
+        <Setter Property="GlyphWidth" Value="15" />
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="Transparent" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#a45e5e" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#a45e5e" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="TriggerButtonStyle"
+           TargetType="dx:SplitButton">
+        <Setter Property="ButtonKind" Value="Toggle" />
+        <Setter Property="GlyphHeight" Value="12" />
+        <Setter Property="Margin" Value="2,0,2,0" />
+        <Setter Property="Padding" Value="0,0,0,0" />
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="#3e3e40" />
+                <Setter Property="BorderBrush" Value="#77bb42" />
+                <Setter Property="Foreground" Value="#77bb42" />
+                <Setter Property="Glyph" Value="{dx:DXImage 'SvgImages/Business Objects/BO_Validation.svg'}" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="False">
+                <Setter Property="Glyph" Value="{dx:DXImage 'SvgImages/RichEdit/BorderNone.svg'}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="TriggerDropDownButtonStyle"
+           TargetType="dx:DropDownButton">
+        <Setter Property="GlyphHeight" Value="12" />
+        <Setter Property="Margin" Value="5,0,0,0" />
+        <Setter Property="Padding" Value="0,0,0,0" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=Tracker.IsRunning}"
+                         Value="True">
+                <Setter Property="Background" Value="#3e3e40" />
+                <Setter Property="BorderBrush" Value="#77bb42" />
+                <Setter Property="Foreground" Value="#77bb42" />
+                <Setter Property="Glyph" Value="{dx:DXImage 'SvgImages/Business Objects/BO_Validation.svg'}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="SpeedButtonStyle"
+           TargetType="dx:SimpleButton">
+        <Setter Property="Glyph" Value="{dx:DXImage SvgImages/Icon Builder/Weather_Wind.svg}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Width" Value="22" />
+        <Setter Property="Height" Value="22.5" />
+        <Setter Property="ButtonKind" Value="Toggle" />
+        <Setter Property="Margin" Value="2,0,-20,0" />
+
+        <Setter Property="GlyphWidth" Value="15" />
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="Transparent" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#a45e5e" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#a45e5e" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

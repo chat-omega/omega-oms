@@ -1,0 +1,389 @@
+﻿<UserControl x:Class="ZeroPlus.Oms.Ui.Views.MacdControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:local="clr-namespace:ZeroPlus.Oms.Ui.Views"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             d:DataContext="{d:DesignInstance Type=ViewModels:MacdContext}"
+             DataContext="{startuphelpers:DISource Type=ViewModels:MacdContext}"
+             mc:Ignorable="d">
+    <Grid>
+        <dxlc:GroupBox Grid.Row="1"
+                       Grid.Column="1"
+                       Margin="0,2,0,0"
+                       Padding="10,5"
+                       Visibility="{Binding ManualMode, Converter={StaticResource BooleanToVisibilityInverseConverter}}">
+            <dxlc:GroupBox.Header>
+                <Label Padding="0"
+                       VerticalAlignment="Center"
+                       FontWeight="Bold"
+                       Foreground="#AFAFB0"
+                       IsHitTestVisible="False">
+                    Macd Settings
+                </Label>
+            </dxlc:GroupBox.Header>
+            <Grid Margin="0,5,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="3"
+                       Margin="5,2,0,0"
+                       Padding="2,2,0,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom"
+                       Content="SIGNAL SMOOTHING"
+                       FontSize="8" />
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Padding="2,2,0,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom"
+                       Content="FAST SMOOTHING"
+                       FontSize="8" />
+
+                <Label Grid.Row="0"
+                       Grid.Column="1"
+                       Margin="5,2,0,0"
+                       Padding="2,2,0,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom"
+                       Content="SLOW SMOOTHING"
+                       FontSize="8" />
+
+                <Label Grid.Row="0"
+                       Grid.Column="4"
+                       Margin="5,2,0,0"
+                       Padding="2,2,0,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom"
+                       Content="MACD INTERVAL"
+                       FontSize="8" />
+
+                <Label Grid.Row="0"
+                       Grid.Column="5"
+                       Margin="5,2,0,0"
+                       Padding="2,2,0,0"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom"
+                       Content="BAR"
+                       FontSize="8" />
+
+                <Label Grid.Row="0"
+                       Grid.Column="6"
+                       Margin="5,2,0,0"
+                       Padding="2,2,0,0"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom"
+                       Content="Fast EMA"
+                       FontSize="8" />
+
+                <Label Grid.Row="0"
+                       Grid.Column="7"
+                       Margin="5,2,0,0"
+                       Padding="2,2,0,0"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom"
+                       Content="Entry"
+                       FontSize="8"
+                       ToolTip="Sign(new Bar) is not Sign(old Bar) and |new Bar - old Bar| &gt; Entry" />
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="0"
+                              Width="75"
+                              Margin="5,2,0,0"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding FastEmaSmoothing}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True">
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:EventToCommand Command="{Binding EmaConfigsChangedCommand}"
+                                               EventName="EditValueChanged" />
+                    </dxmvvm:Interaction.Behaviors>
+                </dxe:SpinEdit>
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="1"
+                              Width="75"
+                              Margin="5,2,0,0"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding SlowEmaSmoothing}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True">
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:EventToCommand Command="{Binding EmaConfigsChangedCommand}"
+                                               EventName="EditValueChanged" />
+                    </dxmvvm:Interaction.Behaviors>
+                </dxe:SpinEdit>
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="3"
+                              Width="75"
+                              Margin="5,2,0,0"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding SignalEmaSmoothing}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True">
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:EventToCommand Command="{Binding EmaConfigsChangedCommand}"
+                                               EventName="EditValueChanged" />
+                    </dxmvvm:Interaction.Behaviors>
+                </dxe:SpinEdit>
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="4"
+                              Width="75"
+                              Margin="5,2,0,0"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding MacdInterval}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True">
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:EventToCommand Command="{Binding EmaConfigsChangedCommand}"
+                                               EventName="EditValueChanged" />
+                    </dxmvvm:Interaction.Behaviors>
+                </dxe:SpinEdit>
+
+                <Border Grid.Row="1"
+                        Grid.Column="5"
+                        Width="75"
+                        Margin="5,2,0,0"
+                        Background="#333337"
+                        BorderBrush="#3F3F46"
+                        BorderThickness="0.75">
+                    <TextBlock Text="{Binding MacdBar}"
+                               TextAlignment="Center" />
+                </Border>
+                <Border Grid.Row="1"
+                        Grid.Column="6"
+                        Width="75"
+                        Margin="5,2,0,0"
+                        Background="#333337"
+                        BorderBrush="#3F3F46"
+                        BorderThickness="0.75">
+                    <TextBlock Text="{Binding FastEMA}"
+                               TextAlignment="Center" />
+                </Border>
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="7"
+                              Width="75"
+                              Margin="5,2,0,0"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding EnterTolerance}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="0.01"
+                              IsEnabled="{Binding MacdAutoTradingEnabled, Converter={dxmvvm:BooleanNegationConverter}}"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="2"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Padding="2,2,0,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom"
+                       Content="FAST PERIODS"
+                       FontSize="8" />
+
+                <Label Grid.Row="2"
+                       Grid.Column="1"
+                       Margin="5,2,0,0"
+                       Padding="2,2,0,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom"
+                       Content="SLOW PERIODS"
+                       FontSize="8" />
+
+                <Label Grid.Row="2"
+                       Grid.Column="3"
+                       Margin="5,2,0,0"
+                       Padding="2,2,0,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom"
+                       Content="SIGNAL PERIODS"
+                       FontSize="8" />
+
+                <Label Grid.Row="2"
+                       Grid.Column="4"
+                       Margin="5,2,0,0"
+                       Padding="2,2,0,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom"
+                       Content="AutoTrading"
+                       FontSize="8" />
+                <Label Grid.Row="2"
+                       Grid.Column="5"
+                       Margin="5,2,0,0"
+                       Padding="2,2,0,0"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom"
+                       Content="MACD"
+                       FontSize="8" />
+
+                <Label Grid.Row="2"
+                       Grid.Column="6"
+                       Margin="5,2,0,0"
+                       Padding="2,2,0,0"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom"
+                       Content="Slow EMA"
+                       FontSize="8" />
+
+                <Label Grid.Row="2"
+                       Grid.Column="7"
+                       Margin="5,2,0,0"
+                       Padding="2,2,0,0"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom"
+                       Content="Exit"
+                       FontSize="8"
+                       ToolTip="Sign(new Bar) is not Sign(old Bar) or Sign(new Bar) is Sign(old Bar) and |new Bar| + Exit &lt; |old Bar|" />
+                <dxe:SpinEdit Grid.Row="3"
+                              Grid.Column="0"
+                              Width="75"
+                              Margin="5,2,0,0"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding FastEmaPeriods}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True">
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:EventToCommand Command="{Binding EmaConfigsChangedCommand}"
+                                               EventName="EditValueChanged" />
+                    </dxmvvm:Interaction.Behaviors>
+                </dxe:SpinEdit>
+                <dxe:SpinEdit Grid.Row="3"
+                              Grid.Column="1"
+                              Width="75"
+                              Margin="5,2,0,0"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding SlowEmaPeriods}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True">
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:EventToCommand Command="{Binding EmaConfigsChangedCommand}"
+                                               EventName="EditValueChanged" />
+                    </dxmvvm:Interaction.Behaviors>
+                </dxe:SpinEdit>
+                <dxe:SpinEdit Grid.Row="3"
+                              Grid.Column="3"
+                              Width="75"
+                              Margin="5,2,0,0"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding SignalEmaPeriods}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True">
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:EventToCommand Command="{Binding EmaConfigsChangedCommand}"
+                                               EventName="EditValueChanged" />
+                    </dxmvvm:Interaction.Behaviors>
+                </dxe:SpinEdit>
+                <dxe:ToggleSwitch Grid.Row="3"
+                                  Grid.Column="4"
+                                  Margin="5,2,0,0"
+                                  Padding="2,2,0,0"
+                                  HorizontalAlignment="Center"
+                                  CheckedStateContent="On"
+                                  ContentPlacement="Inside"
+                                  IsChecked="{Binding MacdAutoTradingEnabled}"
+                                  ToggleSwitchWidth="75"
+                                  UncheckedStateContent="Off" />
+                <Border Grid.Row="3"
+                        Grid.Column="5"
+                        Width="75"
+                        Margin="5,2,0,0"
+                        Background="#333337"
+                        BorderBrush="#3F3F46"
+                        BorderThickness="0.75">
+                    <TextBlock Text="{Binding MacdValue}"
+                               TextAlignment="Center" />
+                </Border>
+                <Border Grid.Row="3"
+                        Grid.Column="6"
+                        Width="75"
+                        Margin="5,2,0,0"
+                        Background="#333337"
+                        BorderBrush="#3F3F46"
+                        BorderThickness="0.75">
+                    <TextBlock Text="{Binding SlowEMA}"
+                               TextAlignment="Center" />
+                </Border>
+                <dxe:SpinEdit Grid.Row="3"
+                              Grid.Column="7"
+                              Width="75"
+                              Margin="5,2,0,0"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding ExitTolerance}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="0.1"
+                              IsEnabled="{Binding MacdAutoTradingEnabled, Converter={dxmvvm:BooleanNegationConverter}}"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+            </Grid>
+        </dxlc:GroupBox>
+
+
+    </Grid>
+</UserControl>

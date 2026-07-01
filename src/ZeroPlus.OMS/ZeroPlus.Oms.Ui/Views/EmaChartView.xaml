@@ -1,0 +1,730 @@
+﻿<view:ModuleWindow x:Class="ZeroPlus.Oms.Ui.Views.EmaChartView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                   xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                   xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts"
+                   xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                   xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                   xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                   xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                   xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                   xmlns:view="clr-namespace:ZeroPlus.Oms.Ui.Views"
+                   xmlns:viewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                   Title="{Binding ModuleTitle}"
+                   Width="1500"
+                   Height="800"
+                   MinWidth="400"
+                   MinHeight="300"
+                   d:DataContext="{d:DesignInstance Type=viewModels:EmaChartViewModel}"
+                   DataContext="{startuphelpers:DISource Type=viewModels:EmaChartViewModel}"
+                   WindowStartupLocation="CenterScreen"
+                   mc:Ignorable="d">
+
+    <dxmvvm:Interaction.Behaviors>
+        <services:OmsMessageBoxService />
+        <dxmvvm:OpenFileDialogService />
+        <dxmvvm:SaveFileDialogService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <dx:ThemedWindow.Resources>
+        <helper:CamelCaseFormatter x:Key="DisplayTextCamelCaseConverter" />
+        <helper:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter" />
+    </dx:ThemedWindow.Resources>
+
+    <dx:ThemedWindow.HeaderItems>
+        <view:ModuleHeaderItems />
+    </dx:ThemedWindow.HeaderItems>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="5" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="1"
+              Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0"
+                    Background="#171718"
+                    BorderBrush="#7d7d7d"
+                    BorderThickness="1"
+                    CornerRadius="1">
+                <StackPanel Orientation="Horizontal">
+                    <Label Padding="3"
+                           Background="#171718"
+                           Content="SOURCE - " />
+
+                    <dxe:ComboBoxEdit Grid.Row="1"
+                                      Grid.Column="0"
+                                      Width="90"
+                                      ApplyItemTemplateToSelectedItem="True"
+                                      Background="#171718"
+                                      BorderBrush="#f1f1f1"
+                                      BorderThickness="0.5"
+                                      IsTextEditable="False"
+                                      ItemsSource="{Binding DataSources}"
+                                      SelectedItem="{Binding DataSource}">
+                        <dxe:ComboBoxEdit.ItemTemplate>
+                            <DataTemplate>
+                                <Label Padding="0,1"
+                                       HorizontalAlignment="Left"
+                                       Content="{Binding Converter={StaticResource DisplayTextCamelCaseConverter}}" />
+                            </DataTemplate>
+                        </dxe:ComboBoxEdit.ItemTemplate>
+                    </dxe:ComboBoxEdit>
+
+                    <dxe:CheckEdit Margin="5,0,0,0"
+                                   Background="#171718"
+                                   Content="HIST - "
+                                   EditValue="{Binding LoadHistoric}" />
+
+                    <dxe:SpinEdit Grid.Row="1"
+                                  Grid.Column="2"
+                                  Width="50"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="#171718"
+                                  BorderBrush="#f1f1f1"
+                                  BorderThickness="0.5"
+                                  EditValue="{Binding HistoricRequestDays, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  Increment="1"
+                                  Mask="N0"
+                                  MaskUseAsDisplayFormat="True"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="1"
+                    Margin="5,0,0,0"
+                    Background="#171718"
+                    BorderBrush="#7d7d7d"
+                    BorderThickness="1"
+                    CornerRadius="1">
+                <StackPanel Orientation="Horizontal">
+                    <Label Padding="3"
+                           Background="#171718"
+                           Content="SYMBOL-" />
+
+                    <dxe:ButtonEdit Width="350"
+                                    AllowDefaultButton="False"
+                                    Background="#171718"
+                                    BorderBrush="#f1f1f1"
+                                    BorderThickness="0.5"
+                                    CharacterCasing="Upper"
+                                    EditValue="{Binding Symbol, UpdateSourceTrigger=PropertyChanged}"
+                                    EditValuePostDelay="0"
+                                    SelectAllOnGotFocus="True"
+                                    SelectAllOnMouseUp="True"
+                                    TabIndex="1">
+                        <dxe:ButtonEdit.Buttons>
+                            <dxe:ButtonInfo Command="{Binding SearchCommand}"
+                                            GlyphKind="Search"
+                                            IsDefaultButton="True" />
+                        </dxe:ButtonEdit.Buttons>
+                        <dxmvvm:Interaction.Behaviors>
+                            <dxmvvm:KeyToCommand Command="{Binding SearchCommand}"
+                                                 KeyGesture="Enter" />
+                        </dxmvvm:Interaction.Behaviors>
+                    </dxe:ButtonEdit>
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="2"
+                    Margin="5,0,0,0"
+                    Background="#171718"
+                    BorderBrush="#7d7d7d"
+                    BorderThickness="1"
+                    CornerRadius="1">
+                <StackPanel Grid.Column="2"
+                            Margin="5,0,0,0"
+                            Background="#171718"
+                            Orientation="Horizontal">
+
+                    <Label Padding="3"
+                           Background="#171718"
+                           Content="EMA - " />
+
+                    <dx:SimpleButton Width="18"
+                                     Height="18"
+                                     Margin="3,0"
+                                     VerticalAlignment="Center"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Command="{Binding ShowEmaSettingsCommand}"
+                                     Glyph="{dx:DXImage SvgImages/Dashboards/XAxisSettings.svg}"
+                                     GlyphHeight="17" />
+
+                    <dx:SimpleButton Width="18"
+                                     Height="18"
+                                     Margin="3,0"
+                                     VerticalAlignment="Center"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Command="{Binding ResetEmaCommand}"
+                                     Glyph="{dx:DXImage SvgImages/Dashboards/GridResetColumnWidths.svg}"
+                                     GlyphHeight="15" />
+
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="3"
+                    Margin="5,0,0,0"
+                    Background="#171718"
+                    BorderBrush="#7d7d7d"
+                    BorderThickness="1"
+                    CornerRadius="1">
+                <StackPanel Grid.Column="2"
+                            Margin="5,0,0,0"
+                            Background="#171718"
+                            Orientation="Horizontal">
+
+                    <Label Padding="3"
+                           Background="#171718"
+                           Content="MACD - " />
+
+                    <dx:SimpleButton Width="18"
+                                     Height="18"
+                                     Margin="3,0"
+                                     VerticalAlignment="Center"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Command="{Binding ShowMacdSettingsCommand}"
+                                     Glyph="{dx:DXImage SvgImages/Dashboards/XAxisSettings.svg}"
+                                     GlyphHeight="17" />
+
+                    <dx:SimpleButton Width="18"
+                                     Height="18"
+                                     Margin="3,0"
+                                     VerticalAlignment="Center"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Command="{Binding ResetMacdCommand}"
+                                     Glyph="{dx:DXImage SvgImages/Dashboards/GridResetColumnWidths.svg}"
+                                     GlyphHeight="15" />
+
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="4"
+                    Margin="5,0,0,0"
+                    Background="#171718"
+                    BorderBrush="#7d7d7d"
+                    BorderThickness="1"
+                    CornerRadius="1">
+                <StackPanel Grid.Column="3"
+                            Margin="5,0,0,0"
+                            Background="#171718"
+                            Orientation="Horizontal">
+
+                    <Label Padding="3"
+                           Background="#171718"
+                           Content="Hi B - Lo A" />
+
+                    <dx:SimpleButton Width="18"
+                                     Height="18"
+                                     Margin="3,0"
+                                     VerticalAlignment="Center"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Command="{Binding ResetHiLoCommand}"
+                                     Glyph="{dx:DXImage SvgImages/Dashboards/GridResetColumnWidths.svg}"
+                                     GlyphHeight="15" />
+
+                    <Label Margin="5,0,0,0"
+                           Padding="3"
+                           Background="#171718"
+                           Content="RESET:" />
+
+                    <dxe:SpinEdit Grid.Row="1"
+                                  Grid.Column="2"
+                                  Width="75"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="#171718"
+                                  BorderBrush="#f1f1f1"
+                                  BorderThickness="0.5"
+                                  EditValue="{Binding ResetPeriod}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="1"
+                                  Mask="N0"
+                                  MaskUseAsDisplayFormat="True"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="5"
+                    Margin="5,0,0,0"
+                    Background="#171718"
+                    BorderBrush="#7d7d7d"
+                    BorderThickness="1"
+                    CornerRadius="1">
+                <StackPanel Grid.Column="3"
+                            Margin="5,0,0,0"
+                            Background="#171718"
+                            Orientation="Horizontal">
+                    <Label Padding="3"
+                           Background="#171718"
+                           Content="Spacing (ms):" />
+
+                    <dxe:SpinEdit Grid.Row="1"
+                                  Grid.Column="2"
+                                  Width="65"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="#171718"
+                                  BorderBrush="#f1f1f1"
+                                  BorderThickness="0.5"
+                                  EditValue="{Binding BarInterval}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  Increment="1"
+                                  Mask="N0"
+                                  MaskUseAsDisplayFormat="True"
+                                  MinValue="150"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True">
+                        <dxmvvm:Interaction.Behaviors>
+                            <dxmvvm:EventToCommand Command="{Binding UpdateIntervalCommand}"
+                                                   EventName="EditValueChanged" />
+                        </dxmvvm:Interaction.Behaviors>
+                    </dxe:SpinEdit>
+
+                </StackPanel>
+            </Border>
+            <dx:DropDownButton Grid.Column="6"
+                               Margin="5,0"
+                               Padding="3,1,7,1"
+                               Background="#171718"
+                               BorderBrush="#7d7d7d"
+                               BorderThickness="1"
+                               Content="LINES">
+                <ItemsControl>
+                    <StackPanel Orientation="Vertical">
+                        <MenuItem Header="Show Bid"
+                                  IsCheckable="True"
+                                  IsChecked="{Binding ShowBid}" />
+                        <MenuItem Header="Show Mid "
+                                  IsCheckable="True"
+                                  IsChecked="{Binding ShowMid}" />
+                        <MenuItem Header="Show Ask"
+                                  IsCheckable="True"
+                                  IsChecked="{Binding ShowAsk}" />
+                        <dx:SuperTipItemControlSeparator />
+                        <MenuItem Header="Show Bid Ema"
+                                  IsCheckable="True"
+                                  IsChecked="{Binding ShowBidEma}" />
+                        <MenuItem Header="Show Mid Ema"
+                                  IsCheckable="True"
+                                  IsChecked="{Binding ShowMidEma}" />
+                        <MenuItem Header="Show Mid Ema 2"
+                                  IsCheckable="True"
+                                  IsChecked="{Binding ShowMidEma2}" />
+                        <MenuItem Header="Show Mid Ema 3"
+                                  IsCheckable="True"
+                                  IsChecked="{Binding ShowMidEma3}" />
+                        <MenuItem Header="Show Ask Ema"
+                                  IsCheckable="True"
+                                  IsChecked="{Binding ShowAskEma}" />
+                        <dx:SuperTipItemControlSeparator />
+                        <MenuItem Header="Show Highest Bid"
+                                  IsCheckable="True"
+                                  IsChecked="{Binding ShowHighestBid}" />
+                        <MenuItem Header="Show Lowest Ask"
+                                  IsCheckable="True"
+                                  IsChecked="{Binding ShowLowestAsk}" />
+                        <dx:SuperTipItemControlSeparator />
+                        <MenuItem Header="Show MACD"
+                                  IsCheckable="True"
+                                  IsChecked="{Binding ShowMacd}" />
+                    </StackPanel>
+                </ItemsControl>
+            </dx:DropDownButton>
+
+            <Border Grid.Column="8"
+                    Background="#171718"
+                    BorderBrush="#7d7d7d"
+                    BorderThickness="1"
+                    CornerRadius="1">
+                <Label Padding="3"
+                       Background="#171718"
+                       Content="{Binding DataPoints.Count}"
+                       ContentStringFormat="COUNT - {0:N0}" />
+            </Border>
+        </Grid>
+
+        <dxc:ChartControl Name="Chart"
+                          Grid.Row="2"
+                          Grid.Column="1"
+                          Margin="0,2,0,0"
+                          CustomDrawSeriesPoint="CustomDrawSeriesPoint">
+            <dxc:ChartControl.Resources>
+                <dxc:LineStyle x:Key="PriceLineStyle"
+                               Thickness="1" />
+                <dxc:LineStyle x:Key="HiLoPriceLineStyle"
+                               Thickness="2" />
+                <dxc:LineStyle x:Key="EmaLineStyle"
+                               Thickness="3" />
+            </dxc:ChartControl.Resources>
+            <dxc:ChartControl.CrosshairOptions>
+                <dxc:CrosshairOptions CrosshairLabelMode="ShowCommonForAllSeries"
+                                      HighlightPoints="False"
+                                      ShowArgumentLabels="False"
+                                      ShowArgumentLine="True"
+                                      ShowOnlyInFocusedPane="False"
+                                      ShowValueLabels="False"
+                                      ShowValueLine="False"
+                                      SnapMode="NearestArgument" />
+            </dxc:ChartControl.CrosshairOptions>
+            <dxc:ChartControl.Legend>
+                <dxc:Legend HorizontalPosition="Center"
+                            MarkerMode="Marker"
+                            Orientation="Horizontal"
+                            VerticalPosition="Top" />
+            </dxc:ChartControl.Legend>
+            <dxc:ChartControl.Diagram>
+                <dxc:XYDiagram2D Name="Diagram"
+                                 EnableAxisXNavigation="True"
+                                 EnableAxisYNavigation="True">
+                    <dxc:XYDiagram2D.PaneLayout>
+                        <dxc:GridLayout>
+                            <dxc:GridLayout.RowDefinitions>
+                                <dxc:LayoutDefinition Size="2*" />
+                                <dxc:LayoutDefinition Size="*" />
+                            </dxc:GridLayout.RowDefinitions>
+                        </dxc:GridLayout>
+                    </dxc:XYDiagram2D.PaneLayout>
+                    <dxc:XYDiagram2D.DefaultPane>
+                        <dxc:Pane x:Name="DefaultPane">
+                            <dxc:Pane.AxisXScrollBarOptions>
+                                <dxc:ScrollBarOptions Visible="False" />
+                            </dxc:Pane.AxisXScrollBarOptions>
+                        </dxc:Pane>
+                    </dxc:XYDiagram2D.DefaultPane>
+
+                    <dxc:XYDiagram2D.Panes>
+                        <dxc:Pane x:Name="MacdPane"
+                                  Collapsed="{Binding ShowMacd, Converter={StaticResource BooleanNegationConverter}}" />
+                    </dxc:XYDiagram2D.Panes>
+
+                    <dxc:XYDiagram2D.AxisX>
+                        <dxc:AxisX2D>
+                            <dxc:AxisX2D.Title>
+                                <dxc:AxisTitle Content="" />
+                            </dxc:AxisX2D.Title>
+                            <dxc:AxisX2D.VisibilityInPanes>
+                                <dxc:VisibilityInPane Pane="{Binding ElementName=DefaultPane}"
+                                                      Visible="False" />
+                                <dxc:VisibilityInPane Pane="{Binding ElementName=MacdPane}"
+                                                      Visible="True" />
+                            </dxc:AxisX2D.VisibilityInPanes>
+                            <dxc:AxisX2D.DateTimeScaleOptions>
+                                <dxc:ContinuousDateTimeScaleOptions WorkTimeOnly="True"
+                                                                    WorkdaysOnly="True">
+                                    <dxc:ContinuousDateTimeScaleOptions.WorkdaysOptions>
+                                        <dxc:WorkdaysOptions Workdays="Monday,Tuesday,Wednesday,Thursday,Friday" />
+                                    </dxc:ContinuousDateTimeScaleOptions.WorkdaysOptions>
+                                    <dxc:ContinuousDateTimeScaleOptions.WorkTimeRules>
+                                        <dxc:WorkTimeRule>
+                                            <dxc:WorkTimeRule.WorkIntervals>
+                                                <dxc:TimeInterval EndHour="15"
+                                                                  EndMinute="15"
+                                                                  EndSecond="00"
+                                                                  StartHour="08"
+                                                                  StartMinute="00"
+                                                                  StartSecond="00" />
+                                            </dxc:WorkTimeRule.WorkIntervals>
+                                        </dxc:WorkTimeRule>
+                                    </dxc:ContinuousDateTimeScaleOptions.WorkTimeRules>
+                                </dxc:ContinuousDateTimeScaleOptions>
+                            </dxc:AxisX2D.DateTimeScaleOptions>
+                        </dxc:AxisX2D>
+                    </dxc:XYDiagram2D.AxisX>
+
+                    <dxc:XYDiagram2D.AxisY>
+                        <dxc:AxisY2D Name="AxisY"
+                                     GridLinesVisible="False"
+                                     Visible="False">
+                            <dxc:AxisY2D.Title>
+                                <dxc:AxisTitle Content="" />
+                            </dxc:AxisY2D.Title>
+                            <dxc:AxisY2D.WholeRange>
+                                <dxc:Range dxc:AxisY2D.AlwaysShowZeroLevel="False" />
+                            </dxc:AxisY2D.WholeRange>
+                        </dxc:AxisY2D>
+                    </dxc:XYDiagram2D.AxisY>
+
+                    <dxc:XYDiagram2D.SecondaryAxesY>
+                        <dxc:SecondaryAxisY2D Name="MainAxisY"
+                                              GridLinesVisible="False">
+                            <dxc:AxisY2D.Title>
+                                <dxc:AxisTitle Content="" />
+                            </dxc:AxisY2D.Title>
+                            <dxc:AxisY2D.WholeRange>
+                                <dxc:Range dxc:AxisY2D.AlwaysShowZeroLevel="False" />
+                            </dxc:AxisY2D.WholeRange>
+                        </dxc:SecondaryAxisY2D>
+                        <dxc:SecondaryAxisY2D Name="MacdAxisY"
+                                              GridLinesVisible="False">
+                            <dxc:AxisY2D.Title>
+                                <dxc:AxisTitle Content="" />
+                            </dxc:AxisY2D.Title>
+                            <dxc:AxisY2D.WholeRange>
+                                <dxc:Range dxc:AxisY2D.AlwaysShowZeroLevel="False" />
+                            </dxc:AxisY2D.WholeRange>
+                        </dxc:SecondaryAxisY2D>
+                    </dxc:XYDiagram2D.SecondaryAxesY>
+
+                    <dxc:XYDiagram2D.NavigationOptions>
+                        <dxc:NavigationOptions UseKeyboard="True"
+                                               UseMouse="True"
+                                               UseScrollBars="True"
+                                               UseTouchDevice="True" />
+                    </dxc:XYDiagram2D.NavigationOptions>
+
+                    <dxc:SplineSeries2D ArgumentDataMember="Timestamp"
+                                        AxisY="{Binding ElementName=MainAxisY}"
+                                        Brush="#40ff01"
+                                        DataSource="{Binding DataPoints}"
+                                        DisplayName="Bid"
+                                        LineStyle="{StaticResource PriceLineStyle}"
+                                        Pane="{Binding ElementName=DefaultPane}"
+                                        ValueDataMember="Bid"
+                                        Visible="{Binding ShowBid}">
+                        <dxc:SplineSeries2D.LastPoint>
+                            <dxc:SidePoint LabelDisplayMode="SeriesPoint">
+                                <dxc:SidePoint.Label>
+                                    <dxc:SeriesLabel TextPattern="{}{V:f2}" />
+                                </dxc:SidePoint.Label>
+                            </dxc:SidePoint>
+                        </dxc:SplineSeries2D.LastPoint>
+                    </dxc:SplineSeries2D>
+                    <dxc:SplineSeries2D ArgumentDataMember="Timestamp"
+                                        AxisY="{Binding ElementName=MainAxisY}"
+                                        Brush="#2952be"
+                                        DataSource="{Binding DataPoints}"
+                                        DisplayName="Mid"
+                                        LineStyle="{StaticResource PriceLineStyle}"
+                                        Pane="{Binding ElementName=DefaultPane}"
+                                        ValueDataMember="Mid"
+                                        Visible="{Binding ShowMid}">
+                        <dxc:SplineSeries2D.LastPoint>
+                            <dxc:SidePoint LabelDisplayMode="SeriesPoint">
+                                <dxc:SidePoint.Label>
+                                    <dxc:SeriesLabel TextPattern="{}{V:f2}" />
+                                </dxc:SidePoint.Label>
+                            </dxc:SidePoint>
+                        </dxc:SplineSeries2D.LastPoint>
+                    </dxc:SplineSeries2D>
+                    <dxc:SplineSeries2D ArgumentDataMember="Timestamp"
+                                        AxisY="{Binding ElementName=MainAxisY}"
+                                        Brush="#ff2828"
+                                        DataSource="{Binding DataPoints}"
+                                        DisplayName="Ask"
+                                        LineStyle="{StaticResource PriceLineStyle}"
+                                        Pane="{Binding ElementName=DefaultPane}"
+                                        ValueDataMember="Ask"
+                                        Visible="{Binding ShowAsk}">
+                        <dxc:SplineSeries2D.LastPoint>
+                            <dxc:SidePoint LabelDisplayMode="SeriesPoint">
+                                <dxc:SidePoint.Label>
+                                    <dxc:SeriesLabel TextPattern="{}{V:f2}" />
+                                </dxc:SidePoint.Label>
+                            </dxc:SidePoint>
+                        </dxc:SplineSeries2D.LastPoint>
+                    </dxc:SplineSeries2D>
+                    <dxc:SplineSeries2D ArgumentDataMember="Timestamp"
+                                        AxisY="{Binding ElementName=MainAxisY}"
+                                        Brush="#228b00"
+                                        DataSource="{Binding DataPoints}"
+                                        DisplayName="Bid Ema"
+                                        LineStyle="{StaticResource EmaLineStyle}"
+                                        Pane="{Binding ElementName=DefaultPane}"
+                                        ValueDataMember="BidEma"
+                                        Visible="{Binding ShowBidEma}">
+                        <dxc:SplineSeries2D.LastPoint>
+                            <dxc:SidePoint LabelDisplayMode="SeriesPoint">
+                                <dxc:SidePoint.Label>
+                                    <dxc:SeriesLabel TextPattern="{}{V:f2}" />
+                                </dxc:SidePoint.Label>
+                            </dxc:SidePoint>
+                        </dxc:SplineSeries2D.LastPoint>
+                    </dxc:SplineSeries2D>
+                    <dxc:SplineSeries2D ArgumentDataMember="Timestamp"
+                                        AxisY="{Binding ElementName=MainAxisY}"
+                                        Brush="#91e8ff"
+                                        DataSource="{Binding DataPoints}"
+                                        DisplayName="Mid Ema"
+                                        LineStyle="{StaticResource EmaLineStyle}"
+                                        Pane="{Binding ElementName=DefaultPane}"
+                                        ValueDataMember="MidEma"
+                                        Visible="{Binding ShowMidEma}">
+                        <dxc:SplineSeries2D.LastPoint>
+                            <dxc:SidePoint LabelDisplayMode="SeriesPoint">
+                                <dxc:SidePoint.Label>
+                                    <dxc:SeriesLabel TextPattern="{}{V:f2}" />
+                                </dxc:SidePoint.Label>
+                            </dxc:SidePoint>
+                        </dxc:SplineSeries2D.LastPoint>
+                    </dxc:SplineSeries2D>
+                    <dxc:SplineSeries2D ArgumentDataMember="Timestamp"
+                                        AxisY="{Binding ElementName=MainAxisY}"
+                                        Brush="#eddd9a"
+                                        DataSource="{Binding DataPoints}"
+                                        DisplayName="Mid Ema 2"
+                                        LineStyle="{StaticResource EmaLineStyle}"
+                                        Pane="{Binding ElementName=DefaultPane}"
+                                        ValueDataMember="MidEma2"
+                                        Visible="{Binding ShowMidEma2}">
+                        <dxc:SplineSeries2D.LastPoint>
+                            <dxc:SidePoint LabelDisplayMode="SeriesPoint">
+                                <dxc:SidePoint.Label>
+                                    <dxc:SeriesLabel TextPattern="{}{V:f2}" />
+                                </dxc:SidePoint.Label>
+                            </dxc:SidePoint>
+                        </dxc:SplineSeries2D.LastPoint>
+                    </dxc:SplineSeries2D>
+                    <dxc:SplineSeries2D ArgumentDataMember="Timestamp"
+                                        AxisY="{Binding ElementName=MainAxisY}"
+                                        Brush="#9fffa6"
+                                        DataSource="{Binding DataPoints}"
+                                        DisplayName="Mid Ema 3"
+                                        LineStyle="{StaticResource EmaLineStyle}"
+                                        Pane="{Binding ElementName=DefaultPane}"
+                                        ValueDataMember="MidEma3"
+                                        Visible="{Binding ShowMidEma3}">
+                        <dxc:SplineSeries2D.LastPoint>
+                            <dxc:SidePoint LabelDisplayMode="SeriesPoint">
+                                <dxc:SidePoint.Label>
+                                    <dxc:SeriesLabel TextPattern="{}{V:f2}" />
+                                </dxc:SidePoint.Label>
+                            </dxc:SidePoint>
+                        </dxc:SplineSeries2D.LastPoint>
+                    </dxc:SplineSeries2D>
+                    <dxc:SplineSeries2D ArgumentDataMember="Timestamp"
+                                        AxisY="{Binding ElementName=MainAxisY}"
+                                        Brush="#860f05"
+                                        DataSource="{Binding DataPoints}"
+                                        DisplayName="Ask Ema"
+                                        LineStyle="{StaticResource EmaLineStyle}"
+                                        Pane="{Binding ElementName=DefaultPane}"
+                                        ValueDataMember="AskEma"
+                                        Visible="{Binding ShowAskEma}">
+                        <dxc:SplineSeries2D.LastPoint>
+                            <dxc:SidePoint LabelDisplayMode="SeriesPoint">
+                                <dxc:SidePoint.Label>
+                                    <dxc:SeriesLabel TextPattern="{}{V:f2}" />
+                                </dxc:SidePoint.Label>
+                            </dxc:SidePoint>
+                        </dxc:SplineSeries2D.LastPoint>
+                    </dxc:SplineSeries2D>
+                    <dxc:SplineSeries2D ArgumentDataMember="Timestamp"
+                                        AxisY="{Binding ElementName=MainAxisY}"
+                                        Brush="#007373"
+                                        DataSource="{Binding DataPoints}"
+                                        DisplayName="Highest Bid"
+                                        LineStyle="{StaticResource HiLoPriceLineStyle}"
+                                        Pane="{Binding ElementName=DefaultPane}"
+                                        ValueDataMember="HighestBid"
+                                        Visible="{Binding ShowHighestBid}">
+                        <dxc:SplineSeries2D.LastPoint>
+                            <dxc:SidePoint LabelDisplayMode="SeriesPoint">
+                                <dxc:SidePoint.Label>
+                                    <dxc:SeriesLabel TextPattern="{}{V:f2}" />
+                                </dxc:SidePoint.Label>
+                            </dxc:SidePoint>
+                        </dxc:SplineSeries2D.LastPoint>
+                    </dxc:SplineSeries2D>
+                    <dxc:SplineSeries2D ArgumentDataMember="Timestamp"
+                                        AxisY="{Binding ElementName=MainAxisY}"
+                                        Brush="#ff5d07"
+                                        DataSource="{Binding DataPoints}"
+                                        DisplayName="Lowest Ask"
+                                        LineStyle="{StaticResource HiLoPriceLineStyle}"
+                                        Pane="{Binding ElementName=DefaultPane}"
+                                        ValueDataMember="LowestAsk"
+                                        Visible="{Binding ShowLowestAsk}">
+                        <dxc:SplineSeries2D.LastPoint>
+                            <dxc:SidePoint LabelDisplayMode="SeriesPoint">
+                                <dxc:SidePoint.Label>
+                                    <dxc:SeriesLabel TextPattern="{}{V:f2}" />
+                                </dxc:SidePoint.Label>
+                            </dxc:SidePoint>
+                        </dxc:SplineSeries2D.LastPoint>
+                    </dxc:SplineSeries2D>
+
+                    <dxc:SplineSeries2D ArgumentDataMember="Timestamp"
+                                        AxisY="{Binding ElementName=MacdAxisY}"
+                                        Brush="#eddd9a"
+                                        DataSource="{Binding DataPoints}"
+                                        DisplayName="MACD"
+                                        LineStyle="{StaticResource PriceLineStyle}"
+                                        Pane="{Binding ElementName=MacdPane}"
+                                        ValueDataMember="Macd">
+                        <dxc:SplineSeries2D.LastPoint>
+                            <dxc:SidePoint LabelDisplayMode="SeriesPoint">
+                                <dxc:SidePoint.Label>
+                                    <dxc:SeriesLabel TextPattern="{}{V:f6}" />
+                                </dxc:SidePoint.Label>
+                            </dxc:SidePoint>
+                        </dxc:SplineSeries2D.LastPoint>
+                    </dxc:SplineSeries2D>
+
+                    <dxc:SplineSeries2D ArgumentDataMember="Timestamp"
+                                        AxisY="{Binding ElementName=MacdAxisY}"
+                                        Brush="#09e8e7"
+                                        DataSource="{Binding DataPoints}"
+                                        DisplayName="Signal"
+                                        LineStyle="{StaticResource PriceLineStyle}"
+                                        Pane="{Binding ElementName=MacdPane}"
+                                        ValueDataMember="Signal">
+                        <dxc:SplineSeries2D.LastPoint>
+                            <dxc:SidePoint LabelDisplayMode="SeriesPoint">
+                                <dxc:SidePoint.Label>
+                                    <dxc:SeriesLabel TextPattern="{}{V:f6}" />
+                                </dxc:SidePoint.Label>
+                            </dxc:SidePoint>
+                        </dxc:SplineSeries2D.LastPoint>
+                    </dxc:SplineSeries2D>
+
+                    <dxc:BarSideBySideSeries2D x:Name="HistogramBarSeries"
+                                               ArgumentDataMember="Timestamp"
+                                               AxisY="{Binding ElementName=MacdAxisY}"
+                                               BarWidth=".01"
+                                               DataSource="{Binding DataPoints}"
+                                               DisplayName="Bars"
+                                               Pane="{Binding ElementName=MacdPane}"
+                                               ShowInLegend="False"
+                                               ValueDataMember="Bar">
+                        <dxc:BarSideBySideSeries2D.Model>
+                            <dxc:BorderlessSimpleBar2DModel />
+                        </dxc:BarSideBySideSeries2D.Model>
+                    </dxc:BarSideBySideSeries2D>
+                </dxc:XYDiagram2D>
+            </dxc:ChartControl.Diagram>
+        </dxc:ChartControl>
+
+    </Grid>
+
+</view:ModuleWindow>

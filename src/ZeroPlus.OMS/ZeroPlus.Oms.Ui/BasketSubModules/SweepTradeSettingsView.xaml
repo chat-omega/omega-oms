@@ -1,0 +1,194 @@
+﻿<UserControl x:Class="ZeroPlus.Oms.Ui.Views.SweepTradeSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+             xmlns:behavior="clr-namespace:ZeroPlus.Oms.Ui.Behaviors"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:views="clr-namespace:ZeroPlus.Oms.Ui.Views"
+             d:DataContext="{d:DesignInstance Type=ViewModels:AutomationSettingsViewModel}"
+             d:Height="auto"
+             d:Width="auto"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <dxmvvm:BooleanNegationConverter x:Key="BooleanNegationConverter" />
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <helper:CamelCaseFormatter x:Key="DisplayTextCamelCaseConverter" />
+        <helper:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <helper:NullToCheckGlyphConverter x:Key="NullToCheckGlyphConverter" />
+        <helper:BoolToCheckGlyphConverter x:Key="BoolToCheckGlyphConverter" />
+        <helper:SizeUpTypeToVisibilityConverter x:Key="SizeUpTypeToVisibilityConverter" />
+        <dxmvvm:BooleanToObjectConverter x:Key="HighlightToColorConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>#1a4c35</dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>Transparent</dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+        <dxmvvm:BooleanToObjectConverter x:Key="BooleanToExpandCollapseConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>3</dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>4</dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+    </UserControl.Resources>
+
+    <dxlc:GroupBox Name="SweepTradeSettingsSubModule"
+                   Grid.Row="5"
+                   Margin="5,0,0,0"
+                   Padding="10,5">
+
+        <dxlc:GroupBox.Header>
+            <Grid Height="22">
+                <Label Padding="0"
+                       VerticalAlignment="Center"
+                       Content="Sweep Trade"
+                       FontWeight="Bold"
+                       Foreground="#AFAFB0"
+                       IsHitTestVisible="False" />
+            </Grid>
+        </dxlc:GroupBox.Header>
+
+        <Grid Margin="0,5,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0"
+                   Grid.Column="0"
+                   Margin="5,2,0,0"
+                   VerticalAlignment="Center"
+                   Content="Entry Size" />
+
+            <dxe:SpinEdit Grid.Row="0"
+                          Grid.Column="1"
+                          Width="80"
+                          Margin="5,2,0,0"
+                          HorizontalContentAlignment="Right"
+                          AllowSpinOnMouseWheel="True"
+                          EditValue="{Binding AutomationConfig.SweepTradeEntrySize, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                          EditValueType="{x:Type sys:Int32}"
+                          Mask="N0"
+                          MaskUseAsDisplayFormat="True"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+
+            <Label Grid.Row="0"
+                   Grid.Column="2"
+                   Margin="5,2,0,0"
+                   VerticalAlignment="Center"
+                   Content="Exit Trigger %" />
+
+            <dxe:SpinEdit Grid.Row="0"
+                          Grid.Column="3"
+                          Width="80"
+                          Margin="5,2,0,0"
+                          HorizontalContentAlignment="Right"
+                          AllowSpinOnMouseWheel="True"
+                          EditValue="{Binding AutomationConfig.SweepTradeExitTriggerPercentage, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                          EditValueType="{x:Type sys:Double}"
+                          Increment="0.01"
+                          Mask="####0.00#"
+                          MaskUseAsDisplayFormat="True"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+
+            <Label Grid.Row="1"
+                   Grid.Column="0"
+                   Margin="5,2,0,0"
+                   VerticalAlignment="Center"
+                   Content="Entry Limit %" />
+
+            <dxe:SpinEdit Grid.Row="1"
+                          Grid.Column="1"
+                          Width="80"
+                          Margin="5,2,0,0"
+                          HorizontalContentAlignment="Right"
+                          AllowSpinOnMouseWheel="True"
+                          EditValue="{Binding AutomationConfig.SweepTradeEntryLimitPercentage, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                          EditValueType="{x:Type sys:Double}"
+                          Increment="0.01"
+                          Mask="####0.00#"
+                          MaskUseAsDisplayFormat="True"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+
+            <Label Grid.Row="1"
+                   Grid.Column="2"
+                   Margin="5,2,0,0"
+                   VerticalAlignment="Center"
+                   Content="Scaled Exit %" />
+
+            <dxe:SpinEdit Grid.Row="1"
+                          Grid.Column="3"
+                          Width="80"
+                          Margin="5,2,0,0"
+                          HorizontalContentAlignment="Right"
+                          AllowSpinOnMouseWheel="True"
+                          EditValue="{Binding AutomationConfig.SweepTradeScaledExitPercentage, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                          EditValueType="{x:Type sys:Double}"
+                          Increment="0.01"
+                          Mask="####0.00#"
+                          MaskUseAsDisplayFormat="True"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+
+            <Label Grid.Row="2"
+                   Grid.Column="0"
+                   Margin="5,2,0,0"
+                   VerticalAlignment="Center"
+                   Content="Stop Loss %" />
+
+            <dxe:SpinEdit Grid.Row="2"
+                          Grid.Column="1"
+                          Width="80"
+                          Margin="5,2,0,0"
+                          HorizontalContentAlignment="Right"
+                          AllowSpinOnMouseWheel="True"
+                          EditValue="{Binding AutomationConfig.SweepTradeStopLossPercentage, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                          EditValueType="{x:Type sys:Double}"
+                          Increment="0.01"
+                          Mask="####0.00#"
+                          MaskUseAsDisplayFormat="True"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+
+            <Label Grid.Row="2"
+                   Grid.Column="2"
+                   Margin="5,2,0,0"
+                   VerticalAlignment="Center"
+                   Content="Auto Close" />
+
+            <dxe:TextEdit Grid.Row="2"
+                          Grid.Column="3"
+                          Width="80"
+                          Margin="5,2,0,0"
+                          HorizontalAlignment="Left"
+                          HorizontalContentAlignment="Left"
+                          EditValue="{Binding AutomationConfig.SweepTradeAutoCloseTime, UpdateSourceTrigger=PropertyChanged}"
+                          Mask="hh:mm:ss tt"
+                          MaskType="DateTimeAdvancingCaret" />
+
+        </Grid>
+    </dxlc:GroupBox>
+</UserControl>

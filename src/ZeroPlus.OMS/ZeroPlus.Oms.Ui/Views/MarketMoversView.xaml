@@ -1,0 +1,245 @@
+<view:ModuleWindow x:Class="ZeroPlus.Oms.Ui.Views.MarketMoversView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                   xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                   xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                   xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                   xmlns:view="clr-namespace:ZeroPlus.Oms.Ui.Views"
+                   xmlns:viewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                   Title="{Binding ModuleTitle}"
+                   Width="1800"
+                   Height="700"
+                   MinWidth="520"
+                   MinHeight="300"
+                   d:DataContext="{d:DesignInstance Type=viewModels:MarketMoversViewModel}"
+                   DataContext="{startuphelpers:DISource Type=viewModels:MarketMoversViewModel}"
+                   WindowStartupLocation="CenterScreen"
+                   mc:Ignorable="d">
+
+    <view:ModuleWindow.Resources>
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <helper:SignToBrushConverter x:Key="SignToBrushConverter"
+                                     NegativeBrush="#ff2100"
+                                     PositiveBrush="#48cb8e"
+                                     ZeroBrush="#F1F1F1" />
+    </view:ModuleWindow.Resources>
+
+    <dx:ThemedWindow.HeaderItems>
+        <view:ModuleHeaderItems />
+    </dx:ThemedWindow.HeaderItems>
+
+    <Grid>
+        <dxg:GridControl x:Name="MoversGrid"
+                         MinHeight="70"
+                         MaxHeight="5000"
+                         Margin="5"
+                         AllowLiveDataShaping="True"
+                         AutoGenerateColumns="None"
+                         EnableSmartColumnsGeneration="False"
+                         ItemsSource="{Binding PortfolioManager.SymbolStatModels}">
+            <dxg:GridControl.Resources>
+                <Style TargetType="dxg:GridColumn">
+                    <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                    <Setter Property="Visible" Value="True" />
+                    <Setter Property="IsSmart" Value="True" />
+                </Style>
+            </dxg:GridControl.Resources>
+            <dxg:GridControl.View>
+                <dxg:TableView Name="BulletinTable"
+                               AllowDragDrop="True"
+                               AllowEditing="False"
+                               AutoWidth="True"
+                               BandSeparatorWidth="1"
+                               EnableSelectedRowAppearance="True"
+                               GroupSummaryDisplayMode="AlignByColumns"
+                               NavigationStyle="Cell"
+                               RowStyle="{StaticResource RowStyle}"
+                               ShowGridMenu="TableView_ShowGridMenu"
+                               ShowGroupPanel="False"
+                               ShowIndicator="True"
+                               ShowTotalSummary="False"
+                               VerticalScrollbarVisibility="Auto">
+                    <dxg:TableView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowColumnChooserCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Column Chooser">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ClearColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Hide All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowAllColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowDefaultColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Default Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </dxg:TableView.ContextMenu>
+                </dxg:TableView>
+            </dxg:GridControl.View>
+            <dxg:GridColumn FieldName="Symbol">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontWeight="DemiBold"
+                                   Foreground="#d7940d"
+                                   Text="{Binding RowData.Row.Symbol}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="Last"
+                            Header="Last">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,3,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{Binding RowData.Row.DayPercentChange, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.Last, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="QuarterHourNetChange"
+                            Header="15M chg">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,3,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{Binding RowData.Row.QuarterHourNetChange, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.QuarterHourNetChange, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="QuarterHourPercentChange"
+                            Header="15M % chg">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,3,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{Binding RowData.Row.QuarterHourPercentChange, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.QuarterHourPercentChange, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.P2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="HalfHourNetChange"
+                            Header="30M chg">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,3,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{Binding RowData.Row.HalfHourNetChange, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.HalfHourNetChange, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="HalfHourPercentChange"
+                            Header="30M % chg">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,3,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{Binding RowData.Row.HalfHourPercentChange, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.HalfHourPercentChange, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.P2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="HourNetChange"
+                            Header="1H chg">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,3,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{Binding RowData.Row.HourNetChange, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.HourNetChange, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="HourPercentChange"
+                            Header="1H % chg">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,3,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{Binding RowData.Row.HourPercentChange, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.HourPercentChange, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.P2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="DayNetChange"
+                            Header="chg">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,3,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{Binding RowData.Row.DayNetChange, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.DayNetChange, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="DayPercentChange"
+                            Header="% chg">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,0,3,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Foreground="{Binding RowData.Row.DayPercentChange, Converter={StaticResource SignToBrushConverter}}"
+                                   Text="{Binding RowData.Row.DayPercentChange, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.P2}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="Volume"
+                            Header="Volume">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="OptionVolume"
+                            Header="Opt Volume">
+                <dxg:GridColumn.EditSettings>
+                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                </dxg:GridColumn.EditSettings>
+            </dxg:GridColumn>
+        </dxg:GridControl>
+    </Grid>
+</view:ModuleWindow>

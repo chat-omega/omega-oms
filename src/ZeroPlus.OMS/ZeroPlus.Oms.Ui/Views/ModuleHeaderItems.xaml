@@ -1,0 +1,121 @@
+﻿<UserControl x:Class="ZeroPlus.Oms.Ui.Views.ModuleHeaderItems"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+             xmlns:views="clr-namespace:ZeroPlus.Oms.Ui.Views"
+             x:Name="ModuleHeaderItemsControl"
+             d:DataContext="{d:DesignInstance viewModels:ModuleViewModelBase}"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             mc:Ignorable="d">
+
+    <StackPanel Margin="1,2,2,0"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+        <dxe:TextEdit x:Name="NameEdit"
+                      Width="150"
+                      Margin="2,2,0,2"
+                      VerticalAlignment="Center"
+                      Background="Transparent"
+                      BorderBrush="Transparent"
+                      BorderThickness="0"
+                      EditValue="{Binding ModuleTitle, UpdateSourceTrigger=PropertyChanged}"
+                      IsHitTestVisible="False"
+                      KeyDown="NameKeyDown"
+                      PreviewMouseUp="SelectAll"
+                      SelectAllOnGotFocus="True"
+                      SelectAllOnMouseUp="True"
+                      Visibility="Collapsed" />
+
+        <dx:SimpleButton x:Name="NameEditButton"
+                         Width="23"
+                         Margin="0,0,2,0"
+                         HorizontalAlignment="Right"
+                         ButtonKind="Toggle"
+                         Checked="EditName"
+                         Glyph="{dx:DXImage SvgImages/Dashboards/RenameQuery.svg}"
+                         GlyphHeight="15"
+                         ToolTip="Edit Instance Title"
+                         Unchecked="SetName" />
+
+        <dx:SimpleButton Width="23"
+                         Margin="2,0"
+                         HorizontalAlignment="Right"
+                         dxb:BarManager.MenuShowMouseButton="LeftButton"
+                         Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Settings.svg}"
+                         GlyphHeight="17">
+            <dxb:BarManager.DXContextMenu>
+                <dxb:PopupControlContainer>
+                    <ItemsControl>
+                        <ItemsControl.Items>
+                            <MenuItem Click="ClearFiltersClick"
+                                      Header="Clear Filters" />
+                            <MenuItem Click="ClearSortingClick"
+                                      Header="Clear Sorting" />
+                            <ContentPresenter Content="{Binding DataContext, RelativeSource={RelativeSource AncestorType=views:ModuleHeaderItems}}"
+                                              ContentTemplate="{Binding AdditionalMenuItemsContent, ElementName=ModuleHeaderItemsControl}" />
+                        </ItemsControl.Items>
+                    </ItemsControl>
+                </dxb:PopupControlContainer>
+            </dxb:BarManager.DXContextMenu>
+        </dx:SimpleButton>
+
+        <dx:SimpleButton Width="23"
+                         Margin="2,0"
+                         HorizontalAlignment="Right"
+                         dxb:BarManager.MenuShowMouseButton="LeftButton"
+                         Glyph="{dx:DXImage SvgImages/DiagramIcons/Orientation/ListOrientationVertical.svg}"
+                         GlyphHeight="17">
+            <dxb:BarManager.DXContextMenu>
+                <dxb:PopupControlContainer>
+                    <ItemsControl>
+                        <ItemsControl.Items>
+                            <MenuItem Height="25"
+                                      Click="CloneModule"
+                                      Header="Clone">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage SvgImages/XAF/Action_CloneMerge_Merge_Object.svg}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Click="ShareLayout"
+                                      Header="Share Config">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage SvgImages/Icon Builder/Actions_Send.svg}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Click="SaveLayout"
+                                      Header="Save Config"
+                                      IsEnabled="{Binding AllowSave}">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage SvgImages/Save/Save.svg}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Click="LoadLayout"
+                                      Header="Load Config">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage SvgImages/Dashboards/ServerMode.svg}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ItemsControl.Items>
+                    </ItemsControl>
+                </dxb:PopupControlContainer>
+            </dxb:BarManager.DXContextMenu>
+        </dx:SimpleButton>
+    </StackPanel>
+</UserControl>

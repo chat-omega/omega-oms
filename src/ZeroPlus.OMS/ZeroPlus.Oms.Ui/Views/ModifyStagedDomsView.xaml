@@ -1,0 +1,629 @@
+﻿<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.ModifyStagedDomsView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 Title="Modify Staged Dominators"
+                 Width="420"
+                 Height="320"
+                 WindowStartupLocation="CenterScreen"
+                 WindowStyle="ToolWindow">
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:CurrentWindowService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <dx:DXTabControl Grid.Row="0"
+                         Grid.ColumnSpan="2">
+            <dx:DXTabControl.View>
+                <dx:TabControlScrollView HeaderLocation="Top"
+                                         HeaderOrientation="Horizontal"
+                                         ShowHeaderMenu="False" />
+            </dx:DXTabControl.View>
+            <dx:DXTabItem Header="Edge">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+
+                    <dxe:CheckEdit Grid.Row="0"
+                                   Grid.Column="0"
+                                   Margin="0,5,0,0"
+                                   Content="Edge Multiplier:"
+                                   EditValue="{Binding UpdateEdgeMultiplier}" />
+
+                    <dxe:SpinEdit Grid.Row="0"
+                                  Grid.Column="1"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding EdgeMultiplier, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.05"
+                                  IsEnabled="{Binding UpdateEdgeMultiplier}"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <dxe:CheckEdit Grid.Row="1"
+                                   Grid.Column="0"
+                                   Margin="0,5,0,0"
+                                   Content="Delta Max:"
+                                   EditValue="{Binding UpdateDeltaMax}" />
+
+                    <dxe:SpinEdit Grid.Row="1"
+                                  Grid.Column="1"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding DeltaMax, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.01"
+                                  IsEnabled="{Binding UpdateDeltaMax}"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <dxe:CheckEdit Grid.Row="2"
+                                   Grid.Column="0"
+                                   Margin="0,5,0,0"
+                                   Content="Loop Size:"
+                                   EditValue="{Binding UpdateLoopSize}" />
+
+                    <dxe:SpinEdit Grid.Row="2"
+                                  Grid.Column="1"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding LoopSize, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  IsEnabled="{Binding UpdateLoopSize}"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <dxe:CheckEdit Grid.Row="3"
+                                   Grid.Column="0"
+                                   Margin="0,5,0,0"
+                                   Content="Days To Exp:"
+                                   EditValue="{Binding UpdateDaysToExpiration}" />
+
+                    <dxe:SpinEdit Grid.Row="3"
+                                  Grid.Column="1"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding MinDaysToExpiration, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  IsEnabled="{Binding UpdateDaysToExpiration}"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="3"
+                           Grid.Column="2"
+                           Margin="2,5,0,0"
+                           Content="-" />
+
+                    <dxe:SpinEdit Grid.Row="3"
+                                  Grid.Column="3"
+                                  Width="60"
+                                  Margin="2,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding MaxDaysToExpiration, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  IsEnabled="{Binding UpdateDaysToExpiration}"
+                                  MinValue="{Binding MinDaysToExpiration}"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </Grid>
+            </dx:DXTabItem>
+
+            <dx:DXTabItem Header="Global Calendar Edge">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+
+                    <Label Grid.Row="0"
+                           Grid.Column="0"
+                           Margin="0,5,0,0"
+                           Content="If days to Exp is more than" />
+
+                    <dxe:SpinEdit Grid.Row="0"
+                                  Grid.Column="1"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding TimeToEdgeSettingModel1.Spacing}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="0"
+                           Grid.Column="2"
+                           Margin="5,5,0,0"
+                           Content="widen by" />
+
+                    <dxe:SpinEdit Grid.Row="0"
+                                  Grid.Column="3"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding TimeToEdgeSettingModel1.EdgeChange}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.05"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="1"
+                           Grid.Column="0"
+                           Margin="0,5,0,0"
+                           Content="If days to Exp is more than" />
+
+                    <dxe:SpinEdit Grid.Row="1"
+                                  Grid.Column="1"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding TimeToEdgeSettingModel2.Spacing}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="1"
+                           Grid.Column="2"
+                           Margin="5,5,0,0"
+                           Content="widen by" />
+
+                    <dxe:SpinEdit Grid.Row="1"
+                                  Grid.Column="3"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding TimeToEdgeSettingModel2.EdgeChange}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.05"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="2"
+                           Grid.Column="0"
+                           Margin="0,5,0,0"
+                           Content="If days to Exp is more than" />
+
+                    <dxe:SpinEdit Grid.Row="2"
+                                  Grid.Column="1"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding TimeToEdgeSettingModel3.Spacing}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="2"
+                           Grid.Column="2"
+                           Margin="5,5,0,0"
+                           Content="widen by" />
+
+                    <dxe:SpinEdit Grid.Row="2"
+                                  Grid.Column="3"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding TimeToEdgeSettingModel3.EdgeChange}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.05"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="3"
+                           Grid.Column="0"
+                           Margin="0,5,0,0"
+                           Content="If days to Exp is more than" />
+
+                    <dxe:SpinEdit Grid.Row="3"
+                                  Grid.Column="1"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding TimeToEdgeSettingModel4.Spacing}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="3"
+                           Grid.Column="2"
+                           Margin="5,5,0,0"
+                           Content="widen by" />
+
+                    <dxe:SpinEdit Grid.Row="3"
+                                  Grid.Column="3"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding TimeToEdgeSettingModel4.EdgeChange}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.05"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="4"
+                           Grid.Column="0"
+                           Margin="0,5,0,0"
+                           Content="If days to Exp is more than" />
+
+                    <dxe:SpinEdit Grid.Row="4"
+                                  Grid.Column="1"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding TimeToEdgeSettingModel5.Spacing}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="4"
+                           Grid.Column="2"
+                           Margin="5,5,0,0"
+                           Content="widen by" />
+
+                    <dxe:SpinEdit Grid.Row="4"
+                                  Grid.Column="3"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding TimeToEdgeSettingModel5.EdgeChange}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.05"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="5"
+                           Grid.Column="0"
+                           Margin="0,5,0,0"
+                           Content="If days to Exp is more than" />
+
+                    <dxe:SpinEdit Grid.Row="5"
+                                  Grid.Column="1"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding TimeToEdgeSettingModel6.Spacing}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="5"
+                           Grid.Column="2"
+                           Margin="5,5,0,0"
+                           Content="widen by" />
+
+                    <dxe:SpinEdit Grid.Row="5"
+                                  Grid.Column="3"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding TimeToEdgeSettingModel6.EdgeChange}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.05"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="6"
+                           Grid.Column="0"
+                           Margin="0,5,0,0"
+                           Content="If days to Exp is more than" />
+
+                    <dxe:SpinEdit Grid.Row="6"
+                                  Grid.Column="1"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding TimeToEdgeSettingModel7.Spacing}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="6"
+                           Grid.Column="2"
+                           Margin="5,5,0,0"
+                           Content="widen by" />
+
+                    <dxe:SpinEdit Grid.Row="6"
+                                  Grid.Column="3"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding TimeToEdgeSettingModel7.EdgeChange}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.05"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                </Grid>
+            </dx:DXTabItem>
+
+            <dx:DXTabItem Header="Delta Edge">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+
+                    <Label Grid.Row="0"
+                           Grid.Column="0"
+                           Margin="0,5,0,0"
+                           Content="If either leg delta is greater than" />
+
+                    <dxe:SpinEdit Grid.Row="0"
+                                  Grid.Column="1"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding LegDeltaToEdgeSettingModel1.Delta}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.05"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="0"
+                           Grid.Column="2"
+                           Margin="5,5,0,0"
+                           Content="widen by" />
+
+                    <dxe:SpinEdit Grid.Row="0"
+                                  Grid.Column="3"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding LegDeltaToEdgeSettingModel1.EdgeChange}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.05"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="1"
+                           Grid.Column="0"
+                           Margin="0,5,0,0"
+                           Content="If either leg delta is greater than" />
+
+                    <dxe:SpinEdit Grid.Row="1"
+                                  Grid.Column="1"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding LegDeltaToEdgeSettingModel2.Delta}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.05"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="1"
+                           Grid.Column="2"
+                           Margin="5,5,0,0"
+                           Content="widen by" />
+
+                    <dxe:SpinEdit Grid.Row="1"
+                                  Grid.Column="3"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding LegDeltaToEdgeSettingModel2.EdgeChange}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.05"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="2"
+                           Grid.Column="0"
+                           Margin="0,5,0,0"
+                           Content="If either leg delta is greater than" />
+
+                    <dxe:SpinEdit Grid.Row="2"
+                                  Grid.Column="1"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding LegDeltaToEdgeSettingModel3.Delta}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.05"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="2"
+                           Grid.Column="2"
+                           Margin="5,5,0,0"
+                           Content="widen by" />
+
+                    <dxe:SpinEdit Grid.Row="2"
+                                  Grid.Column="3"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding LegDeltaToEdgeSettingModel3.EdgeChange}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.05"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="3"
+                           Grid.Column="0"
+                           Margin="0,5,0,0"
+                           Content="If spread delta is greater than"
+                           FontWeight="Bold" />
+
+                    <dxe:SpinEdit Grid.Row="3"
+                                  Grid.Column="1"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding SpreadDeltaToEdgeSettingModel.Delta}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.05"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="3"
+                           Grid.Column="2"
+                           Margin="5,5,0,0"
+                           Content="widen by" />
+
+                    <dxe:SpinEdit Grid.Row="3"
+                                  Grid.Column="3"
+                                  Width="60"
+                                  Margin="5,5,0,0"
+                                  AllowSpinOnMouseWheel="True"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding SpreadDeltaToEdgeSettingModel.EdgeChange}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.05"
+                                  Mask="N2"
+                                  MinValue="0"
+                                  PreviewMouseUp="PriceSpinEdit_MouseUp"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </Grid>
+            </dx:DXTabItem>
+        </dx:DXTabControl>
+
+        <StackPanel Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="5"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
+            <dx:SimpleButton Width="70"
+                             Margin="5,0"
+                             Command="{Binding ModifyCommand}"
+                             Content="Modify"
+                             IsDefault="True" />
+            <dx:SimpleButton Width="70"
+                             Margin="5,0"
+                             Command="{Binding CancelCommand}"
+                             Content="Cancel"
+                             IsCancel="True" />
+        </StackPanel>
+    </Grid>
+</dx:ThemedWindow>

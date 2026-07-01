@@ -1,0 +1,74 @@
+﻿<UserControl x:Class="ZeroPlus.Oms.Ui.Views.PriceChart"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:securities="clr-namespace:ZeroPlus.Oms.Data.Securities;assembly=ZeroPlus.Oms"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             mc:Ignorable="d">
+    <UserControl.DataContext>
+        <ViewModels:PriceChartViewModel />
+    </UserControl.DataContext>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0"
+                    Margin="0,0,0,10"
+                    Orientation="Horizontal">
+            <GroupBox Padding="5"
+                      Header="Option Parameters">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Margin="5">
+                        <Label Content="Spot Price:" />
+                        <dxe:SpinEdit Width="100"
+                                      Value="{Binding SpotPrice}" />
+
+                        <Label Content="Strike Price:" />
+                        <dxe:SpinEdit Width="100"
+                                      Value="{Binding Strike}" />
+
+                        <Label Content="Time to Expiry (years):" />
+                        <dxe:SpinEdit Width="100"
+                                      Value="{Binding TimeToExpiry}" />
+                    </StackPanel>
+
+                    <StackPanel Margin="5">
+                        <Label Content="Risk-Free Rate (%):" />
+                        <dxe:SpinEdit Width="100"
+                                      Value="{Binding RiskFreeRate}" />
+
+                        <Label Content="Volatility (%):" />
+                        <dxe:SpinEdit Width="100"
+                                      Value="{Binding Volatility}" />
+
+                        <Label Content="Quantity:" />
+                        <dxe:SpinEdit Width="100"
+                                      Value="{Binding Quantity}" />
+                    </StackPanel>
+
+                    <StackPanel Margin="5">
+                        <Label Content="Option Type:" />
+                        <dxe:ComboBoxEdit EditValue="{Binding OptionType}"
+                                          ItemsSource="{Binding Source={dxe:EnumItemsSource EnumType=securities:OptionType}}" />
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+
+        <dxc:ChartControl Grid.Row="1">
+            <dxc:XYDiagram2D>
+                <dxc:LineSeries2D ArgumentDataMember="SpotPrice"
+                                  DataSource="{Binding PnLData}"
+                                  ValueDataMember="PnL" />
+            </dxc:XYDiagram2D>
+        </dxc:ChartControl>
+    </Grid>
+</UserControl>

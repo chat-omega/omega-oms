@@ -1,0 +1,289 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Company>ZeroPlus Derivatives, LLC</Company>
+        <Copyright>Copyright © 2025</Copyright>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <EnableWindowsTargeting>true</EnableWindowsTargeting>
+        <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+        <OutputType>WinExe</OutputType>
+        <AssemblyName>ZeroPlus OMS</AssemblyName>
+        <IsWebBootstrapper>false</IsWebBootstrapper>
+        <PublishUrl>publish\</PublishUrl>
+        <Install>true</Install>
+        <InstallFrom>Disk</InstallFrom>
+        <UpdateEnabled>false</UpdateEnabled>
+        <UpdateMode>Foreground</UpdateMode>
+        <UpdateInterval>7</UpdateInterval>
+        <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+        <UpdatePeriodically>false</UpdatePeriodically>
+        <UpdateRequired>false</UpdateRequired>
+        <MapFileExtensions>true</MapFileExtensions>
+        <ApplicationRevision>0</ApplicationRevision>
+        <ApplicationVersion>9.9.9.9</ApplicationVersion>
+        <UseApplicationTrust>false</UseApplicationTrust>
+        <BootstrapperEnabled>true</BootstrapperEnabled>
+        <UseWindowsForms>False</UseWindowsForms>
+        <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+        <Platforms>x64;AnyCPU</Platforms>
+        <ApplicationIcon>zpicon.ico</ApplicationIcon>
+        <StartupObject>ZeroPlus.Oms.Ui.Program</StartupObject>
+        <UseWPF>True</UseWPF>
+        <Nullable>disable</Nullable>
+        <PlatformTarget>x64</PlatformTarget>
+        <LangVersion>13</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <Optimize>True</Optimize>
+      <WarningLevel>0</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <Optimize>True</Optimize>
+    </PropertyGroup>
+    <ItemGroup>
+        <AdditionalFiles Remove="app.manifest" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="Helper\AuditTrail.xsl" />
+        <None Remove="Images\matrix.svg" />
+        <None Remove="Images\mute.svg" />
+        <None Remove="Images\sound.svg" />
+        <None Remove="Images\ticket-off.svg" />
+        <None Remove="Images\ticket-on.svg" />
+        <None Remove="Scripts\bootstrap.py" />
+        <None Remove="Scripts\script_trader_entry_template.py" />
+        <None Remove="Scripts\script_trader_exit_template.py" />
+        <None Remove="Scripts\script_trader_stoploss_template.py" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="16.1.1" />
+        <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
+        <PackageReference Include="CoreCLR-NCalc" Version="3.1.253" />
+        <PackageReference Include="DevExpress.Document.Processor" Version="25.2.5" />
+        <PackageReference Include="DevExpress.Spreadsheet.Core" Version="25.2.5" />
+        <PackageReference Include="DevExpress.Wpf.ExpressionEditor" Version="25.2.5" />
+        <PackageReference Include="K4os.Compression.LZ4" Version="1.3.8" />
+        <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+        <PackageReference Include="MdXaml" Version="1.27.0" />
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+        <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.661903" />
+        <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.1.29" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.3" />
+        <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="10.0.3" />
+        <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.23.2" />
+        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+        <PackageReference Include="NetCoreServer" Version="8.0.7" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+        <PackageReference Include="NLog" Version="6.1.0" />
+        <PackageReference Include="NLog.Extensions.Logging" Version="6.1.1" />
+        <PackageReference Include="pythonnet" Version="3.0.5" />
+        <PackageReference Include="sbe-tool" Version="1.23.1.1" />
+        <PackageReference Include="System.Formats.Asn1" Version="10.0.3" />
+        <PackageReference Include="System.ServiceModel.Federation" Version="10.0.652802" />
+        <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.3" />
+        <PackageReference Include="DevExpress.Wpf.Core" Version="25.2.5" />
+        <PackageReference Include="DevExpress.Images" Version="25.2.5" />
+        <PackageReference Include="DevExpress.Wpf.Charts" Version="25.2.5" />
+        <PackageReference Include="DevExpress.Wpf.Controls" Version="25.2.5" />
+        <PackageReference Include="DevExpress.Wpf.LayoutControl" Version="25.2.5" />
+        <PackageReference Include="DevExpress.Wpf.Themes.Office2019Colorful" Version="25.2.5" />
+        <PackageReference Include="DevExpress.Wpf.Themes.VS2019Dark" Version="25.2.5" />
+        <PackageReference Include="System.Text.Json" Version="10.0.3" />
+    </ItemGroup>
+    <ItemGroup>
+        <!-- Stub project references -->
+        <ProjectReference Include="..\..\SharedMemory\SharedMemory.csproj" />
+        <ProjectReference Include="..\..\SymbolLib\SymbolLib.csproj" />
+        <ProjectReference Include="..\..\ZeroPlus.TagCodecLib\ZeroPlus.TagCodecLib.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <!-- Resources to be copied: Needed for Kill Switch to be deployed -->
+    <ItemGroup>
+        <None Update="Resources\OMS Kill Switch.exe">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+        </None>
+        <None Update="Resources\OMS Kill Switch.pdb">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+        </None>
+    </ItemGroup>
+    <ItemGroup>
+        <Resource Include="Fonts\AgencyFB-Regular.ttf" />
+        <Resource Include="Fonts\Technology.ttf" />
+        <Resource Include="Fonts\ZP Lufga\ZPLufga-Bold.otf" />
+        <Resource Include="Fonts\ZP Lufga\ZPLufga-Medium.otf" />
+        <Resource Include="Fonts\ZP Lufga\ZPLufga-Regular.otf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-Black.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-BlackItalic.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-Bold.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-BoldItalic.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-ExtraBold.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-ExtraBoldItalic.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-ExtraLight.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-ExtraLightItalic.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-Italic.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-Light.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-LightItalic.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-Medium.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-MediumItalic.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-Regular.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-SemiBold.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-SemiBoldItalic.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-Thin.ttf" />
+        <Resource Include="Fonts\Montserrat\Montserrat-ThinItalic.ttf" />
+        <AppDesigner Include="Properties\" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\ZeroPlus.Oms\ZeroPlus.Oms.csproj" />
+        <ProjectReference Include="..\ZeroPlus.Oms.Generators\ZeroPlus.Oms.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    </ItemGroup>
+    <ItemGroup>
+        <AdditionalFiles Include="Sounds\OrderBook_Ack.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\OrderBook_Cancel.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\OrderBook_Fill.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\OrderBook_PartFill.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\OrderBook_Reject.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\OrderBook_Replace.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\Ding.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\Double_Bell.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\Eight.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\Hint.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\Letter.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\Notification.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\Run.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\Scifi.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\Up.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\loss.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\profit.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="Sounds\scratch.wav">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AdditionalFiles>
+    </ItemGroup>
+    <ItemGroup>
+        <Resource Include="Helper\AuditTrail.xsl">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <EmbeddedResource Include="Scripts\bootstrap.py">
+            <CopyToOutputDirectory>
+            </CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Scripts\script_trader_stoploss_template.py">
+            <CopyToOutputDirectory>
+            </CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Scripts\script_trader_exit_template.py">
+            <CopyToOutputDirectory>
+            </CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Scripts\script_trader_entry_template.py">
+            <CopyToOutputDirectory>
+            </CopyToOutputDirectory>
+        </EmbeddedResource> 
+    </ItemGroup>
+    <ItemGroup>
+        <Resource Include="Images\matrix.svg">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\open_box.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\ZeroPlus_RGB_FullLogo_Black.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\ZeroPlus_RGB_FullLogo_Full-Color-Reverse.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\ZeroPlus_RGB_FullLogo_Full-Color.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\ZeroPlus_RGB_FullLogo_White.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\ZeroPlus_RGB_LogoMark_Black.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\ZeroPlus_RGB_LogoMark_Full-Color-Reverse.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\ZeroPlus_RGB_LogoMark_Full-Color.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\ZeroPlus_RGB_LogoMark_White.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\ZeroPlus_RGB_WordMark_Black.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\ZeroPlus_RGB_WordMark_Full-Color-Reverse.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\ZeroPlus_RGB_WordMark_Full-Color.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\ZeroPlus_RGB_WordMark_White.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\mute.svg">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\sound.svg">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\ticket-off.svg">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Images\ticket-on.svg">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="zpicon.ico" />
+    </ItemGroup>   
+    <ItemGroup>
+        <None Update="Properties\Settings.settings">
+            <Generator>SettingsSingleFileGenerator</Generator>
+            <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+        </None>
+        <Compile Update="Properties\Settings.Designer.cs">
+            <DesignTimeSharedInput>True</DesignTimeSharedInput>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Settings.settings</DependentUpon>
+        </Compile>
+
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="..\.editorconfig" Link=".editorconfig" />
+    </ItemGroup>
+</Project>

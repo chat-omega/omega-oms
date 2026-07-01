@@ -1,0 +1,41 @@
+name: .NET Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+
+jobs:
+
+  build:
+
+    runs-on: self-hosted
+    
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 6.0.x
+        source-url: https://github.corp.zeroplusderivatives.com/_registry/nuget/ZeroPlusCoders/index.json
+      env:
+          NUGET_AUTH_TOKEN: ${{secrets.Actions_Secret}}
+          
+    - name: Cache obj folder
+      uses: actions/cache@v3
+      with:
+        path: ~/**/obj
+        key: ${{ runner.os }}-obj-${{ hashFiles('**/*.csproj') }}
+        
+    - name: Build
+      run: dotnet build --configuration Release

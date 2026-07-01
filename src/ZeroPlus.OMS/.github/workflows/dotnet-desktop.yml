@@ -1,0 +1,73 @@
+name: .NET Desktop
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+
+
+jobs:
+
+  publish:
+
+    runs-on: windows-latest  # For a list of available runner types, refer to
+                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+
+    permissions:
+      contents: write
+      packages: read
+    
+    env:
+      Solution_Name: ZeroPlus.Oms.sln
+      NuGetPackageSourceCredentials_devexpress: ${{secrets.DEVEXPRESS_AUTH_KEY}}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Get Version from Project File
+      id: get-version
+      shell: bash
+      run: echo "version=$(grep -oE '<Version>[^<]+' ZeroPlus.Oms.Ui/ZeroPlus.Oms.Ui.csproj | sed 's/<Version>//')" >> $GITHUB_OUTPUT
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 6.0.x
+        cache: true
+        source-url: https://nuget.pkg.github.com/ZeroPlusCoders/index.json
+      env:
+          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+    # https://docs.devexpress.com/GeneralInformation/404166/nuget/security-licensing-reliability-considerations
+    # https://docs.devexpress.com/GeneralInformation/400604/nuget/integrate-nuget-to-popular-continuous-integration-systems
+    # https://learn.microsoft.com/en-us/nuget/consume-packages/consuming-packages-authenticated-feeds#credentials-in-environment-variables
+    - name: Add Online DevExpress NuGet Feed
+      run: dotnet nuget add source https://nuget.devexpress.com/api/ -n devexpress
+
+    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    - name: Restore the application
+      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=Release
+      env:
+        Configuration: Release
+
+    - name: Publish Application
+      run: dotnet publish ZeroPlus.Oms.Ui/ZeroPlus.Oms.Ui.csproj -p:PublishProfile=ZeroPlus.Oms.Ui\Properties\PublishProfiles\LocalWindows8.pubxml
+
+    - name: Create Velopack Release
+      run: |
+        dotnet tool install -g vpk
+        vpk download github --repoUrl https://github.com/ZeroPlusCoders/ZeroPlus.OMS --token ${{ secrets.GITHUB_TOKEN }}
+        vpk pack -u ZeroPlus-OMS-UI -v ${{ steps.get-version.outputs.version }} --packDir build\OMS\lib\net6.0-windows8.0
+        vpk upload github --repoUrl https://github.com/ZeroPlusCoders/ZeroPlus.OMS --publish --releaseName "ZeroPlus-OMS-UI ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN }}

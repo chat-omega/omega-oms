@@ -1,0 +1,561 @@
+﻿<UserControl x:Class="ZeroPlus.Oms.Ui.Views.DrifterControlView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+             xmlns:local="clr-namespace:ZeroPlus.Oms.Ui.Views"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:viewmodels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+             d:DataContext="{d:DesignInstance Type=viewmodels:DrifterControlViewModel}"
+             d:DesignHeight="450"
+             d:DesignWidth="340"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <helper:SignToBrushConverter x:Key="SignToTickBrushConverter"
+                                     NegativeBrush="#F30005"
+                                     PositiveBrush="#6dc534"
+                                     ZeroBrush="#FFFFFF" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <GroupBox Grid.Row="1"
+                  Padding="0"
+                  Header="Enter">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="75" />
+                    <ColumnDefinition Width="75" />
+                    <ColumnDefinition Width="75" />
+                    <ColumnDefinition Width="75" />
+                    <ColumnDefinition Width="5" />
+                </Grid.ColumnDefinitions>
+
+                <dxe:CheckEdit Grid.Row="0"
+                               Grid.Column="1"
+                               Grid.ColumnSpan="2"
+                               Width="220"
+                               Margin="0,2,0,0"
+                               HorizontalAlignment="Left"
+                               Content="Target Off Trades "
+                               EditValue="{Binding TargetOffTrades, UpdateSourceTrigger=PropertyChanged}" />
+
+                <Label Grid.Row="0"
+                       Grid.Column="3"
+                       Width="70"
+                       Margin="5,2,0,0"
+                       HorizontalAlignment="Left"
+                       Content="% Bid - " />
+
+                <dxe:SpinEdit Grid.Row="0"
+                              Grid.Column="4"
+                              Width="70"
+                              Margin="5,2,0,0"
+                              HorizontalAlignment="Left"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding PercentBid, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MaxValue="1"
+                              MinValue="0"
+                              PreviewMouseUp="SpinEdit_MouseUp"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="1"
+                       Width="70"
+                       Margin="0,2,0,0"
+                       HorizontalAlignment="Left"
+                       Content="Hunt TTL - " />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="2"
+                              Width="70"
+                              Margin="5,2,0,0"
+                              HorizontalAlignment="Left"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding HuntTtl, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              MinValue="0"
+                              PreviewMouseUp="SpinEdit_MouseUp"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="3"
+                       Width="70"
+                       Margin="5,2,0,0"
+                       HorizontalAlignment="Left"
+                       Content="Drift TTL - " />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="4"
+                              Width="70"
+                              Margin="5,2,0,0"
+                              HorizontalAlignment="Left"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding DriftTtl, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              MinValue="0"
+                              PreviewMouseUp="SpinEdit_MouseUp"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="2"
+                       Grid.Column="1"
+                       Width="70"
+                       Margin="0,2,0,0"
+                       HorizontalAlignment="Left"
+                       Content="Stale Trade - " />
+
+                <dxe:SpinEdit Grid.Row="2"
+                              Grid.Column="2"
+                              Width="70"
+                              Margin="5,2,0,0"
+                              HorizontalAlignment="Left"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding StaleTradeMs, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              MinValue="0"
+                              PreviewMouseUp="SpinEdit_MouseUp"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="2"
+                       Grid.Column="3"
+                       Width="70"
+                       Margin="5,2,0,0"
+                       HorizontalAlignment="Left"
+                       Content="Payup Ticks - " />
+
+                <dxe:SpinEdit Grid.Row="2"
+                              Grid.Column="4"
+                              Width="70"
+                              Margin="5,2,0,0"
+                              HorizontalAlignment="Left"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding PayupTicks, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Foreground="{Binding PayupTicks, Converter={StaticResource SignToTickBrushConverter}}"
+                              Increment="1"
+                              MinValue="0"
+                              PreviewMouseUp="SpinEdit_MouseUp"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <dxe:SpinEdit Grid.Row="2"
+                              Grid.Column="4"
+                              Width="70"
+                              Margin="5,2,0,0"
+                              HorizontalAlignment="Left"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding PayupTicks, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Foreground="{Binding PayupTicks, Converter={StaticResource SignToTickBrushConverter}}"
+                              Increment="1"
+                              MinValue="0"
+                              PreviewMouseUp="SpinEdit_MouseUp"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="3"
+                       Grid.Column="1"
+                       Grid.ColumnSpan="3"
+                       Margin="0,2,0,0"
+                       HorizontalAlignment="Left"
+                       Content="Min NBBO Spread Ticks To Enter - " />
+
+                <dxe:SpinEdit Grid.Row="3"
+                              Grid.Column="4"
+                              Width="70"
+                              Margin="5,2,0,0"
+                              HorizontalAlignment="Left"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding MinEnterTicks, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              MinValue="0"
+                              PreviewMouseUp="SpinEdit_MouseUp"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="4"
+                       Grid.Column="1"
+                       Grid.ColumnSpan="2"
+                       Width="220"
+                       Margin="0,2,0,0"
+                       HorizontalAlignment="Left"
+                       Content="Min L1 Lean Qty / Cnt - " />
+
+                <dxe:SpinEdit Grid.Row="4"
+                              Grid.Column="3"
+                              Width="70"
+                              Margin="5,2,0,0"
+                              HorizontalAlignment="Left"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding EnterMinL1LeanQty, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              MinValue="0"
+                              PreviewMouseUp="SpinEdit_MouseUp"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <dxe:SpinEdit Grid.Row="4"
+                              Grid.Column="4"
+                              Width="70"
+                              Margin="5,2,0,0"
+                              HorizontalAlignment="Left"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding EnterMinL1LeanCount, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              MinValue="0"
+                              PreviewMouseUp="SpinEdit_MouseUp"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+            </Grid>
+        </GroupBox>
+        <GroupBox Grid.Row="2"
+                  Padding="0"
+                  Header="Work">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="75" />
+                    <ColumnDefinition Width="75" />
+                    <ColumnDefinition Width="75" />
+                    <ColumnDefinition Width="75" />
+                    <ColumnDefinition Width="5" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="1"
+                       Grid.ColumnSpan="3"
+                       Margin="0,2,0,0"
+                       HorizontalAlignment="Left"
+                       Content="Min NBBO Spread Ticks To Work - " />
+
+                <dxe:SpinEdit Grid.Row="0"
+                              Grid.Column="4"
+                              Width="70"
+                              Margin="5,2,0,0"
+                              HorizontalAlignment="Left"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding MinWorkTicks, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              MinValue="0"
+                              PreviewMouseUp="SpinEdit_MouseUp"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="1"
+                       Grid.ColumnSpan="3"
+                       Width="220"
+                       Margin="0,2,0,0"
+                       HorizontalAlignment="Left"
+                       Content="Max Drift Orders To Send - " />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="4"
+                              Width="70"
+                              Margin="5,2,0,0"
+                              HorizontalAlignment="Left"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding MaxDriftOrdersToSend, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              MinValue="0"
+                              PreviewMouseUp="SpinEdit_MouseUp"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <GroupBox Grid.Row="2"
+                          Grid.ColumnSpan="6"
+                          Padding="0"
+                          Header="Alone">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="75" />
+                            <ColumnDefinition Width="75" />
+                            <ColumnDefinition Width="75" />
+                            <ColumnDefinition Width="75" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0"
+                               Grid.Column="0"
+                               Margin="0,2,0,0"
+                               Content="Work TTL - " />
+
+                        <dxe:SpinEdit Grid.Row="0"
+                                      Grid.Column="1"
+                                      Width="70"
+                                      Margin="5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      AllowSpinOnMouseWheel="True"
+                                      EditValue="{Binding WorkTtl, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      Increment="1"
+                                      MinValue="0"
+                                      PreviewMouseUp="SpinEdit_MouseUp"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+
+                        <Label Grid.Row="1"
+                               Grid.Column="0"
+                               Grid.ColumnSpan="3"
+                               Width="220"
+                               Margin="0,2,0,0"
+                               HorizontalAlignment="Left"
+                               Content="Max Side Spread Ticks To Work - " />
+
+                        <dxe:SpinEdit Grid.Row="1"
+                                      Grid.Column="3"
+                                      Width="70"
+                                      Margin="5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      AllowSpinOnMouseWheel="True"
+                                      EditValue="{Binding AloneMaxSideSpreadToWork, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      Increment="1"
+                                      MinValue="0"
+                                      PreviewMouseUp="SpinEdit_MouseUp"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+
+                        <Label Grid.Row="2"
+                               Grid.Column="0"
+                               Grid.ColumnSpan="2"
+                               Width="220"
+                               Margin="0,2,0,0"
+                               HorizontalAlignment="Left"
+                               Content="Min L1 Lean Qty / Cnt - " />
+
+                        <dxe:SpinEdit Grid.Row="2"
+                                      Grid.Column="2"
+                                      Width="70"
+                                      Margin="5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      AllowSpinOnMouseWheel="True"
+                                      EditValue="{Binding AloneMinL1LeanQty, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      Increment="1"
+                                      MinValue="0"
+                                      PreviewMouseUp="SpinEdit_MouseUp"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+
+                        <dxe:SpinEdit Grid.Row="2"
+                                      Grid.Column="3"
+                                      Width="70"
+                                      Margin="5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      AllowSpinOnMouseWheel="True"
+                                      EditValue="{Binding AloneMinL1LeanCount, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      Increment="1"
+                                      MinValue="0"
+                                      PreviewMouseUp="SpinEdit_MouseUp"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+                        <Label Grid.Row="3"
+                               Grid.Column="0"
+                               Grid.ColumnSpan="2"
+                               Width="220"
+                               Margin="0,2,0,0"
+                               HorizontalAlignment="Left"
+                               Content="Min L2 Lean Qty / Cnt - " />
+
+                        <dxe:SpinEdit Grid.Row="3"
+                                      Grid.Column="2"
+                                      Width="70"
+                                      Margin="5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      AllowSpinOnMouseWheel="True"
+                                      EditValue="{Binding AloneMinL2LeanQty, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      Increment="1"
+                                      MinValue="0"
+                                      PreviewMouseUp="SpinEdit_MouseUp"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+
+                        <dxe:SpinEdit Grid.Row="3"
+                                      Grid.Column="3"
+                                      Width="70"
+                                      Margin="5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      AllowSpinOnMouseWheel="True"
+                                      EditValue="{Binding AloneMinL2LeanCount, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      Increment="1"
+                                      MinValue="0"
+                                      PreviewMouseUp="SpinEdit_MouseUp"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+                    </Grid>
+                </GroupBox>
+
+                <GroupBox Grid.Row="3"
+                          Grid.ColumnSpan="6"
+                          Padding="0"
+                          Header="Joined">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="75" />
+                            <ColumnDefinition Width="75" />
+                            <ColumnDefinition Width="75" />
+                            <ColumnDefinition Width="75" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="1"
+                               Grid.Column="0"
+                               Grid.ColumnSpan="3"
+                               Width="220"
+                               Margin="0,2,0,0"
+                               HorizontalAlignment="Left"
+                               Content="Max Side Spread Ticks To Work - " />
+
+                        <dxe:SpinEdit Grid.Row="1"
+                                      Grid.Column="3"
+                                      Width="70"
+                                      Margin="5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      AllowSpinOnMouseWheel="True"
+                                      EditValue="{Binding JoinedMaxSideSpreadToWork, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      Increment="1"
+                                      MinValue="0"
+                                      PreviewMouseUp="SpinEdit_MouseUp"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+
+                        <Label Grid.Row="2"
+                               Grid.Column="0"
+                               Grid.ColumnSpan="2"
+                               Width="220"
+                               Margin="0,2,0,0"
+                               HorizontalAlignment="Left"
+                               Content="Min L1 Lean Qty / Cnt - " />
+
+                        <dxe:SpinEdit Grid.Row="2"
+                                      Grid.Column="2"
+                                      Width="70"
+                                      Margin="5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      AllowSpinOnMouseWheel="True"
+                                      EditValue="{Binding JoinedMinL1LeanQty, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      Increment="1"
+                                      MinValue="0"
+                                      PreviewMouseUp="SpinEdit_MouseUp"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+
+                        <dxe:SpinEdit Grid.Row="2"
+                                      Grid.Column="3"
+                                      Width="70"
+                                      Margin="5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      AllowSpinOnMouseWheel="True"
+                                      EditValue="{Binding JoinedMinL1LeanCount, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      Increment="1"
+                                      MinValue="0"
+                                      PreviewMouseUp="SpinEdit_MouseUp"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+                        <Label Grid.Row="3"
+                               Grid.Column="0"
+                               Grid.ColumnSpan="2"
+                               Width="220"
+                               Margin="0,2,0,0"
+                               HorizontalAlignment="Left"
+                               Content="Min L2 Lean Qty / Cnt - " />
+
+                        <dxe:SpinEdit Grid.Row="3"
+                                      Grid.Column="2"
+                                      Width="70"
+                                      Margin="5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      AllowSpinOnMouseWheel="True"
+                                      EditValue="{Binding JoinedMinL2LeanQty, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      Increment="1"
+                                      MinValue="0"
+                                      PreviewMouseUp="SpinEdit_MouseUp"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+
+                        <dxe:SpinEdit Grid.Row="3"
+                                      Grid.Column="3"
+                                      Width="70"
+                                      Margin="5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      AllowSpinOnMouseWheel="True"
+                                      EditValue="{Binding JoinedMinL2LeanCount, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      Increment="1"
+                                      MinValue="0"
+                                      PreviewMouseUp="SpinEdit_MouseUp"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+                    </Grid>
+                </GroupBox>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

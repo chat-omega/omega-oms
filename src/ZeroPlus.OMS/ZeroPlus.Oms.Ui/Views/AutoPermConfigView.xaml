@@ -1,0 +1,899 @@
+﻿<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.AutoPermConfigView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 xmlns:viewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 Title="Auto Perm Settings"
+                 Width="1550"
+                 Height="300"
+                 MinWidth="600"
+                 d:DataContext="{d:DesignInstance Type=viewModels:AutoPermConfigViewModel}"
+                 d:Width="auto"
+                 DataContext="{startuphelpers:DISource Type=viewModels:AutoPermConfigViewModel}"
+                 Topmost="True"
+                 WindowStartupLocation="CenterOwner"
+                 WindowStyle="ToolWindow"
+                 mc:Ignorable="d">
+
+    <Window.Resources>
+        <helper:SideOperationToDisplayTextConverter x:Key="SideOperationToDisplayTextConverter" />
+        <helper:EnumToDisplayTextConverter x:Key="EnumToDisplayTextConverter" />
+    </Window.Resources>
+
+    <dxmvvm:Interaction.Behaviors>
+        <services:OmsMessageBoxService />
+        <dxmvvm:CurrentWindowService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0"
+                   Margin="5,5,0,0">
+            <Label Width="50"
+                   Margin="0,0,0,0"
+                   Content="Title" />
+
+            <dxe:TextEdit Margin="5,0,0,0"
+                          Text="{Binding Model.Title}" />
+        </DockPanel>
+
+        <StackPanel Grid.Row="1"
+                    Margin="5,5,0,0"
+                    Orientation="Horizontal">
+            <Label Width="50"
+                   Margin="0,3,0,0"
+                   Content="Selection" />
+
+            <dxe:ListBoxEdit Width="135"
+                             Margin="5,3,0,0"
+                             HorizontalAlignment="Left"
+                             ItemsSource="{Binding AutoPermSelectionModes}"
+                             SelectedItem="{Binding Model.AutoPermSelectionMode}"
+                             StyleSettings="{dxe:RadioListBoxEditStyleSettings}">
+                <dxe:ListBoxEdit.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel VerticalAlignment="Center"
+                                    Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </dxe:ListBoxEdit.ItemsPanel>
+            </dxe:ListBoxEdit>
+
+            <dx:SimpleButton Margin="5,3,0,0"
+                             VerticalAlignment="Center"
+                             Command="{Binding OpenPermComboEditorCommand}"
+                             Content="Perm Combo Config"
+                             Glyph="{dx:DXImage SvgImages/Spreadsheet/CustomScaling.svg}"
+                             GlyphHeight="15"
+                             ToolTip="Custom Combos" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="2"
+                    Margin="5,5,0,0"
+                    Orientation="Horizontal">
+            <Label Width="50"
+                   Margin="0,3,0,0"
+                   Content="Matching" />
+            <dxe:ComboBoxEdit Name="GroupByComboBox"
+                              Width="135"
+                              Margin="5,0,0,0"
+                              HorizontalAlignment="Left"
+                              ApplyItemTemplateToSelectedItem="True"
+                              EditValue="{Binding Model.PermMatchingMode, UpdateSourceTrigger=PropertyChanged}"
+                              IsTextEditable="False"
+                              ItemsSource="{Binding PermMatchingModes}">
+                <dxe:ComboBoxEdit.ItemTemplate>
+                    <DataTemplate>
+                        <Label Padding="0,0.5"
+                               HorizontalAlignment="Center"
+                               HorizontalContentAlignment="Center"
+                               Content="{Binding Converter={StaticResource EnumToDisplayTextConverter}}" />
+                    </DataTemplate>
+                </dxe:ComboBoxEdit.ItemTemplate>
+            </dxe:ComboBoxEdit>
+
+            <dxe:CheckEdit Margin="5,3,0,0"
+                           Content="Submit Auto Perms"
+                           EditValue="{Binding Model.SubmitAutoPerms}" />
+
+            <dxe:CheckEdit Margin="5,3,0,0"
+                           Content="Submit Pre-Existing Only"
+                           EditValue="{Binding Model.SubmitExistingItemsOnly}" />
+
+            <dxe:CheckEdit Margin="5,3,0,0"
+                           Content="Wait For Previous Cxl"
+                           EditValue="{Binding Model.WaitForPrevious}" />
+        </StackPanel>
+
+        <dxg:GridControl Grid.Row="3"
+                         Margin="0,5,0,0"
+                         AllowCollectionView="False"
+                         ItemsSource="{Binding AutoPermConfigs}">
+            <dxg:GridControl.Resources>
+                <Style TargetType="dxg:GridColumn">
+                    <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                </Style>
+                <Style TargetType="dxg:GridControlBand">
+                    <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                </Style>
+            </dxg:GridControl.Resources>
+            <dxg:GridControl.View>
+                <dxg:TableView AllowEditing="True"
+                               AllowGrouping="False"
+                               AllowSorting="False"
+                               AutoWidth="True"
+                               ShowGroupPanel="False"
+                               ShowIndicator="True"
+                               VerticalScrollbarVisibility="Auto">
+                    <dxg:TableView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowColumnChooserCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Column Chooser">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ClearColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Hide All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowAllColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowDefaultColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Default Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </dxg:TableView.ContextMenu>
+                </dxg:TableView>
+            </dxg:GridControl.View>
+            <dxg:GridControl.Bands>
+                <dxg:GridControlBand>
+                    <dxg:GridColumn Width="20"
+                                    MinWidth="20"
+                                    MaxWidth="20"
+                                    FieldName="Enabled"
+                                    Header=""
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:CheckEdit HorizontalAlignment="Center"
+                                               Background="Transparent"
+                                               EditValue="{Binding RowData.Row.Enabled}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
+                <dxg:GridControlBand Header="Trigger">
+                    <dxg:GridColumn FieldName="Type"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:ComboBoxEdit Grid.Row="2"
+                                                  Grid.Column="4"
+                                                  Margin="-1"
+                                                  HorizontalContentAlignment="Center"
+                                                  ApplyItemTemplateToSelectedItem="True"
+                                                  Background="Transparent"
+                                                  BorderBrush="Transparent"
+                                                  BorderThickness="0"
+                                                  EditValue="{Binding RowData.Row.SideOperation}"
+                                                  IsTextEditable="False"
+                                                  ItemsSource="{Binding View.DataContext.SideOperations}">
+                                    <dxe:ComboBoxEdit.ItemTemplate>
+                                        <DataTemplate>
+                                            <Label Padding="0,0.5"
+                                                   HorizontalAlignment="Center"
+                                                   HorizontalContentAlignment="Center"
+                                                   Content="{Binding Converter={StaticResource SideOperationToDisplayTextConverter}}" />
+                                        </DataTemplate>
+                                    </dxe:ComboBoxEdit.ItemTemplate>
+                                </dxe:ComboBoxEdit>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="Edge"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.Edge, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              Mask="N2"
+                                              MaskUseAsDisplayFormat="True"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="Template"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:ComboBoxEdit Margin="-1"
+                                                  Background="Transparent"
+                                                  BorderBrush="Transparent"
+                                                  BorderThickness="0"
+                                                  DisplayMember="Title"
+                                                  EditValue="{Binding RowData.Row.AutoPermTemplate}"
+                                                  FontSize="11"
+                                                  IsTextEditable="False"
+                                                  ItemsSource="{Binding View.DataContext.PermOperationModels}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                </dxg:GridControlBand>
+                <dxg:GridControlBand Header="Edge">
+                    <dxg:GridColumn FieldName="MatchTargetEdge"
+                                    Header="Match Trigger Edge"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:CheckEdit HorizontalAlignment="Center"
+                                               Background="Transparent"
+                                               EditValue="{Binding RowData.Row.MatchTargetEdge}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="UseBasketEdge"
+                                    Header="Use Basket Edge"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:CheckEdit HorizontalAlignment="Center"
+                                               Background="Transparent"
+                                               EditValue="{Binding RowData.Row.UseBasketEdge}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="TargetEdge"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.TargetEdge, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              IsEnabled="{Binding RowData.Row.UseBasketEdge, Converter={StaticResource BooleanNegationConverter}}"
+                                              Mask="N3"
+                                              MaskUseAsDisplayFormat="True"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="EdgePerAddedLeg"
+                                    Header="+ Edge/Leg"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.EdgePerAddedLeg, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              Mask="N3"
+                                              MaskUseAsDisplayFormat="True"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True"
+                                              ToolTip="Additional edge per added leg. Applies to &gt;2 legs." />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="BackupEdge"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.BackupEdge, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              Mask="N2"
+                                              MaskUseAsDisplayFormat="True"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                </dxg:GridControlBand>
+                <dxg:GridControlBand Header="Delta Range">
+                    <dxg:GridColumn FieldName="MinDelta"
+                                    Header="Min"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.MinDelta, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              Mask="N4"
+                                              MaskUseAsDisplayFormat="True"
+                                              MaxValue="1"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="MaxDelta"
+                                    Header="Max"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.MaxDelta, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              Mask="N4"
+                                              MaskUseAsDisplayFormat="True"
+                                              MaxValue="1"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
+                <dxg:GridControlBand Header="DTE Range">
+                    <dxg:GridColumn FieldName="MinDte"
+                                    Header="Min"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.MinDte, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Mask="N0"
+                                              MaskUseAsDisplayFormat="True"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="MaxDte"
+                                    Header="Max"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.MaxDte, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Mask="N0"
+                                              MaskUseAsDisplayFormat="True"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                </dxg:GridControlBand>
+                <dxg:GridControlBand Header="Max Added Delta">
+                    <dxg:GridColumn FieldName="MaxDeltaAddition"
+                                    Header="On Spread"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.MaxDeltaAddition, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              Mask="N4"
+                                              MaskUseAsDisplayFormat="True"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="MaxLegDeltaDiff"
+                                    Header="On Leg"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.MaxLegDeltaDiff, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment="0.01"
+                                              Mask="N4"
+                                              MaskUseAsDisplayFormat="True"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                </dxg:GridControlBand>
+                <dxg:GridControlBand Header="Risk Checks">
+                    <dxg:GridColumn FieldName="MaxWeightedVegaDiff"
+                                    Header="W.Vega Diff (Max)"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.MaxWeightedVegaDiff, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Mask="N2"
+                                              MaskUseAsDisplayFormat="True"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="EdgeToEma"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <DockPanel>
+                                    <dxe:CheckEdit Margin="2,0"
+                                                   HorizontalAlignment="Center"
+                                                   Background="Transparent"
+                                                   EditValue="{Binding RowData.Row.EdgeToEmaEnabled}" />
+                                    <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                  AllowSpinOnMouseWheel="True"
+                                                  Background="Transparent"
+                                                  BorderThickness="1,0,0,0"
+                                                  EditValue="{Binding RowData.Row.EdgeToEma, UpdateSourceTrigger=PropertyChanged}"
+                                                  EditValueType="{x:Type sys:Double}"
+                                                  Increment="0.01"
+                                                  IsEnabled="{Binding RowData.Row.EdgeToEmaEnabled}"
+                                                  Mask="N2"
+                                                  MaskUseAsDisplayFormat="True"
+                                                  PreviewMouseUp="SelectAll"
+                                                  SelectAllOnGotFocus="True"
+                                                  SelectAllOnMouseUp="True" />
+                                </DockPanel>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="EdgeToTheo"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <DockPanel>
+                                    <dxe:CheckEdit Margin="2,0"
+                                                   HorizontalAlignment="Center"
+                                                   Background="Transparent"
+                                                   EditValue="{Binding RowData.Row.EdgeToTheoEnabled}" />
+                                    <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                  AllowSpinOnMouseWheel="True"
+                                                  Background="Transparent"
+                                                  BorderThickness="1,0,0,0"
+                                                  EditValue="{Binding RowData.Row.EdgeToTheo, UpdateSourceTrigger=PropertyChanged}"
+                                                  EditValueType="{x:Type sys:Double}"
+                                                  Increment="0.01"
+                                                  IsEnabled="{Binding RowData.Row.EdgeToTheoEnabled}"
+                                                  Mask="N2"
+                                                  MaskUseAsDisplayFormat="True"
+                                                  PreviewMouseUp="SelectAll"
+                                                  SelectAllOnGotFocus="True"
+                                                  SelectAllOnMouseUp="True" />
+                                </DockPanel>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="WidthPercentEdgeToTheo"
+                                    Header="Width % E2T"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <DockPanel>
+                                    <dxe:CheckEdit Margin="2,0"
+                                                   HorizontalAlignment="Center"
+                                                   Background="Transparent"
+                                                   EditValue="{Binding RowData.Row.WidthPercentEdgeToTheoEnabled}" />
+                                    <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                  AllowSpinOnMouseWheel="True"
+                                                  Background="Transparent"
+                                                  BorderThickness="1,0,0,0"
+                                                  EditValue="{Binding RowData.Row.WidthPercentEdgeToTheo, UpdateSourceTrigger=PropertyChanged}"
+                                                  EditValueType="{x:Type sys:Double}"
+                                                  Increment="0.01"
+                                                  IsEnabled="{Binding RowData.Row.WidthPercentEdgeToTheoEnabled}"
+                                                  Mask="N2"
+                                                  MaskUseAsDisplayFormat="True"
+                                                  MaxValue="1"
+                                                  MinValue="0"
+                                                  PreviewMouseUp="SelectAll"
+                                                  SelectAllOnGotFocus="True"
+                                                  SelectAllOnMouseUp="True" />
+                                </DockPanel>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="MaxOpenPerms"
+                                    Header="Open Perms (Max)"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.MaxOpenPerms, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Increment="1"
+                                              Mask="N0"
+                                              MaskUseAsDisplayFormat="True"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="MaxGenForPerms"
+                                    Header="Perm Gens (Max)"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              d:MinValue="0"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.MaxGenForPerms, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Increment="1"
+                                              Mask="N0"
+                                              MaskUseAsDisplayFormat="True"
+                                              MinValue="1"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="MaxNumberOfPerms"
+                                    Header="Max # Perms"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.MaxNumberOfPerms, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Increment="1"
+                                              Mask="N0"
+                                              MaskUseAsDisplayFormat="True"
+                                              MaxValue="100"
+                                              MinValue="0"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                </dxg:GridControlBand>
+
+                <dxg:GridControlBand Header="On Fill Controls">
+                    <dxg:GridColumn FieldName="ReverseOnFill"
+                                    Header="Reverse"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:CheckEdit HorizontalAlignment="Center"
+                                               Background="Transparent"
+                                               EditValue="{Binding RowData.Row.ReverseOnFill}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="SizeDownOnFill"
+                                    Header="Size Down"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:CheckEdit HorizontalAlignment="Center"
+                                               Background="Transparent"
+                                               EditValue="{Binding RowData.Row.SizeDownOnFill}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="StopOnFill"
+                                    Header="Stop"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:CheckEdit HorizontalAlignment="Center"
+                                               Background="Transparent"
+                                               EditValue="{Binding RowData.Row.StopOnFill}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
+
+                <dxg:GridControlBand Header="Order Settings">
+                    <dxg:GridColumn FieldName="AttemptBothSides"
+                                    Header="Attempt Both Sides"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:CheckEdit HorizontalAlignment="Center"
+                                               Background="Transparent"
+                                               EditValue="{Binding RowData.Row.AttemptBothSides}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="LevelResub"
+                                    Header="Px Resub"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.LevelResub, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Increment="1"
+                                              Mask="N0"
+                                              MaskUseAsDisplayFormat="True"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="MaxResub"
+                                    Header="Increment (Max)"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.MaxResub, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Increment="1"
+                                              Mask="N0"
+                                              MaskUseAsDisplayFormat="True"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                </dxg:GridControlBand>
+                <dxg:GridControlBand Header="Initial Size">
+                    <dxg:GridColumn FieldName="InitialSizeForAutoPerms"
+                                    Header="All"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.InitialSizeForAutoPerms, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Increment="1"
+                                              Mask="N0"
+                                              MaskUseAsDisplayFormat="True"
+                                              MinValue="1"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn FieldName="HardSideInitialSizeForAutoPerms"
+                                    Header="Hard Side"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.HardSideInitialSizeForAutoPerms, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Increment="1"
+                                              Mask="N0"
+                                              MaskUseAsDisplayFormat="True"
+                                              MinValue="1"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
+                <dxg:GridControlBand>
+                    <dxg:GridColumn Width="20"
+                                    FieldName="Remove"
+                                    Header=""
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dx:SimpleButton BorderBrush="Transparent"
+                                                 BorderThickness="0"
+                                                 Command="{Binding View.DataContext.RemoveAutoPermItemCommand}"
+                                                 CommandParameter="{Binding RowData.Row}"
+                                                 Glyph="{dx:DXImage SvgImages/HybridDemoIcons/BottomPanel/HybridDemo_Close.svg}"
+                                                 GlyphWidth="19" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
+            </dxg:GridControl.Bands>
+        </dxg:GridControl>
+
+        <StackPanel Grid.Row="4"
+                    Margin="5"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
+            <dx:SimpleButton Margin="5,0"
+                             Command="{Binding AddNewAutoPermConfigCommand}"
+                             Content="Add"
+                             Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Add.svg}"
+                             GlyphHeight="15" />
+
+            <dx:SimpleButton Margin="5,0"
+                             Click="CloseWindow"
+                             Command="{Binding SaveAutoPermConfigCommand}"
+                             Content="Save"
+                             Glyph="{dx:DXImage SvgImages/Outlook Inspired/Save.svg}"
+                             GlyphHeight="15" />
+
+            <dx:SimpleButton Margin="5,0"
+                             Click="CloseWindow"
+                             Command="{Binding SaveAndLoadAutoPermConfigCommand}"
+                             Content="Save and Load"
+                             Glyph="{dx:DXImage SvgImages/Outlook Inspired/Save.svg}"
+                             GlyphHeight="15" />
+        </StackPanel>
+    </Grid>
+</dx:ThemedWindow>

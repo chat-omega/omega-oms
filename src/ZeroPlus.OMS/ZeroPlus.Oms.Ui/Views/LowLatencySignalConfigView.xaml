@@ -1,0 +1,888 @@
+<UserControl x:Class="ZeroPlus.Oms.Ui.Views.LowLatencySignalConfigView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="clr-namespace:ZeroPlus.Oms.Ui.Models"
+             xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             MinWidth="1800"
+             d:DataContext="{d:DesignInstance Type=models:SignalModel}"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <helper:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter" />
+        <helper:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <Style x:Key="RowStyle"
+               TargetType="dxg:RowControl">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=IsSelected}"
+                             Value="True">
+                    <Setter Property="Background" Value="#2d313b" />
+                </DataTrigger>
+                <Trigger Property="dxg:GridViewBase.IsFocusedRow" Value="True">
+                    <Setter Property="Background" Value="#3b404a" />
+                </Trigger>
+                <Trigger Property="dxg:GridViewBase.IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#4e5563" />
+                </Trigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=IsSelected}" Value="True" />
+                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="#4d4d4d" />
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <dxmvvm:Interaction.Behaviors>
+        <services:OmsMessageBoxService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <dxg:GridControl Grid.Row="0"
+                         MaxHeight="1000"
+                         Margin="0,5,0,0"
+                         ItemsSource="{Binding Signals}"
+                         SelectionMode="Row">
+            <dxg:GridControl.View>
+                <dxg:TableView AllowEditing="True"
+                               AllowGrouping="False"
+                               AllowSorting="True"
+                               AutoWidth="True"
+                               BandSeparatorWidth="1.3"
+                               RowStyle="{StaticResource RowStyle}"
+                               ShowGroupPanel="False"
+                               ShowIndicator="True"
+                               VerticalScrollbarVisibility="Auto">
+                    <dxg:TableView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowColumnChooserCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Column Chooser">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ClearColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Hide All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowAllColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowDefaultColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Default Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </dxg:TableView.ContextMenu>
+                </dxg:TableView>
+            </dxg:GridControl.View>
+
+            <dxg:GridControl.Bands>
+                <dxg:GridControlBand HorizontalHeaderContentAlignment="Center">
+
+                    <dxg:GridColumn Width="60"
+                                    FieldName="Enabled"
+                                    FixedWidth="True"
+                                    Header="Enabled"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="False"
+                                    Visible="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:CheckEdit HorizontalAlignment="Center"
+                                               Background="Transparent"
+                                               BorderThickness="0"
+                                               IsChecked="{Binding RowData.Row.Enabled}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+
+                    <dxg:GridColumn AllowCellMerge="False"
+                                    FieldName="Tag"
+                                    Header="Tag"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True"
+                                    ReadOnly="False"
+                                    Visible="True">
+                        <dxg:GridColumn.CellEditTemplate>
+                            <DataTemplate>
+                                <dxe:TextEdit VerticalAlignment="Center"
+                                              Background="Transparent"
+                                              BorderBrush="#333337"
+                                              BorderThickness="0"
+                                              CharacterCasing="Upper"
+                                              Text="{Binding RowData.Row.Tag}" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellEditTemplate>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
+
+                <dxg:GridControlBand HorizontalHeaderContentAlignment="Center">
+                    <dxg:GridColumn Width="90"
+                                    Binding="{Binding Path=RowData.Row.InitialOrderQty, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                                    FieldName="InitialOrderQty"
+                                    Header="Init Qty"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellEditTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.InitialOrderQty, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueChanging="InitialOrderQtyChanging"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Increment="1"
+                                              Mask="N0"
+                                              MaskUseAsDisplayFormat="True"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellEditTemplate>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
+
+                <dxg:GridControlBand Header="Watchlist Filters"
+                                     HorizontalHeaderContentAlignment="Center">
+                    <dxg:GridControlBand.Bands>
+                        <dxg:GridControlBand Header=""
+                                             HorizontalHeaderContentAlignment="Center"
+                                             OverlayHeaderByChildren="True">
+                            <dxg:GridColumn Width="60"
+                                            Binding="{Binding Path=RowData.Row.MinExpiry, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                                            FieldName="MinExpiry"
+                                            FixedWidth="True"
+                                            Header="C/P"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="True">
+                                <dxg:GridColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <dxe:ComboBoxEdit Margin="-1"
+                                                          Background="Transparent"
+                                                          IsTextEditable="False"
+                                                          ItemsSource="{Binding View.DataContext.CallPuts}"
+                                                          SelectedItem="{Binding RowData.Row.CallPut}" />
+
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellTemplate>
+                            </dxg:GridColumn>
+                        </dxg:GridControlBand>
+                        <dxg:GridControlBand Header="Expiry Range"
+                                             HorizontalHeaderContentAlignment="Center">
+                            <dxg:GridColumn Binding="{Binding Path=RowData.Row.MinExpiry, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                                            FieldName="MinExpiry"
+                                            Header="Min"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="True">
+                                <dxg:GridColumn.CellEditTemplate>
+                                    <DataTemplate>
+                                        <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                      AllowSpinOnMouseWheel="True"
+                                                      Background="Transparent"
+                                                      BorderBrush="Transparent"
+                                                      BorderThickness="0"
+                                                      EditValue="{Binding RowData.Row.MinExpiry, UpdateSourceTrigger=PropertyChanged}"
+                                                      EditValueType="{x:Type sys:Int32}"
+                                                      Increment="1"
+                                                      Mask="N0"
+                                                      MaskUseAsDisplayFormat="True"
+                                                      PreviewMouseUp="SelectAll"
+                                                      SelectAllOnGotFocus="True"
+                                                      SelectAllOnMouseUp="True" />
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellEditTemplate>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Binding="{Binding Path=RowData.Row.MaxExpiry, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                                            FieldName="MaxExpiry"
+                                            Header="Max"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="True">
+                                <dxg:GridColumn.CellEditTemplate>
+                                    <DataTemplate>
+                                        <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                      AllowSpinOnMouseWheel="True"
+                                                      Background="Transparent"
+                                                      BorderBrush="Transparent"
+                                                      BorderThickness="0"
+                                                      EditValue="{Binding RowData.Row.MaxExpiry, UpdateSourceTrigger=PropertyChanged}"
+                                                      EditValueType="{x:Type sys:Int32}"
+                                                      Increment="1"
+                                                      Mask="N0"
+                                                      MaskUseAsDisplayFormat="True"
+                                                      PreviewMouseUp="SelectAll"
+                                                      SelectAllOnGotFocus="True"
+                                                      SelectAllOnMouseUp="True" />
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellEditTemplate>
+                            </dxg:GridColumn>
+                        </dxg:GridControlBand>
+                        <dxg:GridControlBand Header="Delta Range"
+                                             HorizontalHeaderContentAlignment="Center">
+                            <dxg:GridColumn Binding="{Binding Path=RowData.Row.MinDelta, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                                            FieldName="MinDelta"
+                                            Header="Min"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="True">
+                                <dxg:GridColumn.CellEditTemplate>
+                                    <DataTemplate>
+                                        <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                      AllowSpinOnMouseWheel="True"
+                                                      Background="Transparent"
+                                                      BorderBrush="Transparent"
+                                                      BorderThickness="0"
+                                                      EditValue="{Binding RowData.Row.MinDelta, UpdateSourceTrigger=PropertyChanged}"
+                                                      EditValueType="{x:Type sys:Int32}"
+                                                      Increment="1"
+                                                      Mask="N0"
+                                                      MaskUseAsDisplayFormat="True"
+                                                      PreviewMouseUp="SelectAll"
+                                                      SelectAllOnGotFocus="True"
+                                                      SelectAllOnMouseUp="True" />
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellEditTemplate>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Binding="{Binding Path=RowData.Row.MaxDelta, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                                            FieldName="MaxDelta"
+                                            Header="Max"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="True">
+                                <dxg:GridColumn.CellEditTemplate>
+                                    <DataTemplate>
+                                        <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                      AllowSpinOnMouseWheel="True"
+                                                      Background="Transparent"
+                                                      BorderBrush="Transparent"
+                                                      BorderThickness="0"
+                                                      EditValue="{Binding RowData.Row.MaxDelta, UpdateSourceTrigger=PropertyChanged}"
+                                                      EditValueType="{x:Type sys:Int32}"
+                                                      Increment="1"
+                                                      Mask="N0"
+                                                      MaskUseAsDisplayFormat="True"
+                                                      PreviewMouseUp="SelectAll"
+                                                      SelectAllOnGotFocus="True"
+                                                      SelectAllOnMouseUp="True" />
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellEditTemplate>
+                            </dxg:GridColumn>
+                        </dxg:GridControlBand>
+                    </dxg:GridControlBand.Bands>
+                </dxg:GridControlBand>
+
+                <dxg:GridControlBand Header="Trade Selector"
+                                     HorizontalHeaderContentAlignment="Center">
+                    <dxg:GridColumn Binding="{Binding Path=RowData.Row.PercentBid, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                                    FieldName="PercentBid"
+                                    Header="% Bid"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellEditTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.PercentBid, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Int32}"
+                                              Increment="1"
+                                              Mask="N0"
+                                              MaskUseAsDisplayFormat="True"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellEditTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn Width="150"
+                                    Binding="{Binding Path=RowData.Row.EdgeToTheo, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                                    FieldName="EdgeToTheo"
+                                    Header="Edge to Theo"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellEditTemplate>
+                            <DataTemplate>
+                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                              AllowSpinOnMouseWheel="True"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              EditValue="{Binding RowData.Row.EdgeToTheo, UpdateSourceTrigger=PropertyChanged}"
+                                              EditValueType="{x:Type sys:Double}"
+                                              Increment=".01"
+                                              Mask="N2"
+                                              MaskUseAsDisplayFormat="True"
+                                              PreviewMouseUp="SelectAll"
+                                              SelectAllOnGotFocus="True"
+                                              SelectAllOnMouseUp="True" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellEditTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn Width="70"
+                                    FieldName="UseAdjTheo"
+                                    FixedWidth="True"
+                                    Header="Theo"
+                                    HorizontalHeaderContentAlignment="Center"
+                                    IsSmart="True">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:ToggleSwitch HorizontalAlignment="Center"
+                                                  Background="Transparent"
+                                                  BorderBrush="Transparent"
+                                                  BorderThickness="0"
+                                                  CheckedStateContent="Adj Theo"
+                                                  ContentPlacement="Inside"
+                                                  IsChecked="{Binding RowData.Row.UseAdjTheo, UpdateSourceTrigger=PropertyChanged}"
+                                                  ToggleSwitchWidth="69"
+                                                  UncheckedStateContent="Theo" />
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
+
+                <dxg:GridControlBand Header="Lean Characterizer"
+                                     HorizontalHeaderContentAlignment="Center">
+                    <dxg:GridControlBand.Bands>
+                        <dxg:GridControlBand Header="Bid Price"
+                                             HorizontalHeaderContentAlignment="Center">
+                            <dxg:GridColumn Binding="{Binding Path=RowData.Row.LeanModel.MinNbboPrice, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                                            FieldName="MinNbboPrice"
+                                            Header="Min"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="True">
+                                <dxg:GridColumn.CellEditTemplate>
+                                    <DataTemplate>
+                                        <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                      AllowSpinOnMouseWheel="True"
+                                                      Background="Transparent"
+                                                      BorderBrush="Transparent"
+                                                      BorderThickness="0"
+                                                      EditValue="{Binding RowData.Row.LeanModel.MinNbboPrice, UpdateSourceTrigger=PropertyChanged}"
+                                                      EditValueType="{x:Type sys:Double}"
+                                                      Increment="1"
+                                                      Mask="N2"
+                                                      MaskUseAsDisplayFormat="True"
+                                                      PreviewMouseUp="SelectAll"
+                                                      SelectAllOnGotFocus="True"
+                                                      SelectAllOnMouseUp="True" />
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellEditTemplate>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Binding="{Binding Path=RowData.Row.LeanModel.MaxNbboPrice, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                                            FieldName="MaxNbboPrice"
+                                            Header="Max"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="True">
+                                <dxg:GridColumn.CellEditTemplate>
+                                    <DataTemplate>
+                                        <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                      AllowSpinOnMouseWheel="True"
+                                                      Background="Transparent"
+                                                      BorderBrush="Transparent"
+                                                      BorderThickness="0"
+                                                      EditValue="{Binding RowData.Row.LeanModel.MaxNbboPrice, UpdateSourceTrigger=PropertyChanged}"
+                                                      EditValueType="{x:Type sys:Double}"
+                                                      Increment="1"
+                                                      Mask="N2"
+                                                      MaskUseAsDisplayFormat="True"
+                                                      PreviewMouseUp="SelectAll"
+                                                      SelectAllOnGotFocus="True"
+                                                      SelectAllOnMouseUp="True" />
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellEditTemplate>
+                            </dxg:GridColumn>
+                        </dxg:GridControlBand>
+                        <dxg:GridControlBand Header="Market/Dig Width"
+                                             HorizontalHeaderContentAlignment="Center">
+                            <dxg:GridColumn Binding="{Binding Path=RowData.Row.LeanModel.MinMarketWidth, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                                            FieldName="MinMarketWidth"
+                                            Header="Min"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="True">
+                                <dxg:GridColumn.CellEditTemplate>
+                                    <DataTemplate>
+                                        <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                      AllowSpinOnMouseWheel="True"
+                                                      Background="Transparent"
+                                                      BorderBrush="Transparent"
+                                                      BorderThickness="0"
+                                                      EditValue="{Binding RowData.Row.LeanModel.MinMarketWidth, UpdateSourceTrigger=PropertyChanged}"
+                                                      EditValueType="{x:Type sys:Double}"
+                                                      Increment="1"
+                                                      Mask="N2"
+                                                      MaskUseAsDisplayFormat="True"
+                                                      PreviewMouseUp="SelectAll"
+                                                      SelectAllOnGotFocus="True"
+                                                      SelectAllOnMouseUp="True" />
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellEditTemplate>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Binding="{Binding Path=RowData.Row.LeanModel.MaxMarketWidth, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                                            FieldName="MaxMarketWidth"
+                                            Header="Max"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="True">
+                                <dxg:GridColumn.CellEditTemplate>
+                                    <DataTemplate>
+                                        <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                      AllowSpinOnMouseWheel="True"
+                                                      Background="Transparent"
+                                                      BorderBrush="Transparent"
+                                                      BorderThickness="0"
+                                                      EditValue="{Binding RowData.Row.LeanModel.MaxMarketWidth, UpdateSourceTrigger=PropertyChanged}"
+                                                      EditValueType="{x:Type sys:Double}"
+                                                      Increment="1"
+                                                      Mask="N2"
+                                                      MaskUseAsDisplayFormat="True"
+                                                      PreviewMouseUp="SelectAll"
+                                                      SelectAllOnGotFocus="True"
+                                                      SelectAllOnMouseUp="True" />
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellEditTemplate>
+                            </dxg:GridColumn>
+                        </dxg:GridControlBand>
+                        <dxg:GridControlBand Header="Side"
+                                             HorizontalHeaderContentAlignment="Center">
+                            <dxg:GridColumn Binding="{Binding Path=RowData.Row.LeanModel.MinSideQty, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                                            FieldName="MinSideQty"
+                                            Header="Min Qty"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="True">
+                                <dxg:GridColumn.CellEditTemplate>
+                                    <DataTemplate>
+                                        <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                      AllowSpinOnMouseWheel="True"
+                                                      Background="Transparent"
+                                                      BorderBrush="Transparent"
+                                                      BorderThickness="0"
+                                                      EditValue="{Binding RowData.Row.LeanModel.MinSideQty, UpdateSourceTrigger=PropertyChanged}"
+                                                      EditValueType="{x:Type sys:Int32}"
+                                                      Increment="1"
+                                                      Mask="N0"
+                                                      MaskUseAsDisplayFormat="True"
+                                                      PreviewMouseUp="SelectAll"
+                                                      SelectAllOnGotFocus="True"
+                                                      SelectAllOnMouseUp="True" />
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellEditTemplate>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Binding="{Binding Path=RowData.Row.LeanModel.MaxSideSpread, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                                            FieldName="MaxSideSpread"
+                                            Header="Max Spread"
+                                            HorizontalHeaderContentAlignment="Center"
+                                            IsSmart="True">
+                                <dxg:GridColumn.CellEditTemplate>
+                                    <DataTemplate>
+                                        <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                      AllowSpinOnMouseWheel="True"
+                                                      Background="Transparent"
+                                                      BorderBrush="Transparent"
+                                                      BorderThickness="0"
+                                                      EditValue="{Binding RowData.Row.LeanModel.MaxSideSpread, UpdateSourceTrigger=PropertyChanged}"
+                                                      EditValueType="{x:Type sys:Double}"
+                                                      Increment=".01"
+                                                      Mask="N2"
+                                                      MaskUseAsDisplayFormat="True"
+                                                      PreviewMouseUp="SelectAll"
+                                                      SelectAllOnGotFocus="True"
+                                                      SelectAllOnMouseUp="True" />
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellEditTemplate>
+                            </dxg:GridColumn>
+                        </dxg:GridControlBand>
+                        <dxg:GridControlBand Header="Data"
+                                             HorizontalHeaderContentAlignment="Center">
+                            <dxg:GridControlBand.Bands>
+                                <dxg:GridControlBand Header=""
+                                                     HorizontalHeaderContentAlignment="Center"
+                                                     OverlayHeaderByChildren="True">
+                                    <dxg:GridColumn Width="80"
+                                                    FieldName="SignalDataType"
+                                                    FixedWidth="True"
+                                                    Header="Type"
+                                                    HorizontalHeaderContentAlignment="Center"
+                                                    IsSmart="True">
+                                        <dxg:GridColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <dxe:ComboBoxEdit Margin="-1"
+                                                                  Background="Transparent"
+                                                                  IsTextEditable="False"
+                                                                  ItemsSource="{Binding RowData.Row.SignalDataTypes}"
+                                                                  SelectedItem="{Binding RowData.Row.LeanModel.SignalDataType}" />
+
+                                            </DataTemplate>
+                                        </dxg:GridColumn.CellTemplate>
+                                    </dxg:GridColumn>
+                                </dxg:GridControlBand>
+                                <dxg:GridControlBand Header="Market Min L1 Lean"
+                                                     HorizontalHeaderContentAlignment="Center">
+                                    <dxg:GridColumn Binding="{Binding Path=RowData.Row.LeanModel.MarketMinL1LeanQty, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                                                    FieldName="MarketMinL1LeanQty"
+                                                    Header="Qty"
+                                                    HorizontalHeaderContentAlignment="Center"
+                                                    IsEnabledBinding="{Binding LeanModel.SignalDataType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter='Market'}"
+                                                    IsSmart="True">
+                                        <dxg:GridColumn.CellEditTemplate>
+                                            <DataTemplate>
+                                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                              AllowSpinOnMouseWheel="True"
+                                                              Background="Transparent"
+                                                              BorderBrush="Transparent"
+                                                              BorderThickness="0"
+                                                              EditValue="{Binding RowData.Row.LeanModel.MarketMinL1LeanQty, UpdateSourceTrigger=PropertyChanged}"
+                                                              EditValueType="{x:Type sys:Int32}"
+                                                              Increment="1"
+                                                              IsEnabled="{Binding RowData.Row.LeanModel.SignalDataType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter='Market'}"
+                                                              Mask="N0"
+                                                              MaskUseAsDisplayFormat="True"
+                                                              PreviewMouseUp="SelectAll"
+                                                              SelectAllOnGotFocus="True"
+                                                              SelectAllOnMouseUp="True" />
+
+                                            </DataTemplate>
+                                        </dxg:GridColumn.CellEditTemplate>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn Binding="{Binding Path=RowData.Row.LeanModel.MarketMinL1LeanCount, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                                                    FieldName="MarketMinL1LeanCount"
+                                                    Header="Count"
+                                                    HorizontalHeaderContentAlignment="Center"
+                                                    IsEnabledBinding="{Binding LeanModel.SignalDataType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter='Market'}"
+                                                    IsSmart="True">
+                                        <dxg:GridColumn.CellEditTemplate>
+                                            <DataTemplate>
+                                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                              AllowSpinOnMouseWheel="True"
+                                                              Background="Transparent"
+                                                              BorderBrush="Transparent"
+                                                              BorderThickness="0"
+                                                              EditValue="{Binding RowData.Row.LeanModel.MarketMinL1LeanCount, UpdateSourceTrigger=PropertyChanged}"
+                                                              EditValueType="{x:Type sys:Int32}"
+                                                              Increment="1"
+                                                              IsEnabled="{Binding RowData.Row.LeanModel.SignalDataType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter='Market'}"
+                                                              Mask="N0"
+                                                              MaskUseAsDisplayFormat="True"
+                                                              PreviewMouseUp="SelectAll"
+                                                              SelectAllOnGotFocus="True"
+                                                              SelectAllOnMouseUp="True" />
+
+                                            </DataTemplate>
+                                        </dxg:GridColumn.CellEditTemplate>
+                                    </dxg:GridColumn>
+                                </dxg:GridControlBand>
+                                <dxg:GridControlBand Header="Market Min L2 Lean"
+                                                     HorizontalHeaderContentAlignment="Center">
+                                    <dxg:GridColumn Binding="{Binding Path=RowData.Row.LeanModel.MarketMinL2LeanQty, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                                                    FieldName="MarketMinL2LeanQty"
+                                                    Header="Qty"
+                                                    HorizontalHeaderContentAlignment="Center"
+                                                    IsEnabledBinding="{Binding LeanModel.SignalDataType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter='Market'}"
+                                                    IsSmart="True">
+                                        <dxg:GridColumn.CellEditTemplate>
+                                            <DataTemplate>
+
+                                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                              AllowSpinOnMouseWheel="True"
+                                                              Background="Transparent"
+                                                              BorderBrush="Transparent"
+                                                              BorderThickness="0"
+                                                              EditValue="{Binding RowData.Row.LeanModel.MarketMinL2LeanQty, UpdateSourceTrigger=PropertyChanged}"
+                                                              EditValueType="{x:Type sys:Int32}"
+                                                              Increment="1"
+                                                              IsEnabled="{Binding RowData.Row.LeanModel.SignalDataType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter='Market'}"
+                                                              Mask="N0"
+                                                              MaskUseAsDisplayFormat="True"
+                                                              PreviewMouseUp="SelectAll"
+                                                              SelectAllOnGotFocus="True"
+                                                              SelectAllOnMouseUp="True" />
+
+                                            </DataTemplate>
+                                        </dxg:GridColumn.CellEditTemplate>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn Binding="{Binding Path=RowData.Row.LeanModel.MarketMinL2LeanCount, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                                                    FieldName="MarketMinL2LeanCount"
+                                                    Header="Count"
+                                                    HorizontalHeaderContentAlignment="Center"
+                                                    IsEnabledBinding="{Binding LeanModel.SignalDataType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter='Market'}"
+                                                    IsSmart="True">
+                                        <dxg:GridColumn.CellEditTemplate>
+                                            <DataTemplate>
+                                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                              AllowSpinOnMouseWheel="True"
+                                                              Background="Transparent"
+                                                              BorderBrush="Transparent"
+                                                              BorderThickness="0"
+                                                              EditValue="{Binding RowData.Row.LeanModel.MarketMinL2LeanCount, UpdateSourceTrigger=PropertyChanged}"
+                                                              EditValueType="{x:Type sys:Int32}"
+                                                              Increment="1"
+                                                              IsEnabled="{Binding RowData.Row.LeanModel.SignalDataType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter='Market'}"
+                                                              Mask="N0"
+                                                              MaskUseAsDisplayFormat="True"
+                                                              PreviewMouseUp="SelectAll"
+                                                              SelectAllOnGotFocus="True"
+                                                              SelectAllOnMouseUp="True" />
+
+                                            </DataTemplate>
+                                        </dxg:GridColumn.CellEditTemplate>
+                                    </dxg:GridColumn>
+                                </dxg:GridControlBand>
+                                <dxg:GridControlBand Header="Dig"
+                                                     HorizontalHeaderContentAlignment="Center">
+                                    <dxg:GridColumn Binding="{Binding Path=RowData.Row.LeanModel.DigQty, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                                                    FieldName="DigQty"
+                                                    HorizontalHeaderContentAlignment="Center"
+                                                    IsEnabledBinding="{Binding LeanModel.SignalDataType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter='Dig'}"
+                                                    IsSmart="True">
+                                        <dxg:GridColumn.CellEditTemplate>
+                                            <DataTemplate>
+                                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                              AllowSpinOnMouseWheel="True"
+                                                              Background="Transparent"
+                                                              BorderBrush="Transparent"
+                                                              BorderThickness="0"
+                                                              EditValue="{Binding RowData.Row.LeanModel.DigQty, UpdateSourceTrigger=PropertyChanged}"
+                                                              EditValueType="{x:Type sys:Int32}"
+                                                              Increment="1"
+                                                              IsEnabled="{Binding RowData.Row.LeanModel.SignalDataType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter='Dig'}"
+                                                              Mask="N0"
+                                                              MaskUseAsDisplayFormat="True"
+                                                              PreviewMouseUp="SelectAll"
+                                                              SelectAllOnGotFocus="True"
+                                                              SelectAllOnMouseUp="True" />
+                                            </DataTemplate>
+                                        </dxg:GridColumn.CellEditTemplate>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn Binding="{Binding Path=RowData.Row.LeanModel.DigCount, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N0}}"
+                                                    FieldName="DigCount"
+                                                    HorizontalHeaderContentAlignment="Center"
+                                                    IsEnabledBinding="{Binding LeanModel.SignalDataType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter='Dig'}"
+                                                    IsSmart="True">
+                                        <dxg:GridColumn.CellEditTemplate>
+                                            <DataTemplate>
+                                                <dxe:SpinEdit HorizontalContentAlignment="Right"
+                                                              AllowSpinOnMouseWheel="True"
+                                                              Background="Transparent"
+                                                              BorderBrush="Transparent"
+                                                              BorderThickness="0"
+                                                              EditValue="{Binding RowData.Row.LeanModel.DigCount, UpdateSourceTrigger=PropertyChanged}"
+                                                              EditValueType="{x:Type sys:Int32}"
+                                                              Increment="1"
+                                                              IsEnabled="{Binding RowData.Row.LeanModel.SignalDataType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter='Dig'}"
+                                                              Mask="N0"
+                                                              MaskUseAsDisplayFormat="True"
+                                                              PreviewMouseUp="SelectAll"
+                                                              SelectAllOnGotFocus="True"
+                                                              SelectAllOnMouseUp="True" />
+                                            </DataTemplate>
+                                        </dxg:GridColumn.CellEditTemplate>
+                                    </dxg:GridColumn>
+                                </dxg:GridControlBand>
+                            </dxg:GridControlBand.Bands>
+                        </dxg:GridControlBand>
+                    </dxg:GridControlBand.Bands>
+                </dxg:GridControlBand>
+            </dxg:GridControl.Bands>
+        </dxg:GridControl>
+
+        <Border Grid.Row="1"
+                Margin="0,5,0,0"
+                Padding="5"
+                BorderBrush="#3f3f46"
+                BorderThickness="1">
+
+            <Grid Margin="5,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="0" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="0" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="1"
+                       Grid.Column="1"
+                       Width="70"
+                       Margin="5,2,0,0"
+                       Content="Signal TTL" />
+
+                <dxe:ComboBoxEdit Grid.Row="1"
+                                  Grid.Column="2"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  ApplyItemTemplateToSelectedItem="True"
+                                  IsTextEditable="False"
+                                  ItemsSource="{Binding SignalTtls}"
+                                  SelectedItem="{Binding SignalTtl}">
+                    <dxe:ComboBoxEdit.ItemTemplate>
+                        <DataTemplate>
+                            <Label Padding="0,0.6,0,0.5"
+                                   Content="{Binding Converter={StaticResource EnumToDisplayTextConverter}}"
+                                   FontSize="12" />
+                        </DataTemplate>
+                    </dxe:ComboBoxEdit.ItemTemplate>
+                </dxe:ComboBoxEdit>
+
+                <dxe:TextEdit Grid.Row="1"
+                              Grid.Column="3"
+                              Width="85"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Center"
+                              VerticalContentAlignment="Center"
+                              dxe:TimeSpanMaskOptions.InputMode="Restricted"
+                              EditValue="{Binding ManualSignalTtl}"
+                              FontSize="12"
+                              Mask="hh:mm tt ET"
+                              MaskType="DateTimeAdvancingCaret"
+                              MaskUseAsDisplayFormat="True"
+                              Visibility="{Binding SignalTtl, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter='Manual'}" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="4"
+                       Margin="5,2,0,0"
+                       Content="Loop On Profit" />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="5"
+                              Width="70"
+                              Margin="5,2,0,0"
+                              HorizontalAlignment="Left"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding LoopOnProfit, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="6"
+                       Margin="5,2,0,0"
+                       Content="Stale Trade MS" />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="7"
+                              Width="70"
+                              Margin="5,2,0,0"
+                              HorizontalAlignment="Left"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding StaleTradeMs, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="8"
+                       Margin="5,2,0,0"
+                       Content="Stale Theo MS" />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="9"
+                              Width="70"
+                              Margin="5,2,0,0"
+                              HorizontalAlignment="Left"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding StaleTheoMs, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="10"
+                       Margin="5,2,0,0"
+                       Content="Max Signals" />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="11"
+                              Width="70"
+                              Margin="5,2,0,0"
+                              HorizontalAlignment="Left"
+                              AllowSpinOnMouseWheel="True"
+                              EditValue="{Binding MaxSignals, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <dxe:CheckEdit Grid.Row="1"
+                               Grid.Column="12"
+                               Margin="5,2,0,0"
+                               HorizontalAlignment="Left"
+                               Content="Exclude on Loss"
+                               EditValue="{Binding ExcludeOnLoss, UpdateSourceTrigger=PropertyChanged}" />
+
+                <dxe:CheckEdit Grid.Row="1"
+                               Grid.Column="13"
+                               Margin="5,2,0,0"
+                               HorizontalAlignment="Left"
+                               Content="Exclude on Scratch"
+                               EditValue="{Binding ExcludeOnScratch, UpdateSourceTrigger=PropertyChanged}" />
+
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

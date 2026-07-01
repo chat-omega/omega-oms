@@ -1,0 +1,443 @@
+﻿<dx:ThemedWindow x:Name="CoLoTraderWindow"
+                 x:Class="ZeroPlus.Oms.Ui.Views.CoLoTradeManagerView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                 xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:helpers="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 xmlns:views="clr-namespace:ZeroPlus.Oms.Ui.Views"
+                 Title="CoLo Trade Manager"
+                 Width="1200"
+                 Height="800"
+                 MinWidth="400"
+                 MinHeight="300"
+                 d:DataContext="{d:DesignInstance Type=ViewModels:CoLoTradeManagerViewModel}"
+                 DataContext="{startuphelpers:DISource Type=ViewModels:CoLoTradeManagerViewModel}"
+                 WindowStartupLocation="CenterScreen"
+                 mc:Ignorable="d">
+    <dx:ThemedWindow.Resources>
+        <helpers:SideToColorConverter x:Key="SideToColorConverter" />
+        <helpers:SideToColorConverter x:Key="SideToInverseColorConverter"
+                                      Inverse="True" />
+        <helpers:EnumToVisibilityConverter x:Key="CoLoTradeModeToVisibilityConverter" />
+    </dx:ThemedWindow.Resources>
+    <dx:ThemedWindow.HeaderItems>
+        <StackPanel Grid.Row="1"
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+            <dx:SimpleButton Grid.Row="2"
+                             Grid.ColumnSpan="2"
+                             Width="150"
+                             Height="24"
+                             Padding="0,0,0,1"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Top"
+                             VerticalContentAlignment="Center"
+                             BorderThickness="1.5"
+                             Command="{Binding EmergencyStopCommand}"
+                             Content="EMERGENCY STOP"
+                             FontSize="12"
+                             FontWeight="Bold"
+                             IsTabStop="False"
+                             Style="{StaticResource EmergencyStopButtonStyle}" />
+        </StackPanel>
+    </dx:ThemedWindow.HeaderItems>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="5" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+        </Grid.ColumnDefinitions>
+
+        <ScrollViewer Grid.Row="1"
+                      Grid.RowSpan="2"
+                      Grid.Column="1"
+                      Margin="2,0"
+                      Padding="0,0,5,0"
+                      HorizontalAlignment="Left"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <dxlc:GroupBox Grid.Row="1"
+                               Grid.Column="1"
+                               HorizontalAlignment="Left">
+                    <dxlc:GroupBox.Header>
+                        <Grid>
+                            <Label Padding="0"
+                                   HorizontalAlignment="Center"
+                                   Content="Add"
+                                   FontWeight="DemiBold" />
+                        </Grid>
+                    </dxlc:GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="11" />
+                            <ColumnDefinition Width="75" />
+                            <ColumnDefinition Width="75" />
+                            <ColumnDefinition Width="75" />
+                            <ColumnDefinition Width="75" />
+                            <ColumnDefinition Width="11" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0"
+                               Grid.Column="1"
+                               Margin="5,2,0,0"
+                               Content="Group - " />
+
+                        <dxe:ComboBoxEdit Grid.Row="0"
+                                          Grid.Column="2"
+                                          Grid.ColumnSpan="3"
+                                          Margin="5,2,0,0"
+                                          EditValue="{Binding Group, UpdateSourceTrigger=PropertyChanged}"
+                                          ItemsSource="{Binding Groups}" />
+
+                        <Label Grid.Row="1"
+                               Grid.Column="1"
+                               Margin="5,2,0,0"
+                               Content="Symbol - " />
+
+                        <dxe:ButtonEdit Grid.Row="1"
+                                        Grid.Column="2"
+                                        Grid.ColumnSpan="3"
+                                        Margin="5,2,0,0"
+                                        AllowDefaultButton="False"
+                                        CharacterCasing="Upper"
+                                        EditValue="{Binding Symbol, UpdateSourceTrigger=PropertyChanged}"
+                                        EditValuePostDelay="0"
+                                        SelectAllOnGotFocus="True"
+                                        SelectAllOnMouseUp="True"
+                                        TabIndex="1">
+                            <dxe:ButtonEdit.Buttons>
+                                <dxe:ButtonInfo Command="{Binding SearchSymbolCommand}"
+                                                GlyphKind="Search"
+                                                IsDefaultButton="True" />
+                            </dxe:ButtonEdit.Buttons>
+                        </dxe:ButtonEdit>
+
+                        <Label Grid.Row="2"
+                               Grid.Column="1"
+                               Margin="5,2,0,0"
+                               Content="Tick Size - " />
+
+                        <dxe:ComboBoxEdit Grid.Row="2"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          IsTextEditable="False"
+                                          ItemsSource="{Binding Ticks}"
+                                          SelectedItem="{Binding Tick, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <Label Grid.Row="2"
+                               Grid.Column="3"
+                               Margin="5,2,0,0"
+                               Content="Order Qty - " />
+
+                        <dxe:SpinEdit Grid.Row="2"
+                                      Grid.Column="4"
+                                      Width="70"
+                                      Margin="5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      AllowSpinOnMouseWheel="True"
+                                      EditValue="{Binding Qty, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      Increment="1"
+                                      MinValue="0"
+                                      PreviewMouseUp="SpinEdit_MouseUp"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+
+                        <Label Grid.Row="4"
+                               Grid.Column="1"
+                               Margin="5,2,0,0"
+                               Content="Initial Side - " />
+
+                        <dxe:ComboBoxEdit Grid.Row="4"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          Background="{Binding SelectedSide, Converter={StaticResource SideToColorConverter}}"
+                                          IsTextEditable="False"
+                                          ItemsSource="{Binding Sides}"
+                                          SelectedItem="{Binding SelectedSide, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <Label Grid.Row="4"
+                               Grid.Column="3"
+                               Margin="5,2,0,0"
+                               Content="Reenable - " />
+
+                        <dxe:SpinEdit Grid.Row="4"
+                                      Grid.Column="4"
+                                      Width="70"
+                                      Margin="5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      AllowSpinOnMouseWheel="True"
+                                      EditValue="{Binding ReenableSec, UpdateSourceTrigger=PropertyChanged}"
+                                      EditValueType="{x:Type sys:Int32}"
+                                      Increment="1"
+                                      MinValue="0"
+                                      PreviewMouseUp="SpinEdit_MouseUp"
+                                      SelectAllOnGotFocus="True"
+                                      SelectAllOnMouseUp="True" />
+
+                        <dx:SimpleButton Grid.Row="6"
+                                         Grid.ColumnSpan="6"
+                                         Width="120"
+                                         Margin="3,10,0,0"
+                                         Command="{Binding SendToCoLoCommand}"
+                                         Content="Send"
+                                         Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Send.svg}"
+                                         GlyphHeight="15" />
+                    </Grid>
+                </dxlc:GroupBox>
+
+                <dxlc:GroupBox Grid.Row="2"
+                               Grid.Column="1"
+                               Margin="0,5,0,0"
+                               HorizontalAlignment="Left"
+                               BorderBrush="{Binding SelectedSide, Converter={StaticResource SideToColorConverter}}">
+                    <dxlc:GroupBox.Header>
+                        <Grid>
+                            <Label Padding="0"
+                                   HorizontalAlignment="Center"
+                                   Content="Initiator"
+                                   FontWeight="DemiBold" />
+                        </Grid>
+                    </dxlc:GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0"
+                               Grid.Column="0"
+                               Margin="5,2,0,0"
+                               Content="Type - " />
+
+                        <dxe:ComboBoxEdit Grid.Row="0"
+                                          Grid.Column="1"
+                                          Margin="5,2,0,0"
+                                          EditValue="{Binding SelectedInitiator, UpdateSourceTrigger=PropertyChanged}"
+                                          IsTextEditable="False"
+                                          ItemsSource="{Binding Initiators}" />
+
+                        <views:HunterControlView Grid.Row="1"
+                                                 Grid.ColumnSpan="2"
+                                                 DataContext="{Binding InitiatorHunterModel}"
+                                                 Visibility="{Binding DataContext.SelectedInitiator, ElementName=CoLoTraderWindow, Converter={StaticResource CoLoTradeModeToVisibilityConverter}, ConverterParameter='Hunter'}" />
+                        <views:DrifterControlView Grid.Row="1"
+                                                  Grid.ColumnSpan="2"
+                                                  DataContext="{Binding InitiatorDrifterModel}"
+                                                  Visibility="{Binding DataContext.SelectedInitiator, ElementName=CoLoTraderWindow, Converter={StaticResource CoLoTradeModeToVisibilityConverter}, ConverterParameter='Drifter'}" />
+                    </Grid>
+                </dxlc:GroupBox>
+
+                <dxlc:GroupBox Grid.Row="3"
+                               Grid.Column="1"
+                               Margin="0,5,0,0"
+                               BorderBrush="{Binding SelectedSide, Converter={StaticResource SideToInverseColorConverter}}">
+                    <dxlc:GroupBox.Header>
+                        <Grid>
+                            <Label Padding="0"
+                                   HorizontalAlignment="Center"
+                                   Content="Liquidator"
+                                   FontWeight="DemiBold" />
+                        </Grid>
+                    </dxlc:GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0"
+                               Grid.Column="0"
+                               Margin="5,2,0,0"
+                               Content="Type - " />
+
+                        <dxe:ComboBoxEdit Grid.Row="0"
+                                          Grid.Column="1"
+                                          Margin="5,2,0,0"
+                                          EditValue="{Binding SelectedLiquidator, UpdateSourceTrigger=PropertyChanged}"
+                                          IsTextEditable="False"
+                                          ItemsSource="{Binding Liquidators}" />
+
+                        <views:ChaserControlView Grid.Row="1"
+                                                 Grid.ColumnSpan="2"
+                                                 DataContext="{Binding LiquidatorChaserModel}"
+                                                 Visibility="{Binding DataContext.SelectedLiquidator, ElementName=CoLoTraderWindow, Converter={StaticResource CoLoTradeModeToVisibilityConverter}, ConverterParameter='Chaser'}" />
+
+                        <views:DrifterControlView Grid.Row="1"
+                                                  Grid.ColumnSpan="2"
+                                                  DataContext="{Binding LiquidatorDrifterModel}"
+                                                  Visibility="{Binding DataContext.SelectedLiquidator, ElementName=CoLoTraderWindow, Converter={StaticResource CoLoTradeModeToVisibilityConverter}, ConverterParameter='Drifter'}" />
+                    </Grid>
+                </dxlc:GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+
+        <dxg:GridControl Name="BasketGrid"
+                         Grid.Row="1"
+                         Grid.RowSpan="2"
+                         Grid.Column="3"
+                         Margin="2,0"
+                         dx:DXSerializer.StoreLayoutMode="All"
+                         dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                         AutoGenerateColumns="AddNew"
+                         CurrentItem="{Binding SelectedItem}"
+                         EnableSmartColumnsGeneration="True"
+                         ItemsSource="{Binding BasketItems}"
+                         SelectedItems="{Binding SelectedItems}"
+                         SelectionMode="Row">
+            <dxg:GridControl.LayoutTransform>
+                <ScaleTransform CenterX="0" CenterY="0" ScaleX="{Binding ElementName=BasketGridScale, Path=Value}" ScaleY="{Binding ElementName=BasketGridScale, Path=Value}" />
+            </dxg:GridControl.LayoutTransform>
+            <dxg:GridControl.Resources>
+                <Style TargetType="dxg:GridColumn">
+                    <Setter Property="Visible" Value="False" />
+                    <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                </Style>
+            </dxg:GridControl.Resources>
+            <dxmvvm:Interaction.Behaviors>
+                <services:UiUpdateService />
+            </dxmvvm:Interaction.Behaviors>
+            <dxg:GridControl.View>
+                <dxg:TableView Name="BasketTable"
+                               AllowDragDrop="True"
+                               AllowEditing="False"
+                               AutoWidth="True"
+                               EditorShowMode="MouseUp"
+                               EnableSelectedRowAppearance="True"
+                               FadeSelectionOnLostFocus="False"
+                               RowStyle="{StaticResource BasketGridStyle}"
+                               ShowGroupPanel="False"
+                               ShowIndicator="True">
+                    <dxg:TableView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowColumnChooserCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Column Chooser">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ClearColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Hide All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowAllColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowDefaultColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Default Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </dxg:TableView.ContextMenu>
+                    <dxg:TableView.RowCellMenuCustomizations>
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.OpenInComplexOrderTicketCommand}"
+                                           CommandParameter="{Binding Path=SelectedItem, ElementName=BasketGrid}"
+                                           Content="Open in Complex Order Ticket" />
+                        <dxb:BarItemSeparator />
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.ResetAutomationCommand}"
+                                           CommandParameter="{Binding Path=SelectedItem, ElementName=BasketGrid}"
+                                           Content="Reset Automation" />
+                        <dxb:BarItemSeparator />
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.RemoveSelectedCommand}"
+                                           CommandParameter="{Binding Path=SelectedItems, ElementName=BasketGrid}"
+                                           Content="Remove Selected" />
+                        <dxb:BarItemSeparator />
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.DuplicateOrderCommand}"
+                                           CommandParameter="{Binding Path=SelectedItem, ElementName=BasketGrid}"
+                                           Content="Create Duplicate Order" />
+                        <dxb:BarItemSeparator />
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.CheckAllCommand}"
+                                           Content="Check All" />
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.UncheckAllCommand}"
+                                           Content="Uncheck All" />
+                    </dxg:TableView.RowCellMenuCustomizations>
+                    <dxg:TableView.GroupValueTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="10,0,0,0"
+                                       Text="{Binding Value}" />
+                        </DataTemplate>
+                    </dxg:TableView.GroupValueTemplate>
+                </dxg:TableView>
+            </dxg:GridControl.View>
+        </dxg:GridControl>
+
+        <Slider x:Name="BasketGridScale"
+                Grid.Row="3"
+                Grid.Column="1"
+                Maximum="4"
+                Minimum="0.1"
+                Visibility="Hidden"
+                Value="1" />
+    </Grid>
+</dx:ThemedWindow>

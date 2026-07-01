@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Upgrade>
+  <Property Name="Version" Value="<version>" />
+  <Files>
+    <File Name="zeroplusomsaddin_v<version>.zip" />
+  </Files>
+</Upgrade>

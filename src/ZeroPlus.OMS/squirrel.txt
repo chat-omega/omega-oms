@@ -1,0 +1,1 @@
+squirrel --releasify nupkg/ZeroPlus-OMS-Ui.2.3.-.nupkg --no-msi --framework-version net48 --icon zpicon.ico --setupIcon zpicon.ico --releaseDir=SquirrelRelease

@@ -1,0 +1,223 @@
+﻿<UserControl x:Class="ZeroPlus.Oms.Ui.Views.AutoLegSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+             xmlns:behavior="clr-namespace:ZeroPlus.Oms.Ui.Behaviors"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:views="clr-namespace:ZeroPlus.Oms.Ui.Views"
+             d:DataContext="{d:DesignInstance Type=ViewModels:AutomationSettingsViewModel}"
+             d:Height="auto"
+             d:Width="auto"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <dxmvvm:BooleanNegationConverter x:Key="BooleanNegationConverter" />
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <helper:CamelCaseFormatter x:Key="DisplayTextCamelCaseConverter" />
+        <helper:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <helper:NullToCheckGlyphConverter x:Key="NullToCheckGlyphConverter" />
+        <helper:BoolToCheckGlyphConverter x:Key="BoolToCheckGlyphConverter" />
+        <helper:SizeUpTypeToVisibilityConverter x:Key="SizeUpTypeToVisibilityConverter" />
+        <dxmvvm:BooleanToObjectConverter x:Key="HighlightToColorConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>#1a4c35</dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>Transparent</dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+        <dxmvvm:BooleanToObjectConverter x:Key="BooleanToExpandCollapseConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>3</dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>4</dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+    </UserControl.Resources>
+
+    <dxlc:GroupBox Name="AutoLegSettingsSubModule"
+                   Grid.Row="3"
+                   Margin="5,0,0,0"
+                   Padding="10,5">
+
+        <dxlc:GroupBox.Header>
+            <Grid Height="22">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+
+                <dx:DXImage Grid.Column="0"
+                            Height="15"
+                            HorizontalAlignment="Right"
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            Source="{dx:DXImage 'SvgImages/Dashboards/InsertTreeView.svg'}" />
+
+                <Label Grid.Column="1"
+                       Margin="2,0"
+                       Padding="0"
+                       VerticalAlignment="Center"
+                       Content="Auto Leg"
+                       FontWeight="Bold"
+                       Foreground="#AFAFB0"
+                       IsHitTestVisible="False" />
+
+                <dxe:ToggleSwitch Grid.Column="2"
+                                  Margin="0,0,5,0"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  AnimationMode="Always"
+                                  CheckedStateContent="Enabled"
+                                  ContentPlacement="Inside"
+                                  FontSize="11"
+                                  IsChecked="{Binding AutomationConfig.AutoLegEnabled}"
+                                  ToggleSwitchHeight="16"
+                                  ToggleSwitchWidth="70"
+                                  UncheckedStateContent="Disabled" />
+            </Grid>
+        </dxlc:GroupBox.Header>
+
+        <Grid Margin="0,5,0,0"
+              IsEnabled="{Binding AutomationConfig.AutoLegEnabled}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   Content="Max Width" />
+
+            <dxe:SpinEdit Grid.Row="0"
+                          Grid.Column="1"
+                          Width="75"
+                          Margin="5,0,0,0"
+                          HorizontalContentAlignment="Right"
+                          AllowSpinOnMouseWheel="True"
+                          EditValue="{Binding AutomationConfig.AutoLegMaxWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                          EditValueType="{x:Type sys:Double}"
+                          Increment="0.01"
+                          Mask="####0.00#"
+                          MaskUseAsDisplayFormat="True"
+                          MinValue="0"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+
+            <Label Grid.Row="0"
+                   Grid.Column="2"
+                   Margin="5,2,0,0"
+                   VerticalAlignment="Center"
+                   Content="Route" />
+
+            <dxe:ComboBoxEdit Grid.Row="0"
+                              Grid.Column="3"
+                              Width="95"
+                              Margin="5,0,0,0"
+                              EditValue="{Binding AutomationConfig.AutoLegCloseRoute}"
+                              FontSize="10"
+                              IsTextEditable="False"
+                              ItemsSource="{Binding RoutesList}"
+                              SelectAllOnGotFocus="True" />
+
+            <Label Grid.Row="1"
+                   Grid.Column="0"
+                   Margin="0,2,0,0"
+                   VerticalAlignment="Center"
+                   Content="Edge" />
+
+            <dxe:SpinEdit Grid.Row="1"
+                          Grid.Column="1"
+                          Width="75"
+                          Margin="5,2,0,0"
+                          HorizontalContentAlignment="Right"
+                          AllowSpinOnMouseWheel="True"
+                          EditValue="{Binding AutomationConfig.AutoLegCloseEdge, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                          EditValueType="{x:Type sys:Double}"
+                          Increment="0.01"
+                          Mask="####0.00#"
+                          MaskUseAsDisplayFormat="True"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+
+            <Label Grid.Row="1"
+                   Grid.Column="2"
+                   Margin="5,2,0,0"
+                   VerticalAlignment="Center"
+                   Content="Max Loss" />
+
+            <dxe:SpinEdit Grid.Row="1"
+                          Grid.Column="3"
+                          Margin="5,2,0,0"
+                          HorizontalContentAlignment="Right"
+                          AllowSpinOnMouseWheel="True"
+                          EditValue="{Binding AutomationConfig.AutoLegMaxLoss, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                          EditValueType="{x:Type sys:Double}"
+                          Increment="0.01"
+                          Mask="####0.00#"
+                          MaskUseAsDisplayFormat="True"
+                          MinValue="0"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+
+            <Label Grid.Row="2"
+                   Grid.Column="0"
+                   Margin="0,2,0,0"
+                   VerticalAlignment="Center"
+                   Content="Px Inc" />
+
+            <dxe:SpinEdit Grid.Row="2"
+                          Grid.Column="1"
+                          Width="75"
+                          Margin="5,2,0,0"
+                          HorizontalContentAlignment="Right"
+                          AllowSpinOnMouseWheel="True"
+                          EditValue="{Binding AutomationConfig.AutoLegCloseIncrement, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                          EditValueType="{x:Type sys:Double}"
+                          Increment="0.01"
+                          Mask="####0.00#"
+                          MaskUseAsDisplayFormat="True"
+                          MinValue="0"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+
+            <Label Grid.Row="2"
+                   Grid.Column="2"
+                   Margin="5,2,0,0"
+                   VerticalAlignment="Center"
+                   Content="Interval" />
+
+            <dxe:SpinEdit Grid.Row="2"
+                          Grid.Column="3"
+                          Margin="5,2,0,0"
+                          HorizontalContentAlignment="Right"
+                          AllowSpinOnMouseWheel="True"
+                          EditValue="{Binding AutomationConfig.AutoLegRestTime, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                          EditValueType="{x:Type sys:Double}"
+                          Increment="1"
+                          Mask="N0"
+                          MaskUseAsDisplayFormat="True"
+                          MinValue="0"
+                          PreviewMouseUp="SelectAll"
+                          SelectAllOnGotFocus="True"
+                          SelectAllOnMouseUp="True" />
+        </Grid>
+    </dxlc:GroupBox>
+
+</UserControl>

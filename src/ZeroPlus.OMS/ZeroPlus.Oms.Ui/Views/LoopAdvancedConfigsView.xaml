@@ -1,0 +1,1564 @@
+﻿<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.LoopAdvancedConfigsView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+                 xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 Title="Advanced Settings"
+                 Width="400"
+                 Height="800"
+                 MinWidth="300"
+                 MinHeight="400"
+                 d:DataContext="{d:DesignInstance Type=ViewModels:LoopAdvancedConfigsViewModel}"
+                 d:Height="auto"
+                 d:Width="auto"
+                 DataContext="{startuphelpers:DISource Type=ViewModels:LoopAdvancedConfigsViewModel}"
+                 Topmost="True"
+                 WindowStartupLocation="CenterScreen"
+                 WindowStyle="ToolWindow"
+                 mc:Ignorable="d">
+
+    <dx:ThemedWindow.Resources>
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <helper:NullToCheckGlyphConverter x:Key="NullToCheckGlyphConverter" />
+        <helper:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter" />
+        <helper:LoopPricingModeToDisplayTextConverter x:Key="LoopPricingModeToDisplayTextConverter" />
+        <helper:MultiBooleanToOrConverter x:Key="MultiBooleanToOrConverter" />
+    </dx:ThemedWindow.Resources>
+    <dx:DXTabControl>
+        <dx:DXTabItem Header="Loop">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="5" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="5" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="5" />
+                    </Grid.RowDefinitions>
+
+                    <Label Grid.Row="1"
+                           Grid.Column="1"
+                           Margin="5,2,0,0"
+                           VerticalAlignment="Center"
+                           Content="Pricing Mode" />
+
+                    <dxe:ComboBoxEdit Grid.Row="1"
+                                      Grid.Column="2"
+                                      Grid.ColumnSpan="3"
+                                      Margin="5,2,0,0"
+                                      ApplyItemTemplateToSelectedItem="True"
+                                      EditValue="{Binding BasketSettings.AutomationConfig.LoopPricingMode}"
+                                      IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                      IsTextEditable="False"
+                                      ItemsSource="{Binding LoopPricingModes}">
+                        <dxe:ComboBoxEdit.ItemTemplate>
+                            <DataTemplate>
+                                <Label Padding="0,0.5"
+                                       Content="{Binding Converter={StaticResource LoopPricingModeToDisplayTextConverter}}"
+                                       FontSize="11" />
+                            </DataTemplate>
+                        </dxe:ComboBoxEdit.ItemTemplate>
+                    </dxe:ComboBoxEdit>
+
+                    <Label Grid.Row="2"
+                           Grid.Column="1"
+                           Margin="5,2,0,0"
+                           VerticalAlignment="Center"
+                           Content="Under Mapping" />
+                    <Grid Grid.Row="2"
+                          Grid.Column="2"
+                          Grid.ColumnSpan="3"
+                          Margin="5,2,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <dx:SimpleButton Grid.Column="0"
+                                         Height="22"
+                                         Padding="0"
+                                         Command="{Binding ConfigAutomationConfigCommand}"
+                                         Content="Configure"
+                                         Glyph="{dx:DXImage SvgImages/Actions/NewTableStyle.svg}"
+                                         GlyphHeight="15"
+                                         IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}" />
+                        <dx:SimpleButton Grid.Column="1"
+                                         Width="70"
+                                         Height="22"
+                                         Margin="5,0,0,0"
+                                         Command="{Binding ClearAutomationConfigCommand}"
+                                         Content="Clear"
+                                         Glyph="{dx:DXImage 'SvgImages/Snap/ClearTableStyle.svg'}"
+                                         GlyphHeight="15"
+                                         IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}" />
+                    </Grid>
+                    <Label Grid.Row="3"
+                           Grid.Column="1"
+                           Margin="5,2,0,0"
+                           VerticalAlignment="Center"
+                           Content="Resting Period" />
+
+                    <dxe:ComboBoxEdit Grid.Row="3"
+                                      Grid.Column="2"
+                                      Width="70"
+                                      Margin="5,2,0,0"
+                                      HorizontalAlignment="Left"
+                                      ApplyItemTemplateToSelectedItem="True"
+                                      EditValue="{Binding BasketSettings.AutomationConfig.LoopIntervalType, UpdateSourceTrigger=PropertyChanged}"
+                                      IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                      IsTextEditable="False"
+                                      ItemsSource="{Binding LoopIntervalTypes}" />
+
+                    <dxe:SpinEdit Grid.Row="3"
+                                  Grid.Column="3"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.AutomationConfig.ContraFishInterval, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  Increment="1"
+                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                  MaxValue="{Binding BasketSettings.AutomationConfig.ContraFishIntervalMax}"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <dx:SimpleButton Grid.Row="3"
+                                     Grid.Column="3"
+                                     Width="70"
+                                     Margin="5,2,0,0"
+                                     Padding="0,0,7,0"
+                                     HorizontalAlignment="Left"
+                                     HorizontalContentAlignment="Right"
+                                     Command="{Binding ShowDynamicIntervalConfigPanelCommand}"
+                                     Glyph="{Binding BasketSettings.AutomationConfig.DynamicIntervalModel, Converter={StaticResource NullToCheckGlyphConverter}}"
+                                     GlyphWidth="15"
+                                     IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                     ToolTip="{Binding BasketSettings.AutomationConfig.DynamicIntervalModel.Title}"
+                                     Visibility="{Binding BasketSettings.AutomationConfig.LoopIntervalType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter='Dynamic'}">
+                        <TextBlock Width="60"
+                                   HorizontalAlignment="Stretch"
+                                   Text="{Binding BasketSettings.AutomationConfig.DynamicIntervalModel.Title, StringFormat='{}{0}', TargetNullValue='Config'}" />
+                    </dx:SimpleButton>
+
+                    <dxe:SpinEdit Grid.Row="3"
+                                  Grid.Column="4"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.AutomationConfig.ContraFishIntervalMax, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  Increment="1"
+                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                  MinValue="{Binding BasketSettings.AutomationConfig.ContraFishInterval}"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True"
+                                  Visibility="{Binding BasketSettings.AutomationConfig.LoopIntervalType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter='Static'}" />
+
+                    <Label Grid.Row="4"
+                           Grid.Column="1"
+                           Margin="5,2,0,0"
+                           VerticalAlignment="Center"
+                           Content="Loop Interval" />
+
+                    <dxe:SpinEdit Grid.Row="4"
+                                  Grid.Column="2"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.AutomationConfig.LoopInterval, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  Increment="1"
+                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                  MaxValue="{Binding BasketSettings.AutomationConfig.LoopIntervalMax}"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <dxe:SpinEdit Grid.Row="4"
+                                  Grid.Column="3"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.AutomationConfig.LoopIntervalMax, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  Increment="1"
+                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                  MinValue="{Binding BasketSettings.AutomationConfig.LoopInterval}"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="5"
+                           Grid.Column="1"
+                           Margin="5,2,0,0"
+                           VerticalAlignment="Center"
+                           Content="Loop Before Size-Up" />
+
+                    <dxe:SpinEdit Grid.Row="5"
+                                  Grid.Column="2"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.AutomationConfig.LoopCountBeforeSizeup, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="6"
+                           Grid.Column="1"
+                           Margin="5,2,0,0"
+                           VerticalAlignment="Center"
+                           Content="Resubmit All" />
+
+                    <dxe:SpinEdit Grid.Row="6"
+                                  Grid.Column="2"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.AutomationConfig.AttemptResubmit, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  Increment="1"
+                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="7"
+                           Grid.Column="1"
+                           Margin="5,2,0,0"
+                           VerticalAlignment="Center"
+                           Content="Resubmit Last" />
+
+                    <dxe:SpinEdit Grid.Row="7"
+                                  Grid.Column="2"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.AutomationConfig.LoopResubmit, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  Increment="1"
+                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="8"
+                           Grid.Column="1"
+                           Margin="5,2,0,0"
+                           VerticalAlignment="Center"
+                           Content="Adj Loop Resubmit" />
+
+                    <dxe:SpinEdit Grid.Row="8"
+                                  Grid.Column="2"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.AutomationConfig.MaxBelowEdgeResubmit, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="9"
+                           Grid.Column="1"
+                           Margin="5,2,0,0"
+                           VerticalAlignment="Center"
+                           Content="Partial Resubmit" />
+
+                    <dxe:SpinEdit Grid.Row="9"
+                                  Grid.Column="2"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.AutomationConfig.AutomationPartialResubmitCount, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="10"
+                           Grid.Column="1"
+                           Margin="5,2,0,0"
+                           VerticalAlignment="Center"
+                           Content="Partial Fill (%)" />
+
+                    <dxe:SpinEdit Grid.Row="10"
+                                  Grid.Column="2"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.AutomationConfig.AutomationRequiredPartialFillPercentage, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment=".01"
+                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                  Mask="N2"
+                                  MaskUseAsDisplayFormat="True"
+                                  MaxValue="1"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="11"
+                           Grid.Column="1"
+                           Margin="5,2,0,0"
+                           VerticalAlignment="Center"
+                           Content="Edge Tighten (%)" />
+
+                    <dxe:SpinEdit Grid.Row="11"
+                                  Grid.Column="2"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.AutomationConfig.LastEdgeTightenPercent, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment=".01"
+                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                  Mask="N2"
+                                  MaskUseAsDisplayFormat="True"
+                                  MaxValue="1"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="12"
+                           Grid.Column="1"
+                           Margin="5,2,0,0"
+                           Content="Edge Exp(%)"
+                           Visibility="{Binding BasketSettings.AutomationConfig.LoopCloseEdgeType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter='Dynamic'}" />
+
+                    <dxe:SpinEdit Grid.Row="12"
+                                  Grid.Column="2"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.AutomationConfig.DynamicEdgeExpansion, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.01"
+                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                  Mask="N2"
+                                  MaskUseAsDisplayFormat="True"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True"
+                                  Visibility="{Binding BasketSettings.AutomationConfig.LoopCloseEdgeType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter='Dynamic'}" />
+
+                    <Label Grid.Row="13"
+                           Grid.Column="1"
+                           Margin="5,2,0,0"
+                           VerticalAlignment="Center"
+                           Content="Size Exp(%)"
+                           Visibility="{Binding BasketSettings.AutomationConfig.LoopCloseEdgeType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter='Dynamic'}" />
+
+                    <dxe:SpinEdit Grid.Row="13"
+                                  Grid.Column="2"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.AutomationConfig.DynamicSizeExpansion, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.01"
+                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                  Mask="N2"
+                                  MaskUseAsDisplayFormat="True"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True"
+                                  Visibility="{Binding BasketSettings.AutomationConfig.LoopCloseEdgeType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter='Dynamic'}" />
+
+                    <dxe:CheckEdit Grid.Row="18"
+                                   Grid.Column="1"
+                                   Grid.ColumnSpan="2"
+                                   Margin="5,2,0,0"
+                                   HorizontalAlignment="Left"
+                                   Content="Maintain Last Edge"
+                                   EditValue="{Binding BasketSettings.AutomationConfig.MaintainLastEdge}"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                   Visibility="{Binding BasketSettings.AutomationConfig.LoopingEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                    <dxe:CheckEdit Grid.Row="19"
+                                   Grid.Column="1"
+                                   Grid.ColumnSpan="2"
+                                   Margin="5,2,0,0"
+                                   HorizontalAlignment="Left"
+                                   Content="Size-Up on Closing"
+                                   DockPanel.Dock="Left"
+                                   EditValue="{Binding BasketSettings.AutomationConfig.SizeUpOnClosingLoop}"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}" />
+
+                    <dxe:CheckEdit Grid.Row="20"
+                                   Grid.Column="1"
+                                   Grid.ColumnSpan="2"
+                                   Margin="5,2,0,0"
+                                   Content="Size-Up on Hard Side"
+                                   DockPanel.Dock="Right"
+                                   EditValue="{Binding BasketSettings.AutomationConfig.SizeUpOnHardSideOnly}"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}" />
+
+                    <dxe:CheckEdit Grid.Row="21"
+                                   Grid.Column="1"
+                                   Grid.ColumnSpan="3"
+                                   Margin="5,2,0,0"
+                                   HorizontalAlignment="Left"
+                                   Content="Require Adj Edge For Size-Up"
+                                   EditValue="{Binding BasketSettings.AutomationConfig.RequireAdjEdgeForSizeUp}"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                   Visibility="Collapsed" />
+
+                    <dxe:CheckEdit Grid.Row="22"
+                                   Grid.Column="1"
+                                   Grid.ColumnSpan="2"
+                                   Margin="5,2,0,0"
+                                   HorizontalAlignment="Left"
+                                   Content="Adjust out of market prices"
+                                   EditValue="{Binding BasketSettings.AutomationConfig.AdjustClosingPriceToMarket}"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                   ToolTip="Adjust closing price to market, when price is below bid or above ask." />
+
+                    <dxe:CheckEdit Grid.Row="22"
+                                   Grid.Column="3"
+                                   Grid.ColumnSpan="2"
+                                   Margin="5,2,0,0"
+                                   HorizontalAlignment="Left"
+                                   Content="(Check for positive edge)"
+                                   EditValue="{Binding BasketSettings.AutomationConfig.AdjustClosingPriceToMarketWinnersOnly}"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                   ToolTip="Adjust closing price to market, when price is below bid or above ask and market is within edge."
+                                   Visibility="Collapsed" />
+
+                    <dxlc:GroupBox Grid.Row="24"
+                                   Grid.Column="1"
+                                   Grid.ColumnSpan="4"
+                                   Margin="0,5,0,0"
+                                   Padding="0"
+                                   VerticalAlignment="Top"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}">
+                        <dxlc:GroupBox.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <dx:DXImage Grid.Column="0"
+                                            Height="15"
+                                            HorizontalAlignment="Right"
+                                            RenderOptions.BitmapScalingMode="HighQuality"
+                                            Source="{dx:DXImage 'SvgImages/Find/Find.svg'}" />
+
+                                <Label Grid.Column="1"
+                                       Margin="2,0"
+                                       Padding="0"
+                                       VerticalAlignment="Center"
+                                       Content="Free Look"
+                                       Foreground="#AFAFB0"
+                                       IsHitTestVisible="False" />
+
+                            </Grid>
+                        </dxlc:GroupBox.Header>
+
+                        <Grid IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="5" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="5" />
+                            </Grid.RowDefinitions>
+
+                            <dxe:CheckEdit Grid.Row="0"
+                                           Grid.Column="1"
+                                           Margin="5,2,0,0"
+                                           HorizontalAlignment="Left"
+                                           Content="Free Look Last"
+                                           EditValue="{Binding BasketSettings.AutomationConfig.LoopFreeLook}" />
+
+                            <dxe:CheckEdit Grid.Row="0"
+                                           Grid.Column="2"
+                                           Grid.ColumnSpan="3"
+                                           Margin="5,2,0,0"
+                                           HorizontalAlignment="Left"
+                                           Content="Free Look When Getting Close Edge"
+                                           EditValue="{Binding BasketSettings.AutomationConfig.FreeLookWhenGettingCloseEdge}" />
+
+                            <dxe:CheckEdit Grid.Row="1"
+                                           Grid.Column="1"
+                                           Margin="5,2,0,0"
+                                           HorizontalAlignment="Left"
+                                           Content="Free Look All"
+                                           EditValue="{Binding BasketSettings.AutomationConfig.LoopFreeLookOnAll}" />
+
+                            <dxe:CheckEdit Grid.Row="1"
+                                           Grid.Column="2"
+                                           Grid.ColumnSpan="3"
+                                           Margin="5,2,0,0"
+                                           HorizontalAlignment="Left"
+                                           Content="Require Min Fill Time"
+                                           EditValue="{Binding BasketSettings.AutomationConfig.FreeLookRequireMinFillTime}" />
+
+                            <dxe:SpinEdit Grid.Row="1"
+                                          Grid.Column="4"
+                                          Margin="5,2,0,0"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.FreeLookMinFillTime, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment="1"
+                                          Mask="N0"
+                                          MaskUseAsDisplayFormat="True"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True">
+                                <dxe:SpinEdit.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource MultiBooleanToOrConverter}">
+                                        <Binding Path="BasketSettings.AutomationConfig.LoopFreeLookOnAll" />
+                                        <Binding Path="BasketSettings.AutomationConfig.FreeLookRequireMinFillTime" />
+                                    </MultiBinding>
+                                </dxe:SpinEdit.IsEnabled>
+                            </dxe:SpinEdit>
+
+                            <dxe:CheckEdit Grid.Row="2"
+                                           Grid.Column="1"
+                                           Margin="5,2,0,0"
+                                           HorizontalAlignment="Left"
+                                           Content="Use Ticks"
+                                           EditValue="{Binding BasketSettings.AutomationConfig.LoopFreeLookOnAllUsingTicks}">
+                                <dxe:CheckEdit.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource MultiBooleanToOrConverter}">
+                                        <Binding Path="BasketSettings.AutomationConfig.LoopFreeLookOnAll" />
+                                        <Binding Path="BasketSettings.AutomationConfig.FreeLookWhenGettingCloseEdge" />
+                                    </MultiBinding>
+                                </dxe:CheckEdit.IsEnabled>
+                            </dxe:CheckEdit>
+
+                            <dxe:CheckEdit Grid.Row="2"
+                                           Grid.Column="2"
+                                           Grid.ColumnSpan="3"
+                                           Margin="5,2,0,0"
+                                           HorizontalAlignment="Left"
+                                           Content="Free Look on Losers"
+                                           EditValue="{Binding BasketSettings.AutomationConfig.FreeLookOnLosers}" />
+
+                            <dxe:SpinEdit Grid.Row="2"
+                                          Grid.Column="4"
+                                          Margin="5,2,0,0"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.FreeLookOnLosersMax, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Int32}"
+                                          Increment="1"
+                                          Mask="N0"
+                                          MaskUseAsDisplayFormat="True"
+                                          MaxValue="2"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True">
+                                <dxe:SpinEdit.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource MultiBooleanToOrConverter}">
+                                        <Binding Path="BasketSettings.AutomationConfig.LoopFreeLook" />
+                                        <Binding Path="BasketSettings.AutomationConfig.FreeLookOnLosers" />
+                                    </MultiBinding>
+                                </dxe:SpinEdit.IsEnabled>
+                            </dxe:SpinEdit>
+
+                            <Label Grid.Row="3"
+                                   Grid.Column="1"
+                                   Margin="5,2,0,0"
+                                   Content="Free Look All Backup"
+                                   FontSize="11">
+                                <Label.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource MultiBooleanToOrConverter}">
+                                        <Binding Path="BasketSettings.AutomationConfig.LoopFreeLookOnAll" />
+                                        <Binding Path="BasketSettings.AutomationConfig.FreeLookWhenGettingCloseEdge" />
+                                    </MultiBinding>
+                                </Label.IsEnabled>
+                            </Label>
+
+                            <dxe:SpinEdit Grid.Row="3"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.FreeLookOnAllIncrement, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment="0.01"
+                                          Mask="N2"
+                                          MaskUseAsDisplayFormat="True"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True"
+                                          Visibility="{Binding BasketSettings.AutomationConfig.LoopFreeLookOnAllUsingTicks, Converter={StaticResource BooleanToVisibilityInverseConverter}}">
+                                <dxe:SpinEdit.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource MultiBooleanToOrConverter}">
+                                        <Binding Path="BasketSettings.AutomationConfig.LoopFreeLookOnAll" />
+                                        <Binding Path="BasketSettings.AutomationConfig.FreeLookWhenGettingCloseEdge" />
+                                    </MultiBinding>
+                                </dxe:SpinEdit.IsEnabled>
+                            </dxe:SpinEdit>
+
+                            <dxe:SpinEdit Grid.Row="3"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.FreeLookOnAllIncrementTicks, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment="1"
+                                          Mask="N0"
+                                          MaskUseAsDisplayFormat="True"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True"
+                                          Visibility="{Binding BasketSettings.AutomationConfig.LoopFreeLookOnAllUsingTicks, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <dxe:SpinEdit.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource MultiBooleanToOrConverter}">
+                                        <Binding Path="BasketSettings.AutomationConfig.LoopFreeLookOnAll" />
+                                        <Binding Path="BasketSettings.AutomationConfig.FreeLookWhenGettingCloseEdge" />
+                                    </MultiBinding>
+                                </dxe:SpinEdit.IsEnabled>
+                            </dxe:SpinEdit>
+
+                            <Label Grid.Row="3"
+                                   Grid.Column="3"
+                                   Margin="5,2,0,0"
+                                   Content="Increment">
+                                <Label.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource MultiBooleanToOrConverter}">
+                                        <Binding Path="BasketSettings.AutomationConfig.LoopFreeLookOnAll" />
+                                        <Binding Path="BasketSettings.AutomationConfig.FreeLookWhenGettingCloseEdge" />
+                                    </MultiBinding>
+                                </Label.IsEnabled>
+                            </Label>
+
+                            <dxe:SpinEdit Grid.Row="3"
+                                          Grid.Column="4"
+                                          Margin="5,2,0,0"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.FreeLookOnAllWalkBackIncrement, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment="0.01"
+                                          Mask="N2"
+                                          MaskUseAsDisplayFormat="True"
+                                          MaxValue="{Binding BasketSettings.AutomationConfig.FreeLookOnAllIncrement}"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True"
+                                          Visibility="{Binding BasketSettings.AutomationConfig.LoopFreeLookOnAllUsingTicks, Converter={StaticResource BooleanToVisibilityInverseConverter}}">
+                                <dxe:SpinEdit.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource MultiBooleanToOrConverter}">
+                                        <Binding Path="BasketSettings.AutomationConfig.LoopFreeLookOnAll" />
+                                        <Binding Path="BasketSettings.AutomationConfig.FreeLookWhenGettingCloseEdge" />
+                                    </MultiBinding>
+                                </dxe:SpinEdit.IsEnabled>
+                            </dxe:SpinEdit>
+
+                            <dxe:SpinEdit Grid.Row="3"
+                                          Grid.Column="4"
+                                          Margin="5,2,0,0"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.FreeLookOnAllWalkBackIncrementTicks, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment="1"
+                                          Mask="N0"
+                                          MaskUseAsDisplayFormat="True"
+                                          MaxValue="{Binding BasketSettings.AutomationConfig.FreeLookOnAllIncrementTicks}"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True"
+                                          Visibility="{Binding BasketSettings.AutomationConfig.LoopFreeLookOnAllUsingTicks, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <dxe:SpinEdit.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource MultiBooleanToOrConverter}">
+                                        <Binding Path="BasketSettings.AutomationConfig.LoopFreeLookOnAll" />
+                                        <Binding Path="BasketSettings.AutomationConfig.FreeLookWhenGettingCloseEdge" />
+                                    </MultiBinding>
+                                </dxe:SpinEdit.IsEnabled>
+                            </dxe:SpinEdit>
+
+                            <dxe:CheckEdit Grid.Row="4"
+                                           Grid.Column="1"
+                                           Margin="5,2,0,0"
+                                           HorizontalAlignment="Left"
+                                           Content="Free Look Nickel"
+                                           EditValue="{Binding BasketSettings.AutomationConfig.LoopFreeLookOnNickelNames}" />
+
+                            <dxe:SpinEdit Grid.Row="4"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.LoopFreeLookOnNickelNamesIncrement, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment="0.01"
+                                          IsEnabled="{Binding BasketSettings.AutomationConfig.LoopFreeLookOnNickelNames}"
+                                          Mask="N2"
+                                          MaskUseAsDisplayFormat="True"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True" />
+
+                            <dxe:TextEdit Grid.Row="4"
+                                          Grid.Column="3"
+                                          Grid.ColumnSpan="2"
+                                          Margin="5,2,0,0"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.LoopFreeLookOnNickelNamesRoute}"
+                                          IsEnabled="{Binding BasketSettings.AutomationConfig.LoopFreeLookOnNickelNames}"
+                                          NullText="Route" />
+
+                            <dxe:CheckEdit Grid.Row="5"
+                                           Grid.Column="1"
+                                           Margin="5,2,0,0"
+                                           HorizontalAlignment="Left"
+                                           Content="Free Look Dime"
+                                           EditValue="{Binding BasketSettings.AutomationConfig.LoopFreeLookOnDimeNames}" />
+
+                            <dxe:SpinEdit Grid.Row="5"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.LoopFreeLookOnDimeNamesIncrement, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment="0.01"
+                                          IsEnabled="{Binding BasketSettings.AutomationConfig.LoopFreeLookOnDimeNames}"
+                                          Mask="N2"
+                                          MaskUseAsDisplayFormat="True"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True" />
+
+                            <dxe:TextEdit Grid.Row="5"
+                                          Grid.Column="3"
+                                          Grid.ColumnSpan="2"
+                                          Margin="5,2,0,0"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.LoopFreeLookOnDimeNamesRoute}"
+                                          IsEnabled="{Binding BasketSettings.AutomationConfig.LoopFreeLookOnDimeNames}"
+                                          NullText="Route" />
+
+                        </Grid>
+                    </dxlc:GroupBox>
+
+                    <dxlc:GroupBox Grid.Row="25"
+                                   Grid.Column="1"
+                                   Grid.ColumnSpan="4"
+                                   Margin="0,5,0,0"
+                                   Padding="0"
+                                   VerticalAlignment="Top"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}">
+                        <dxlc:GroupBox.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <dx:DXImage Grid.Column="0"
+                                            Height="15"
+                                            HorizontalAlignment="Right"
+                                            RenderOptions.BitmapScalingMode="HighQuality"
+                                            Source="{dx:DXImage 'SvgImages/Spreadsheet/3ArrowsColored.svg'}" />
+
+                                <Label Grid.Column="1"
+                                       Margin="2,0"
+                                       Padding="0"
+                                       VerticalAlignment="Center"
+                                       Content="Dynamic Routing (Exchange Targeting)"
+                                       Foreground="#AFAFB0"
+                                       IsHitTestVisible="False" />
+
+                                <dxe:ToggleSwitch Grid.Column="2"
+                                                  Margin="10,0,5,0"
+                                                  HorizontalAlignment="Right"
+                                                  VerticalAlignment="Center"
+                                                  AnimationMode="Always"
+                                                  CheckedStateContent="On"
+                                                  ContentPlacement="Inside"
+                                                  FontSize="11"
+                                                  IsChecked="{Binding BasketSettings.AutomationConfig.LooperDynamicRouting}"
+                                                  ToggleSwitchHeight="16"
+                                                  ToggleSwitchWidth="50"
+                                                  UncheckedStateContent="Off" />
+                            </Grid>
+                        </dxlc:GroupBox.Header>
+
+                        <Grid IsEnabled="{Binding BasketSettings.AutomationConfig.LooperDynamicRouting}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="5" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="5" />
+                            </Grid.RowDefinitions>
+
+                            <dx:SimpleButton Grid.Row="0"
+                                             Grid.Column="1"
+                                             Grid.ColumnSpan="2"
+                                             Margin="5,2,0,0"
+                                             HorizontalAlignment="Left"
+                                             HorizontalContentAlignment="Right"
+                                             Command="{Binding ShowExchangeToRouteMappingEditorCommand}"
+                                             Content="Exchange to Route Mapping"
+                                             Glyph="{dx:DXImage SvgImages/DiagramIcons/MindMapTree_Horizontal.svg}"
+                                             GlyphWidth="15" />
+
+                            <dxe:CheckEdit Grid.Row="1"
+                                           Grid.Column="1"
+                                           Margin="5,2,0,0"
+                                           HorizontalAlignment="Left"
+                                           Content="Enable for Opening orders"
+                                           EditValue="{Binding BasketSettings.AutomationConfig.EnableDynamicRouteForOpeningOrders}" />
+
+                            <dxe:CheckEdit Grid.Row="1"
+                                           Grid.Column="2"
+                                           Margin="5,2,0,0"
+                                           HorizontalAlignment="Left"
+                                           Content="Enable for Closing orders"
+                                           EditValue="{Binding BasketSettings.AutomationConfig.EnableDynamicRouteForClosingOrders}" />
+
+                            <dxe:CheckEdit Grid.Row="2"
+                                           Grid.Column="1"
+                                           Grid.ColumnSpan="2"
+                                           Margin="5,2,0,0"
+                                           HorizontalAlignment="Left"
+                                           Content="Attempt Increment Using Dynamic Route"
+                                           EditValue="{Binding BasketSettings.AutomationConfig.AttemptIncrementUsingDynamicRoute}" />
+                        </Grid>
+                    </dxlc:GroupBox>
+
+                    <dxlc:GroupBox Grid.Row="26"
+                                   Grid.Column="1"
+                                   Grid.ColumnSpan="4"
+                                   Margin="0,5,0,0"
+                                   Padding="0"
+                                   VerticalAlignment="Top"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}">
+                        <dxlc:GroupBox.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <dx:DXImage Grid.Column="0"
+                                            Height="15"
+                                            HorizontalAlignment="Right"
+                                            RenderOptions.BitmapScalingMode="HighQuality"
+                                            Source="{dx:DXImage 'SvgImages/Outlook Inspired/FollowUp.svg'}" />
+
+                                <Label Grid.Column="1"
+                                       Margin="2,0"
+                                       Padding="0"
+                                       VerticalAlignment="Center"
+                                       Content="Auto Aggressor"
+                                       Foreground="#AFAFB0"
+                                       IsHitTestVisible="False" />
+
+                                <dxe:ToggleSwitch Grid.Column="2"
+                                                  Margin="10,0,5,0"
+                                                  HorizontalAlignment="Right"
+                                                  VerticalAlignment="Center"
+                                                  AnimationMode="Always"
+                                                  CheckedStateContent="On"
+                                                  ContentPlacement="Inside"
+                                                  FontSize="11"
+                                                  IsChecked="{Binding BasketSettings.AutomationConfig.AutoAggressorEnabled}"
+                                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                                  ToggleSwitchHeight="16"
+                                                  ToggleSwitchWidth="50"
+                                                  UncheckedStateContent="Off" />
+                            </Grid>
+                        </dxlc:GroupBox.Header>
+
+                        <Grid IsEnabled="{Binding BasketSettings.AutomationConfig.AutoAggressorEnabled}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="85" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="5" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="5" />
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Row="0"
+                                   Grid.Column="1"
+                                   Margin="5,2,0,0"
+                                   VerticalAlignment="Center"
+                                   Content="Trigger Mode" />
+
+                            <dxe:ComboBoxEdit Grid.Row="0"
+                                              Grid.Column="2"
+                                              Width="120"
+                                              Margin="5,2,0,0"
+                                              ApplyItemTemplateToSelectedItem="True"
+                                              EditValue="{Binding BasketSettings.AutomationConfig.AutoAggressorMode}"
+                                              IsTextEditable="False"
+                                              ItemsSource="{Binding AutoAggressorModes}">
+                                <dxe:ComboBoxEdit.ItemTemplate>
+                                    <DataTemplate>
+                                        <Label Padding="0,0.5"
+                                               Content="{Binding Converter={StaticResource EnumToDisplayTextConverter}}"
+                                               FontSize="11" />
+                                    </DataTemplate>
+                                </dxe:ComboBoxEdit.ItemTemplate>
+                            </dxe:ComboBoxEdit>
+
+                            <Label Grid.Row="1"
+                                   Grid.Column="1"
+                                   Margin="5,2,0,0"
+                                   VerticalAlignment="Center"
+                                   Content="Tighten By" />
+
+                            <dxe:ComboBoxEdit Grid.Row="1"
+                                              Grid.Column="2"
+                                              Width="120"
+                                              Margin="5,2,0,0"
+                                              ApplyItemTemplateToSelectedItem="True"
+                                              EditValue="{Binding BasketSettings.AutomationConfig.AutoAggressorEdgeTightenMode, UpdateSourceTrigger=PropertyChanged}"
+                                              IsTextEditable="False"
+                                              ItemsSource="{Binding AutoAggressorEdgeTightenModes}">
+                                <dxe:ComboBoxEdit.ItemTemplate>
+                                    <DataTemplate>
+                                        <Label Padding="0,0.5"
+                                               Content="{Binding Converter={StaticResource EnumToDisplayTextConverter}}"
+                                               FontSize="11" />
+                                    </DataTemplate>
+                                </dxe:ComboBoxEdit.ItemTemplate>
+                            </dxe:ComboBoxEdit>
+
+                            <dxe:SpinEdit Grid.Row="1"
+                                          Grid.Column="3"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.AutoAggressorEdgeTightenPercentage, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment="0.01"
+                                          Mask="N2"
+                                          MaskUseAsDisplayFormat="True"
+                                          MaxValue="1"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True"
+                                          Visibility="{Binding BasketSettings.AutomationConfig.AutoAggressorEdgeTightenMode, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter='Percentage'}" />
+
+                        </Grid>
+                    </dxlc:GroupBox>
+
+                    <dxlc:GroupBox Grid.Row="27"
+                                   Grid.Column="1"
+                                   Grid.ColumnSpan="4"
+                                   Margin="0,5,0,0"
+                                   Padding="0"
+                                   VerticalAlignment="Top"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}">
+                        <dxlc:GroupBox.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <dx:DXImage Grid.Column="0"
+                                            Height="15"
+                                            HorizontalAlignment="Right"
+                                            RenderOptions.BitmapScalingMode="HighQuality"
+                                            Source="{dx:DXImage 'SvgImages/RichEdit/InsertPageCount.svg'}" />
+
+                                <Label Grid.Column="1"
+                                       Margin="2,0"
+                                       Padding="0"
+                                       VerticalAlignment="Center"
+                                       Content="Manually Close Low Delta"
+                                       Foreground="#AFAFB0"
+                                       IsHitTestVisible="False" />
+
+                                <dxe:ToggleSwitch Grid.Column="2"
+                                                  Margin="10,0,5,0"
+                                                  HorizontalAlignment="Right"
+                                                  VerticalAlignment="Center"
+                                                  AnimationMode="Always"
+                                                  CheckedStateContent="On"
+                                                  ContentPlacement="Inside"
+                                                  FontSize="11"
+                                                  IsChecked="{Binding BasketSettings.AutomationConfig.ScratchOnLowDeltaSize}"
+                                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}"
+                                                  ToggleSwitchHeight="16"
+                                                  ToggleSwitchWidth="50"
+                                                  UncheckedStateContent="Off" />
+                            </Grid>
+                        </dxlc:GroupBox.Header>
+
+                        <Grid IsEnabled="{Binding BasketSettings.AutomationConfig.ScratchOnLowDeltaSize}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="85" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="5" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="5" />
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Row="1"
+                                   Grid.Column="1"
+                                   Margin="5,2,0,0"
+                                   VerticalAlignment="Center"
+                                   Content="Max Delta"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.ScratchOnLowDeltaSize}" />
+
+                            <dxe:SpinEdit Grid.Row="1"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.ScratchOnLowDeltaMax, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment="0.01"
+                                          IsEnabled="{Binding BasketSettings.AutomationConfig.ScratchOnLowDeltaSize}"
+                                          Mask="N3"
+                                          MaskUseAsDisplayFormat="True"
+                                          MaxValue="1"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True" />
+
+                            <Label Grid.Row="2"
+                                   Grid.Column="1"
+                                   Margin="5,2,0,0"
+                                   VerticalAlignment="Center"
+                                   Content="Min Size"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.ScratchOnLowDeltaSize}" />
+
+                            <dxe:SpinEdit Grid.Row="2"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.ScratchOnLowDeltaMinSize, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Int32}"
+                                          Increment="1"
+                                          IsEnabled="{Binding BasketSettings.AutomationConfig.ScratchOnLowDeltaSize}"
+                                          Mask="N0"
+                                          MaskUseAsDisplayFormat="True"
+                                          MinValue="1"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True" />
+
+                            <Label Grid.Row="3"
+                                   Grid.Column="1"
+                                   Margin="5,2,0,0"
+                                   VerticalAlignment="Center"
+                                   Content="Max Loss"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.ScratchOnLowDeltaSize}" />
+
+                            <dxe:SpinEdit Grid.Row="3"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.ScratchOnLowDeltaMaxLoss, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment=".01"
+                                          IsEnabled="{Binding BasketSettings.AutomationConfig.ScratchOnLowDeltaSize}"
+                                          Mask="N2"
+                                          MaskUseAsDisplayFormat="True"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True" />
+                        </Grid>
+                    </dxlc:GroupBox>
+
+                    <dxlc:GroupBox Grid.Row="28"
+                                   Grid.Column="1"
+                                   Grid.ColumnSpan="4"
+                                   Margin="0,5,0,0"
+                                   Padding="0"
+                                   VerticalAlignment="Top"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}">
+                        <dxlc:GroupBox.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <dx:DXImage Grid.Column="0"
+                                            Height="15"
+                                            HorizontalAlignment="Right"
+                                            RenderOptions.BitmapScalingMode="HighQuality"
+                                            Source="{dx:DXImage 'SvgImages/Spreadsheet/MultipleSheet.svg'}" />
+
+                                <Label Grid.Column="1"
+                                       Margin="2,0"
+                                       Padding="0"
+                                       VerticalAlignment="Center"
+                                       Content="Dynamic Edge Multiplier"
+                                       Foreground="#AFAFB0"
+                                       IsHitTestVisible="False" />
+                            </Grid>
+                        </dxlc:GroupBox.Header>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="85" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="85" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="5" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="5" />
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Row="0"
+                                   Grid.Column="1"
+                                   Margin="5,2,0,0"
+                                   VerticalAlignment="Center"
+                                   Content="Edge Mul" />
+
+                            <dxe:SpinEdit Grid.Row="0"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.EdgeMultiplier, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment=".01"
+                                          Mask="N3"
+                                          MaskUseAsDisplayFormat="True"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True" />
+
+                            <Label Grid.Row="0"
+                                   Grid.Column="3"
+                                   Margin="5,2,0,0"
+                                   VerticalAlignment="Center"
+                                   Content="Max Loss Mul" />
+
+                            <dxe:SpinEdit Grid.Row="0"
+                                          Grid.Column="4"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.MaxLossMultiplier, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Double}"
+                                          Increment=".01"
+                                          Mask="N3"
+                                          MaskUseAsDisplayFormat="True"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True" />
+                        </Grid>
+                    </dxlc:GroupBox>
+
+                    <dxlc:GroupBox Grid.Row="30"
+                                   Grid.Column="1"
+                                   Grid.ColumnSpan="4"
+                                   Margin="0,5,0,0"
+                                   Padding="0"
+                                   VerticalAlignment="Top"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled}">
+                        <dxlc:GroupBox.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <dx:DXImage Grid.Column="0"
+                                            Height="15"
+                                            HorizontalAlignment="Right"
+                                            RenderOptions.BitmapScalingMode="HighQuality"
+                                            Source="{dx:DXImage 'SvgImages/Icon Builder/Travel_Mountains.svg'}" />
+
+                                <Label Grid.Column="1"
+                                       Margin="2,0"
+                                       Padding="0"
+                                       VerticalAlignment="Center"
+                                       Content="Iceberg Closer"
+                                       Foreground="#AFAFB0"
+                                       IsHitTestVisible="False" />
+
+                                <dxe:ToggleSwitch Grid.Column="2"
+                                                  Margin="10,0,5,0"
+                                                  HorizontalAlignment="Right"
+                                                  VerticalAlignment="Center"
+                                                  AnimationMode="Always"
+                                                  CheckedStateContent="On"
+                                                  ContentPlacement="Inside"
+                                                  FontSize="11"
+                                                  IsChecked="{Binding BasketSettings.AutomationConfig.IcebergCloserEnabled}"
+                                                  ToggleSwitchHeight="16"
+                                                  ToggleSwitchWidth="50"
+                                                  UncheckedStateContent="Off" />
+                            </Grid>
+                        </dxlc:GroupBox.Header>
+
+                        <Grid IsEnabled="{Binding BasketSettings.AutomationConfig.IcebergCloserEnabled}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="85" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="5" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="5" />
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Row="1"
+                                   Grid.Column="1"
+                                   Margin="5,2,0,0"
+                                   VerticalAlignment="Center"
+                                   Content="Display Size" />
+
+                            <dxe:SpinEdit Grid.Row="1"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.IcebergDisplaySize, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Int32}"
+                                          Increment="1"
+                                          Mask="N0"
+                                          MaskUseAsDisplayFormat="True"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True" />
+
+                            <Label Grid.Row="2"
+                                   Grid.Column="1"
+                                   Margin="5,2,0,0"
+                                   VerticalAlignment="Center"
+                                   Content="Total/Min Size" />
+
+                            <dxe:SpinEdit Grid.Row="2"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.IcebergTotalSize, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Int32}"
+                                          Increment="1"
+                                          Mask="N0"
+                                          MaskUseAsDisplayFormat="True"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True" />
+
+                            <Label Grid.Row="3"
+                                   Grid.Column="1"
+                                   Margin="5,2,0,0"
+                                   VerticalAlignment="Center"
+                                   Content="Max Resubmit" />
+
+                            <dxe:SpinEdit Grid.Row="3"
+                                          Grid.Column="2"
+                                          Width="70"
+                                          Margin="5,2,0,0"
+                                          HorizontalAlignment="Left"
+                                          HorizontalContentAlignment="Right"
+                                          AllowSpinOnMouseWheel="True"
+                                          EditValue="{Binding BasketSettings.AutomationConfig.IcebergMaxResubmit, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleFormatter}}"
+                                          EditValueType="{x:Type sys:Int32}"
+                                          Increment="1"
+                                          Mask="N0"
+                                          MaskUseAsDisplayFormat="True"
+                                          MinValue="0"
+                                          PreviewMouseUp="SelectAll"
+                                          SelectAllOnGotFocus="True"
+                                          SelectAllOnMouseUp="True" />
+                        </Grid>
+                    </dxlc:GroupBox>
+                </Grid>
+            </ScrollViewer>
+        </dx:DXTabItem>
+        <dx:DXTabItem Header="Auto-Close">
+            <GroupBox VerticalAlignment="Top"
+                      Header="3-way Close">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="5" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="5" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="5" />
+                    </Grid.RowDefinitions>
+
+                    <Label Grid.Row="1"
+                           Grid.Column="1"
+                           Margin="5,2,0,0"
+                           VerticalAlignment="Center"
+                           Content="Max perms" />
+
+                    <dxe:SpinEdit Grid.Row="1"
+                                  Grid.Column="2"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.AutomationConfig.ThreeWayCloseMaxPerms, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  Increment="1"
+                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled, Converter={StaticResource BooleanNegationConverter}}"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="2"
+                           Grid.Column="1"
+                           Margin="5,2,0,0"
+                           VerticalAlignment="Center"
+                           Content="Vertical closer max resubmit" />
+
+                    <dxe:SpinEdit Grid.Row="2"
+                                  Grid.Column="2"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.AutomationConfig.ThreeWayVerticalResubmit, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  Increment="1"
+                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled, Converter={StaticResource BooleanNegationConverter}}"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <Label Grid.Row="3"
+                           Grid.Column="1"
+                           Margin="5,2,0,0"
+                           VerticalAlignment="Center"
+                           Content="Max strike spacing" />
+
+                    <dxe:SpinEdit Grid.Row="3"
+                                  Grid.Column="2"
+                                  Width="70"
+                                  Margin="5,2,0,0"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  EditValue="{Binding BasketSettings.AutomationConfig.ThreeWayCloseMaxSpacing, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Int32}"
+                                  Increment="1"
+                                  IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled, Converter={StaticResource BooleanNegationConverter}}"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+
+                    <dxe:CheckEdit Grid.Row="4"
+                                   Grid.Column="1"
+                                   Grid.ColumnSpan="2"
+                                   Margin="5,2,0,0"
+                                   HorizontalAlignment="Left"
+                                   Content="Attempt regular close as part of 3-way"
+                                   EditValue="{Binding BasketSettings.AutomationConfig.AttemptRegularCloseIn3Way}"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled, Converter={StaticResource BooleanNegationConverter}}" />
+
+                    <dxe:CheckEdit Grid.Row="5"
+                                   Grid.Column="1"
+                                   Grid.ColumnSpan="3"
+                                   Margin="5,2,0,0"
+                                   HorizontalAlignment="Left"
+                                   Content="Use matching HW theos to price verticals"
+                                   EditValue="{Binding BasketSettings.AutomationConfig.UseMatchingHwTheosForPricing3WayVerticals}"
+                                   IsEnabled="{Binding BasketSettings.AutomationConfig.LoopingEnabled, Converter={StaticResource BooleanNegationConverter}}" />
+
+                </Grid>
+            </GroupBox>
+        </dx:DXTabItem>
+    </dx:DXTabControl>
+</dx:ThemedWindow>

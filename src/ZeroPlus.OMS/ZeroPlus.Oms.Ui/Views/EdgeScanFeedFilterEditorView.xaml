@@ -1,0 +1,1739 @@
+﻿<UserControl x:Class="ZeroPlus.Oms.Ui.Views.EdgeScanFeedFilterEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:edgeScanner="clr-namespace:ZeroPlus.Models.Data.EdgeScanner;assembly=ZeroPlus.Models"
+             xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             d:DataContext="{d:DesignInstance Type=edgeScanner:EdgeScanFeedTradeFilterRowModel}"
+             d:DesignHeight="720"
+             d:DesignWidth="720"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <helper:CamelCaseFormatter x:Key="DisplayTextCamelCaseConverter" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+        <dxlc:GroupBox Grid.Row="0"
+                       Grid.Column="0"
+                       Grid.ColumnSpan="3"
+                       Margin="5,5,0,0"
+                       Padding="2">
+            <dxlc:GroupBox.Header>
+                <Grid Height="22">
+                    <Label Padding="0"
+                           VerticalAlignment="Center"
+                           Content="Allow/Block Lists"
+                           FontWeight="Bold"
+                           Foreground="#AFAFB0"
+                           IsHitTestVisible="False" />
+                </Grid>
+            </dxlc:GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Width="70"
+                       Margin="5,2,0,0"
+                       Content="Allowed UL" />
+
+                <dxe:TextEdit Grid.Row="0"
+                              Grid.Column="1"
+                              Margin="5,2,5,0"
+                              VerticalAlignment="Center"
+                              Background="Transparent"
+                              BorderBrush="#333337"
+                              BorderThickness="0"
+                              CharacterCasing="Upper"
+                              Text="{Binding AllowUnderlyings}" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Width="70"
+                       Margin="5,2,0,0"
+                       Content="Blocked UL" />
+
+                <dxe:TextEdit Grid.Row="1"
+                              Grid.Column="1"
+                              Margin="5,2,5,0"
+                              VerticalAlignment="Center"
+                              Background="Transparent"
+                              BorderBrush="#333337"
+                              BorderThickness="0"
+                              CharacterCasing="Upper"
+                              Text="{Binding BlockedUnderlyings}" />
+
+                <Label Grid.Row="2"
+                       Grid.Column="0"
+                       Width="70"
+                       Margin="5,2,0,0"
+                       Content="Allow Exch" />
+
+                <dxe:TextEdit Grid.Row="2"
+                              Grid.Column="1"
+                              Margin="5,2,5,0"
+                              VerticalAlignment="Center"
+                              Background="Transparent"
+                              BorderBrush="#333337"
+                              BorderThickness="0"
+                              CharacterCasing="Upper"
+                              Text="{Binding AllowExchange}" />
+
+                <Label Grid.Row="3"
+                       Grid.Column="0"
+                       Width="70"
+                       Margin="5,2,0,0"
+                       Content="Block Exch" />
+
+                <dxe:TextEdit Grid.Row="3"
+                              Grid.Column="1"
+                              Margin="5,2,5,0"
+                              VerticalAlignment="Center"
+                              Background="Transparent"
+                              BorderBrush="#333337"
+                              BorderThickness="0"
+                              CharacterCasing="Upper"
+                              Text="{Binding BlockedExchange}" />
+            </Grid>
+        </dxlc:GroupBox>
+        <dxlc:GroupBox Grid.Row="1"
+                       Grid.RowSpan="5"
+                       Grid.Column="0"
+                       Margin="5,5,0,0"
+                       Padding="2">
+            <dxlc:GroupBox.Header>
+                <Grid Height="22">
+                    <Label Padding="0"
+                           VerticalAlignment="Center"
+                           Content="General Filters"
+                           FontWeight="Bold"
+                           Foreground="#AFAFB0"
+                           IsHitTestVisible="False" />
+                </Grid>
+            </dxlc:GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="130" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Scanner Types" />
+
+                <dxe:ComboBoxEdit Grid.Row="0"
+                                  Grid.Column="1"
+                                  Margin="5,2,0,0"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  EditValue="{Binding SelectedEdgeFeedScanners}"
+                                  IsTextEditable="False"
+                                  ItemsSource="{Binding EdgeFeedScanners}">
+                    <dxe:ComboBoxEdit.StyleSettings>
+                        <dxe:CheckedComboBoxStyleSettings />
+                    </dxe:ComboBoxEdit.StyleSettings>
+                    <dxe:ComboBoxEdit.ItemTemplate>
+                        <DataTemplate>
+                            <Label Padding="0,1"
+                                   HorizontalAlignment="Center"
+                                   Content="{Binding Converter={StaticResource DisplayTextCamelCaseConverter}}" />
+                        </DataTemplate>
+                    </dxe:ComboBoxEdit.ItemTemplate>
+                </dxe:ComboBoxEdit>
+
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Leg Types" />
+
+                <dxe:ComboBoxEdit Grid.Row="1"
+                                  Grid.Column="1"
+                                  Margin="5,2,0,0"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  IsTextEditable="False"
+                                  ItemsSource="{Binding LegTypes}"
+                                  SelectedItem="{Binding SelectedLegTypes}" />
+
+                <Label Grid.Row="2"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Conditions" />
+
+                <dxe:ComboBoxEdit Grid.Row="2"
+                                  Grid.Column="1"
+                                  Margin="5,2,0,0"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  DisplayMember="Code"
+                                  EditValue="{Binding SelectedTradeConditionCodes, UpdateSourceTrigger=PropertyChanged}"
+                                  IsTextEditable="False"
+                                  ItemsSource="{Binding TradeConditionCodes}"
+                                  ValueMember="Code">
+                    <dxe:ComboBoxEdit.StyleSettings>
+                        <dxe:CheckedComboBoxStyleSettings />
+                    </dxe:ComboBoxEdit.StyleSettings>
+                    <dxe:ComboBoxEdit.ItemTemplate>
+                        <DataTemplate>
+                            <Label HorizontalAlignment="Stretch"
+                                   Content="{Binding Description}" />
+                        </DataTemplate>
+                    </dxe:ComboBoxEdit.ItemTemplate>
+                </dxe:ComboBoxEdit>
+
+                <Label Grid.Row="3"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Strategies" />
+
+                <Grid Grid.Row="3"
+                      Grid.Column="1"
+                      Margin="5,2,0,0"
+                      Background="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <dxe:TextEdit Grid.Column="0"
+                                  VerticalAlignment="Center"
+                                  IsReadOnly="True"
+                                  Text="{Binding StrategiesSummary}" />
+
+                    <dx:SimpleButton Grid.Column="1"
+                                     Width="40"
+                                     Background="Transparent"
+                                     Command="{Binding DataContext.ShowStrategiesSelectorCommand, ElementName=FilterTabControl}"
+                                     CommandParameter="{Binding}"
+                                     Glyph="{dx:DXImage 'SvgImages/HybridDemoIcons/BottomPanel/HybridDemo_Settings.svg'}"
+                                     GlyphWidth="20" />
+                </Grid>
+
+                <Label Grid.Row="4"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Edge To Theo" />
+
+                <Grid Grid.Row="4"
+                      Grid.Column="1"
+                      Margin="5,2,0,0"
+                      Background="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <dxe:CheckEdit Grid.Column="0"
+                                   Margin="1,-1"
+                                   HorizontalAlignment="Center"
+                                   Background="Transparent"
+                                   EditValue="{Binding MinEdgeToTheoEnabled, UpdateSourceTrigger=PropertyChanged}" />
+                    <dxe:SpinEdit Grid.Column="1"
+                                  Margin="1,0,0,0"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding MinEdgeToTheo, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment="0.01"
+                                  IsEnabled="{Binding MinEdgeToTheoEnabled}"
+                                  Mask="N2"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </Grid>
+
+                <Label Grid.Row="5"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Min % Bid" />
+
+                <Grid Grid.Row="5"
+                      Grid.Column="1"
+                      Margin="5,2,0,0"
+                      Background="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <dxe:CheckEdit Grid.Column="0"
+                                   Margin="1,-1"
+                                   HorizontalAlignment="Center"
+                                   Background="Transparent"
+                                   EditValue="{Binding MinBidPercentEnabled, UpdateSourceTrigger=PropertyChanged}" />
+                    <dxe:SpinEdit Grid.Column="1"
+                                  Margin="1,0,0,0"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding MinBidPercent, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment=".01"
+                                  IsEnabled="{Binding MinBidPercentEnabled}"
+                                  Mask="N2"
+                                  MaskUseAsDisplayFormat="True"
+                                  MaxValue="1"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </Grid>
+
+                <Label Grid.Row="6"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Max % Bid" />
+
+                <Grid Grid.Row="6"
+                      Grid.Column="1"
+                      Margin="5,2,0,0"
+                      Background="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <dxe:CheckEdit Grid.Column="0"
+                                   Margin="1,-1"
+                                   HorizontalAlignment="Center"
+                                   Background="Transparent"
+                                   EditValue="{Binding MaxBidPercentEnabled, UpdateSourceTrigger=PropertyChanged}" />
+                    <dxe:SpinEdit Grid.Column="1"
+                                  Margin="1,0,0,0"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding MaxBidPercent, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment=".01"
+                                  IsEnabled="{Binding MaxBidPercentEnabled}"
+                                  Mask="N2"
+                                  MaskUseAsDisplayFormat="True"
+                                  MaxValue="1"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </Grid>
+
+                <Label Grid.Row="7"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Min Bid" />
+
+                <Grid Grid.Row="7"
+                      Grid.Column="1"
+                      Margin="5,2,0,0"
+                      Background="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <dxe:CheckEdit Grid.Column="0"
+                                   Margin="1,-1"
+                                   HorizontalAlignment="Center"
+                                   Background="Transparent"
+                                   EditValue="{Binding MinBidEnabled, UpdateSourceTrigger=PropertyChanged}" />
+                    <dxe:SpinEdit Grid.Column="1"
+                                  Margin="1,0,0,0"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding MinBid, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment=".01"
+                                  IsEnabled="{Binding MinBidEnabled}"
+                                  Mask="N2"
+                                  MaskUseAsDisplayFormat="True"
+                                  MaxValue="1"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </Grid>
+
+                <Label Grid.Row="8"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Min Notional" />
+
+                <Grid Grid.Row="8"
+                      Grid.Column="1"
+                      Margin="5,2,0,0"
+                      Background="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <dxe:CheckEdit Grid.Column="0"
+                                   Margin="1,-1"
+                                   HorizontalAlignment="Center"
+                                   Background="Transparent"
+                                   EditValue="{Binding MinNotionalEnabled, UpdateSourceTrigger=PropertyChanged}" />
+                    <dxe:SpinEdit Grid.Column="1"
+                                  Margin="1,0,0,0"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  EditValue="{Binding MinNotional, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  IsEnabled="{Binding MinNotionalEnabled}"
+                                  Mask="N0"
+                                  MaskUseAsDisplayFormat="True"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </Grid>
+
+                <Label Grid.Row="9"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Min Leg Delta (High Leg)" />
+
+                <Grid Grid.Row="9"
+                      Grid.Column="1"
+                      Margin="5,2,0,0"
+                      Background="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <dxe:CheckEdit Grid.Column="0"
+                                   Margin="1,-1"
+                                   HorizontalAlignment="Center"
+                                   Background="Transparent"
+                                   EditValue="{Binding MinLegDeltaEnabled, UpdateSourceTrigger=PropertyChanged}" />
+                    <dxe:SpinEdit Grid.Column="1"
+                                  Margin="1,0,0,0"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding MinLegDelta, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment=".01"
+                                  IsEnabled="{Binding MinLegDeltaEnabled}"
+                                  Mask="N2"
+                                  MaskUseAsDisplayFormat="True"
+                                  MaxValue="1"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </Grid>
+
+                <Label Grid.Row="10"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Max W. Vega" />
+
+                <Grid Grid.Row="10"
+                      Grid.Column="1"
+                      Margin="5,2,0,0"
+                      Background="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <dxe:CheckEdit Grid.Column="0"
+                                   Margin="1,-1"
+                                   HorizontalAlignment="Center"
+                                   Background="Transparent"
+                                   EditValue="{Binding MaxSpreadWeightedVegaEnabled, UpdateSourceTrigger=PropertyChanged}" />
+                    <dxe:SpinEdit Grid.Column="1"
+                                  Margin="1,0,0,0"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding MaxSpreadWeightedVega, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment=".01"
+                                  IsEnabled="{Binding MaxSpreadWeightedVegaEnabled}"
+                                  Mask="N2"
+                                  MaskUseAsDisplayFormat="True"
+                                  MaxValue="1"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </Grid>
+
+                <Label Grid.Row="11"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Min B/A Size" />
+
+                <dxe:SpinEdit Grid.Row="11"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding MinBidAskSize, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="12"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Max Time Delay (MS)" />
+
+                <dxe:SpinEdit Grid.Row="12"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              DisplayFormatString="N2"
+                              EditValue="{Binding MaxTimeDelay, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="0.01"
+                              Mask="N0"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <dxe:CheckEdit Grid.Row="13"
+                               Grid.Column="0"
+                               Margin="5,2,0,0"
+                               HorizontalAlignment="Left"
+                               Background="Transparent"
+                               Content="Allow Uncertain"
+                               EditValue="{Binding AllowUncertain, UpdateSourceTrigger=PropertyChanged}" />
+
+                <dxe:CheckEdit Grid.Row="14"
+                               Grid.Column="0"
+                               Margin="5,2,0,0"
+                               HorizontalAlignment="Left"
+                               Background="Transparent"
+                               Content="Allow Qty Mismatch"
+                               EditValue="{Binding AllowQtyMismatch, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </dxlc:GroupBox>
+        <dxlc:GroupBox Grid.Row="1"
+                       Grid.Column="1"
+                       Margin="5,5,0,0"
+                       Padding="2">
+            <dxlc:GroupBox.Header>
+                <Grid Height="22">
+                    <Label Padding="0"
+                           VerticalAlignment="Center"
+                           Content="Qty Filters"
+                           FontWeight="Bold"
+                           Foreground="#AFAFB0"
+                           IsHitTestVisible="False" />
+                </Grid>
+            </dxlc:GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="130" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Min" />
+
+                <dxe:SpinEdit Grid.Row="0"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding MinQty, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Max" />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding MaxQty, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+            </Grid>
+        </dxlc:GroupBox>
+        <dxlc:GroupBox Grid.Row="1"
+                       Grid.Column="2"
+                       Margin="5,5,0,0"
+                       Padding="2">
+            <dxlc:GroupBox.Header>
+                <Grid Height="22">
+                    <Label Padding="0"
+                           VerticalAlignment="Center"
+                           Content="Price Range"
+                           FontWeight="Bold"
+                           Foreground="#AFAFB0"
+                           IsHitTestVisible="False" />
+                </Grid>
+            </dxlc:GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="130" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Min" />
+
+                <dxe:SpinEdit Grid.Row="0"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              EditValue="{Binding MinPrice, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MaxValue="{Binding MaxPrice}"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Max" />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding MaxPrice, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="{Binding MinPrice}"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+            </Grid>
+        </dxlc:GroupBox>
+        <dxlc:GroupBox Grid.Row="2"
+                       Grid.Column="1"
+                       Margin="5,5,0,0"
+                       Padding="2">
+            <dxlc:GroupBox.Header>
+                <Grid Height="22">
+                    <Label Padding="0"
+                           VerticalAlignment="Center"
+                           Content="Loop Filters"
+                           FontWeight="Bold"
+                           Foreground="#AFAFB0"
+                           IsHitTestVisible="False" />
+                </Grid>
+            </dxlc:GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="130" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Timespan" />
+
+                <dxe:SpinEdit Grid.Row="0"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding LoopTimeSpan, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Count" />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding MinLoopCount, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+            </Grid>
+        </dxlc:GroupBox>
+        <dxlc:GroupBox Grid.Row="2"
+                       Grid.Column="2"
+                       Margin="5,5,0,0"
+                       Padding="2">
+            <dxlc:GroupBox.Header>
+                <Grid Height="22">
+                    <Label Padding="0"
+                           VerticalAlignment="Center"
+                           Content="Delta Range"
+                           FontWeight="Bold"
+                           Foreground="#AFAFB0"
+                           IsHitTestVisible="False" />
+                </Grid>
+            </dxlc:GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="130" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Min" />
+
+                <dxe:SpinEdit Grid.Row="0"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              EditValue="{Binding MinDelta, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MaxValue="{Binding MaxDelta}"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Max" />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding MaxDelta, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="{Binding MinDelta}"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+            </Grid>
+        </dxlc:GroupBox>
+        <dxlc:GroupBox Grid.Row="3"
+                       Grid.Column="1"
+                       Margin="5,5,0,0"
+                       Padding="2">
+            <dxlc:GroupBox.Header>
+                <Grid Height="22">
+                    <Label Padding="0"
+                           VerticalAlignment="Center"
+                           Content="Leg Delta Range - Low Delta"
+                           FontWeight="Bold"
+                           Foreground="#AFAFB0"
+                           IsHitTestVisible="False" />
+                </Grid>
+            </dxlc:GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="130" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Min" />
+
+                <dxe:SpinEdit Grid.Row="0"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              EditValue="{Binding LowLegMinDelta, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MaxValue="{Binding LowLegMaxDelta}"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Max" />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding LowLegMaxDelta, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="{Binding LowLegMinDelta}"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+            </Grid>
+        </dxlc:GroupBox>
+        <dxlc:GroupBox Grid.Row="3"
+                       Grid.Column="2"
+                       Margin="5,5,0,0"
+                       Padding="2">
+            <dxlc:GroupBox.Header>
+                <Grid Height="22">
+                    <Label Padding="0"
+                           VerticalAlignment="Center"
+                           Content="Leg Delta Range - High Delta"
+                           FontWeight="Bold"
+                           Foreground="#AFAFB0"
+                           IsHitTestVisible="False" />
+                </Grid>
+            </dxlc:GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="130" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Min" />
+
+                <dxe:SpinEdit Grid.Row="0"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              EditValue="{Binding HighLegMinDelta, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MaxValue="{Binding HighLegMaxDelta}"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Max" />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding HighLegMaxDelta, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="{Binding HighLegMinDelta}"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+            </Grid>
+        </dxlc:GroupBox>
+        <dxlc:GroupBox Grid.Row="4"
+                       Grid.Column="1"
+                       Margin="5,5,0,0"
+                       Padding="2">
+            <dxlc:GroupBox.Header>
+                <Grid Height="22">
+                    <Label Padding="0"
+                           VerticalAlignment="Center"
+                           Content="Mkt Width Range"
+                           FontWeight="Bold"
+                           Foreground="#AFAFB0"
+                           IsHitTestVisible="False" />
+                </Grid>
+            </dxlc:GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="130" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Min" />
+
+                <dxe:SpinEdit Grid.Row="0"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding MinMarketWidth, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MaxValue="{Binding MaxMarketWidth}"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Max" />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding MaxMarketWidth, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="{Binding MinMarketWidth}"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+            </Grid>
+        </dxlc:GroupBox>
+        <dxlc:GroupBox Grid.Row="4"
+                       Grid.Column="2"
+                       Margin="5,5,0,0"
+                       Padding="2">
+            <dxlc:GroupBox.Header>
+                <Grid Height="22">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Padding="0"
+                           VerticalAlignment="Center"
+                           Content="Edge Range"
+                           FontWeight="Bold"
+                           Foreground="#AFAFB0"
+                           IsHitTestVisible="False" />
+
+                    <dxe:ToggleSwitch Grid.Column="1"
+                                      Margin="0,0,5,0"
+                                      HorizontalAlignment="Right"
+                                      VerticalAlignment="Center"
+                                      AnimationMode="Always"
+                                      CheckedStateContent="Enabled"
+                                      ContentPlacement="Inside"
+                                      FontSize="11"
+                                      IsChecked="{Binding EdgeRangeEnabled}"
+                                      ToggleSwitchHeight="16"
+                                      ToggleSwitchWidth="65"
+                                      UncheckedStateContent="Disabled" />
+
+                </Grid>
+            </dxlc:GroupBox.Header>
+            <Grid IsEnabled="{Binding EdgeRangeEnabled}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="130" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Min" />
+
+                <dxe:SpinEdit Grid.Row="0"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              EditValue="{Binding MinEdge, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MaxValue="{Binding MaxEdge}"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Max" />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding MaxEdge, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="{Binding MinEdge}"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+            </Grid>
+        </dxlc:GroupBox>
+        <dxlc:GroupBox Grid.Row="5"
+                       Grid.Column="1"
+                       Margin="5,5,0,0"
+                       Padding="2">
+            <dxlc:GroupBox.Header>
+                <Grid Height="22">
+                    <Label Padding="0"
+                           VerticalAlignment="Center"
+                           Content="DTE Range"
+                           FontWeight="Bold"
+                           Foreground="#AFAFB0"
+                           IsHitTestVisible="False" />
+                </Grid>
+            </dxlc:GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="130" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Min" />
+
+                <dxe:SpinEdit Grid.Row="0"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding MinDte, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Max" />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding MaxDte, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Int32}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+            </Grid>
+        </dxlc:GroupBox>
+        <dxlc:GroupBox Grid.Row="5"
+                       Grid.Column="2"
+                       Margin="5,5,0,0"
+                       Padding="2">
+            <dxlc:GroupBox.Header>
+                <Grid Height="22">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Padding="0"
+                           VerticalAlignment="Center"
+                           Content="Adj Edge Range"
+                           FontWeight="Bold"
+                           Foreground="#AFAFB0"
+                           IsHitTestVisible="False" />
+
+                    <dxe:ToggleSwitch Grid.Column="1"
+                                      Margin="0,0,5,0"
+                                      HorizontalAlignment="Right"
+                                      VerticalAlignment="Center"
+                                      AnimationMode="Always"
+                                      CheckedStateContent="Enabled"
+                                      ContentPlacement="Inside"
+                                      FontSize="11"
+                                      IsChecked="{Binding DeltaAdjEdgeRangeEnabled}"
+                                      ToggleSwitchHeight="16"
+                                      ToggleSwitchWidth="65"
+                                      UncheckedStateContent="Disabled" />
+
+                </Grid>
+            </dxlc:GroupBox.Header>
+            <Grid IsEnabled="{Binding DeltaAdjEdgeRangeEnabled}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="130" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Min" />
+
+                <dxe:SpinEdit Grid.Row="0"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              EditValue="{Binding MinDeltaAdjEdge, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MaxValue="{Binding MaxDeltaAdjEdge}"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Width="55"
+                       Margin="5,2,0,0"
+                       Content="Max" />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding MaxDeltaAdjEdge, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="{Binding MinDeltaAdjEdge}"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+            </Grid>
+        </dxlc:GroupBox>
+
+        <dxlc:GroupBox Grid.Row="6"
+                       Grid.Column="0"
+                       Margin="5,5,0,0"
+                       Padding="2">
+            <dxlc:GroupBox.Header>
+                <Grid Height="22">
+                    <Label Padding="0"
+                           VerticalAlignment="Center"
+                           Content="Underlying Px"
+                           FontWeight="Bold"
+                           Foreground="#AFAFB0"
+                           IsHitTestVisible="False" />
+                </Grid>
+            </dxlc:GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="130" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Min" />
+
+                <dxe:SpinEdit Grid.Row="0"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding MinUnderlying, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Max" />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding MaxUnderlying, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="2"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Width" />
+
+                <dxe:SpinEdit Grid.Row="2"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding UnderlyingWidth, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="3"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Max Change" />
+
+                <Grid Grid.Row="3"
+                      Grid.Column="1"
+                      Margin="5,2,0,0"
+                      Background="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <dxe:CheckEdit Grid.Column="0"
+                                   Margin="1,-1"
+                                   HorizontalAlignment="Center"
+                                   Background="Transparent"
+                                   EditValue="{Binding MaxChangeInUnderlyingEnabled, UpdateSourceTrigger=PropertyChanged}" />
+                    <dxe:SpinEdit Grid.Column="1"
+                                  Margin="1,0,0,0"
+                                  HorizontalContentAlignment="Right"
+                                  AllowSpinOnMouseWheel="True"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  DisplayFormatString="N2"
+                                  EditValue="{Binding MaxChangeInUnderlyingEnabled, UpdateSourceTrigger=PropertyChanged}"
+                                  EditValueType="{x:Type sys:Double}"
+                                  Increment=".01"
+                                  IsEnabled="{Binding MaxChangeInUnderlyingEnabled}"
+                                  Mask="N2"
+                                  MaskUseAsDisplayFormat="True"
+                                  MinValue="0"
+                                  PreviewMouseUp="SelectAll"
+                                  SelectAllOnGotFocus="True"
+                                  SelectAllOnMouseUp="True" />
+                </Grid>
+            </Grid>
+        </dxlc:GroupBox>
+
+        <dxlc:GroupBox Grid.Row="6"
+                       Grid.Column="1"
+                       Margin="5,5,0,0"
+                       Padding="2">
+            <dxlc:GroupBox.Header>
+                <Grid Height="22">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Padding="0"
+                           VerticalAlignment="Center"
+                           Content="Expiration Range"
+                           FontWeight="Bold"
+                           Foreground="#AFAFB0"
+                           IsHitTestVisible="False" />
+
+                </Grid>
+            </dxlc:GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="130" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Near Min" />
+
+                <dxe:TextEdit Grid.Row="0"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Center"
+                              Background="Transparent"
+                              EditValue="{Binding MinNearExpirationFilter}"
+                              Mask="d"
+                              MaskType="DateTimeAdvancingCaret"
+                              MaskUseAsDisplayFormat="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Near Max" />
+
+                <dxe:TextEdit Grid.Row="1"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Center"
+                              Background="Transparent"
+                              EditValue="{Binding MaxNearExpirationFilter}"
+                              Mask="d"
+                              MaskType="DateTimeAdvancingCaret"
+                              MaskUseAsDisplayFormat="True" />
+
+                <Label Grid.Row="2"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Far Min" />
+
+                <dxe:TextEdit Grid.Row="2"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Center"
+                              Background="Transparent"
+                              EditValue="{Binding MinFarExpirationFilter}"
+                              Mask="d"
+                              MaskType="DateTimeAdvancingCaret"
+                              MaskUseAsDisplayFormat="True" />
+
+                <Label Grid.Row="3"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Far Max" />
+
+                <dxe:TextEdit Grid.Row="3"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Center"
+                              Background="Transparent"
+                              EditValue="{Binding MaxFarExpirationFilter}"
+                              Mask="d"
+                              MaskType="DateTimeAdvancingCaret"
+                              MaskUseAsDisplayFormat="True" />
+
+                <Label Grid.Row="4"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Blocked" />
+
+                <dx:SimpleButton Grid.Row="4"
+                                 Grid.Column="1"
+                                 Margin="5,2,0,0"
+                                 Background="Transparent"
+                                 Command="{Binding DataContext.ShowBlockedExpirationsSelectorCommand, ElementName=FilterTabControl}"
+                                 CommandParameter="{Binding}"
+                                 Content="Configure"
+                                 Glyph="{dx:DXImage 'SvgImages/HybridDemoIcons/BottomPanel/HybridDemo_Settings.svg'}"
+                                 GlyphWidth="15" />
+            </Grid>
+        </dxlc:GroupBox>
+
+        <dxlc:GroupBox Grid.Row="6"
+                       Grid.Column="2"
+                       Margin="5,5,0,0"
+                       Padding="2">
+            <dxlc:GroupBox.Header>
+                <Grid Height="22">
+                    <Label Padding="0"
+                           VerticalAlignment="Center"
+                           Content="Px Chain Deviation"
+                           FontWeight="Bold"
+                           Foreground="#AFAFB0"
+                           IsHitTestVisible="False" />
+                </Grid>
+            </dxlc:GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="80" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Max Lookback" />
+
+                <dxe:SpinEdit Grid.Row="0"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding PriceChainDeviationMaxLookBackTime, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment="1"
+                              Mask="N0"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Max UL Chg" />
+
+                <dxe:SpinEdit Grid.Row="1"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding PriceChainDeviationMaxChangeInUnder, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N4"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="2"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Min Deviation" />
+
+                <dxe:SpinEdit Grid.Row="2"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding PriceChainDeviationMinDeviation, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="3"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Min Trade Width" />
+
+                <dxe:SpinEdit Grid.Row="3"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding PriceChainDeviationMinMarketWidthAtTrade, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+                <Label Grid.Row="4"
+                       Grid.Column="0"
+                       Margin="5,2,0,0"
+                       Content="Max Violation Width" />
+
+                <dxe:SpinEdit Grid.Row="4"
+                              Grid.Column="1"
+                              Margin="5,2,0,0"
+                              HorizontalContentAlignment="Right"
+                              AllowSpinOnMouseWheel="True"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              EditValue="{Binding PriceChainDeviationMaxMarketWidthAtViolation, UpdateSourceTrigger=PropertyChanged}"
+                              EditValueType="{x:Type sys:Double}"
+                              Increment=".01"
+                              Mask="N2"
+                              MaskUseAsDisplayFormat="True"
+                              MinValue="0"
+                              PreviewMouseUp="SelectAll"
+                              SelectAllOnGotFocus="True"
+                              SelectAllOnMouseUp="True" />
+
+            </Grid>
+        </dxlc:GroupBox>
+    </Grid>
+</UserControl>

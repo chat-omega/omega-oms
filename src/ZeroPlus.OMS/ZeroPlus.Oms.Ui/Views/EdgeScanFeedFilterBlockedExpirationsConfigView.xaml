@@ -1,0 +1,92 @@
+﻿<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.EdgeScanFeedFilterBlockedExpirationsConfigView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 Title="Edge Scan Feed Blocked Expiration Editor"
+                 Width="450"
+                 Height="350"
+                 MinWidth="400"
+                 MinHeight="300"
+                 d:DataContext="{d:DesignInstance Type=ViewModels:EdgeScanFeedFilterBlockedExpirationsConfigViewModel}"
+                 DataContext="{startuphelpers:DISource Type=ViewModels:EdgeScanFeedFilterBlockedExpirationsConfigViewModel}"
+                 Topmost="True"
+                 WindowStartupLocation="CenterScreen"
+                 WindowStyle="ToolWindow"
+                 mc:Ignorable="d">
+
+    <dxmvvm:Interaction.Behaviors>
+        <services:OmsMessageBoxService />
+        <dxmvvm:CurrentWindowService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Grid Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="5" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="2"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    Orientation="Horizontal">
+            <dxe:DateEdit EditValue="{Binding Model.BlockedExpirationInput}"
+                          Mask="MMM dd yy"
+                          MaskType="DateOnly"
+                          MaskUseAsDisplayFormat="True" />
+            <dx:SimpleButton Margin="5,0,0,0"
+                             Command="{Binding AddBlockedExpirationCommand}"
+                             Content="Add Expiration" />
+        </StackPanel>
+
+        <ListBox x:Name="BlockedExpirationsList"
+                 Grid.Row="3"
+                 Grid.Column="1"
+                 Margin="0,5,0,0"
+                 ItemsSource="{Binding Model.BlockedExpirations}">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel>
+                        <dx:SimpleButton Width="20"
+                                         Command="{Binding DataContext.RemoveBlockedExpirationCommand, ElementName=BlockedExpirationsList}"
+                                         CommandParameter="{Binding}"
+                                         DockPanel.Dock="Right"
+                                         Glyph="{dx:DXImage SvgImages/HybridDemoIcons/BottomPanel/HybridDemo_Close.svg}"
+                                         GlyphWidth="19" />
+                        <TextBlock Text="{Binding StringFormat='{}{0:MMM dd yy}'}"
+                                   TextAlignment="Left" />
+                    </DockPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Grid.Row="4"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
+            <dx:SimpleButton Click="Close"
+                             Content="Save" />
+        </StackPanel>
+    </Grid>
+</dx:ThemedWindow>

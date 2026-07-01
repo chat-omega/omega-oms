@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>OMS Kill Switch</AssemblyName>
+    <Platforms>x64;AnyCPU</Platforms>
+    <SelfContained>true</SelfContained>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <StartupObject>ZeroPlus.OMS.KillSwitch.App</StartupObject>
+  </PropertyGroup>
+</Project>

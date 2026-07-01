@@ -1,0 +1,97 @@
+﻿<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.LoadSetupView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                 Title="Load Setup"
+                 Width="500"
+                 Height="600"
+                 MinWidth="400"
+                 MinHeight="300"
+                 WindowStartupLocation="CenterScreen">
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:CurrentWindowService />
+        <dxmvvm:DispatcherService />
+        <services:OmsMessageBoxService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="5" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+        </Grid.ColumnDefinitions>
+
+        <dx:DXTabControl Grid.Row="1"
+                         Grid.Column="1"
+                         Margin="0,5"
+                         Padding="0"
+                         ItemsSource="{Binding SetupGroups}"
+                         SelectedItem="{Binding SelectedSetupGroup}">
+            <dx:DXTabControl.ItemHeaderTemplate>
+                <DataTemplate>
+                    <DockPanel LastChildFill="True">
+                        <TextBlock FontWeight="DemiBold"
+                                   Text="{Binding Title}" />
+                    </DockPanel>
+                </DataTemplate>
+            </dx:DXTabControl.ItemHeaderTemplate>
+            <dx:DXTabControl.ItemTemplate>
+                <DataTemplate>
+                    <dxg:TreeListControl Name="SetupsTable"
+                                         Grid.Row="2"
+                                         Grid.Column="1"
+                                         AutoGenerateColumns="AddNew"
+                                         ItemsSource="{Binding Setups}"
+                                         SelectedItem="{Binding SelectedSetup}"
+                                         SelectionMode="Row">
+                        <dxg:TreeListColumn FieldName="Column"
+                                            Header="Title"
+                                            IsSmart="True" />
+                        <dxg:TreeListControl.View>
+                            <dxg:TreeListView AllowEditing="False"
+                                              AutoExpandAllNodes="True"
+                                              AutoWidth="True"
+                                              ChildNodesPath="Setups"
+                                              TreeDerivationMode="ChildNodesSelector"
+                                              VerticalScrollbarVisibility="Auto" />
+                        </dxg:TreeListControl.View>
+                    </dxg:TreeListControl>
+                </DataTemplate>
+            </dx:DXTabControl.ItemTemplate>
+        </dx:DXTabControl>
+
+        <StackPanel Grid.Row="2"
+                    Grid.Column="1"
+                    Margin="0,5"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
+            <dx:SimpleButton Width="80"
+                             Margin="5,0"
+                             Command="{Binding LoadCommand}"
+                             Content="Load"
+                             Glyph="{dx:DXImage SvgImages/Dashboards/ImageLoad.svg}"
+                             GlyphHeight="15"
+                             IsDefault="True" />
+
+            <dx:SimpleButton Width="80"
+                             Margin="5,0"
+                             Command="{Binding CancelCommand}"
+                             Content="Cancel" />
+        </StackPanel>
+
+    </Grid>
+</dx:ThemedWindow>

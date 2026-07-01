@@ -1,0 +1,969 @@
+<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.MainView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 xmlns:Views="clr-namespace:ZeroPlus.Oms.Ui.Views"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:models="clr-namespace:ZeroPlus.Oms.Ui.Models"
+                 xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 Title="{Binding ModuleTitle}"
+                 Width="1200"
+                 Height="800"
+                 MinWidth="400"
+                 MinHeight="300"
+                 d:DataContext="{d:DesignInstance Type=ViewModels:MainViewModel}"
+                 DataContext="{startuphelpers:DISource Type=ViewModels:MainViewModel}"
+                 ShowGlow="True"
+                 TitleAlignment="Center"
+                 WindowStartupLocation="CenterScreen"
+                 mc:Ignorable="d">
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:EventToCommand Command="{Binding ClosingCommand}"
+                               EventName="Closing"
+                               PassEventArgsToCommand="True" />
+        <services:OmsMessageBoxService />
+        <dxmvvm:WindowService WindowStartupLocation="CenterScreen" />
+        <dxmvvm:DispatcherService />
+        <dxmvvm:OpenFileDialogService />
+        <dxmvvm:SaveFileDialogService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Window.Resources>
+        <helper:CamelCaseFormatter x:Key="DisplayTextCamelCaseConverter"
+                                   AllCaps="True" />
+        <dxmvvm:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <helper:ModuleGrantedConverter x:Key="ModuleGrantedConverter" />
+        <Storyboard x:Key="AnimateFlicker"
+                    RepeatBehavior="Forever">
+            <DoubleAnimation AutoReverse="True"
+                             RepeatBehavior="10x"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0"
+                             To="1"
+                             Duration="0:0:0.6" />
+        </Storyboard>
+        <dxmvvm:BooleanToObjectConverter x:Key="BooleanToStatusColorConverter">
+            <dxmvvm:BooleanToObjectConverter.TrueValue>
+                <SolidColorBrush Color="Green" />
+            </dxmvvm:BooleanToObjectConverter.TrueValue>
+            <dxmvvm:BooleanToObjectConverter.FalseValue>
+                <SolidColorBrush Color="DarkRed" />
+            </dxmvvm:BooleanToObjectConverter.FalseValue>
+        </dxmvvm:BooleanToObjectConverter>
+    </Window.Resources>
+    <dx:ThemedWindow.ToolbarItems>
+        <StackPanel Grid.Row="1"
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+
+            <dxb:MainMenuControl x:Name="MenuBar"
+                                 VerticalAlignment="Center">
+                <dxb:BarSubItem x:Name="FileMenu"
+                                Content="File">
+                    <dxb:BarButtonItem Command="{Binding ConnectClientsCommand}"
+                                       Content="Connect"
+                                       Glyph="{dx:DXImage SvgImages/Dashboards/EditConnection.svg}" />
+
+                    <dxb:BarButtonItem Command="{Binding DisconnectClientsCommand}"
+                                       Content="Disconnect"
+                                       Glyph="{dx:DXImage SvgImages/Outlook Inspired/Close.svg}" />
+
+                    <dxb:BarButtonItem Command="{Binding SettingsCommand}"
+                                       Content="Settings"
+                                       Glyph="{dx:DXImage Image=Properties_32x32.png}" />
+                    <dxb:BarItemSeparator />
+                    <dxb:BarSubItem Content="Workspace"
+                                    Glyph="{dx:DXImage Images/Layout/StackedLayout_32x32.png}">
+                        <dxb:BarButtonItem Command="{Binding SaveWorkspaceCommand}"
+                                           Content="Save Workspace"
+                                           Glyph="{dx:DXImage Image=Save_32x32.png}" />
+                        <dxb:BarButtonItem Command="{Binding LoadWorkspaceCommand}"
+                                           Content="Load Workspace"
+                                           Glyph="{dx:DXImage SvgImages/Dashboards/LoadMap.svg}" />
+                        <dxb:BarButtonItem Command="{Binding SaveWorkspaceAndRestartCommand}"
+                                           Content="Save Workspace And Restart"
+                                           Glyph="{dx:DXImage 'SvgImages/XAF/Action_Reload.svg'}" />
+                        <dxb:BarItemSeparator />
+                        <dxb:BarButtonItem Command="{Binding ExportSettingsCommand}"
+                                           Content="Export Settings"
+                                           Glyph="{dx:DXImage SvgImages/Outlook Inspired/Icon_Export.svg}" />
+                        <dxb:BarButtonItem Command="{Binding ImportSettingsCommand}"
+                                           Content="Import Settings"
+                                           Glyph="{dx:DXImage SvgImages/PDF Viewer/Import.svg}" />
+                    </dxb:BarSubItem>
+                    <dxb:BarButtonItem Command="{Binding ExitCommand}"
+                                       Content="Exit"
+                                       Glyph="{dx:DXImage Image=Close_32x32.png}" />
+                </dxb:BarSubItem>
+                <dxb:BarSubItem x:Name="ModulesMenu"
+                                Content="Modules">
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.Dashboard}"
+                                       Content="Dashboard"
+                                       Glyph="{dx:DXImage SvgImages/Chart/ChartType_SideBySideBar3DStacked.svg}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.AdminControls}"
+                                       Content="Admin Controls"
+                                       Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_Settings.svg'}"
+                                       IsVisible="{Binding OmsCore.GatewayClient.GrantedModules, Converter={StaticResource ModuleGrantedConverter}, ConverterParameter={x:Static models:Module.AdminControls}}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.EodRisk}"
+                                       Content="EOD Risk"
+                                       Glyph="{dx:DXImage SvgImages/Chart/ChartType_SideBySideBar3DStacked.svg}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.BulletinBoard}"
+                                       Content="Bulletin Board"
+                                       Glyph="{dx:DXImage 'SvgImages/Outlook Inspired/Glyph_Message.svg'}" />
+                    <dxb:BarButtonItem Command="{Binding PortfolioAdjustmentCommand}"
+                                       Content="Portfolio Adjustment"
+                                       Glyph="{dx:DXImage SvgImages/Chart/ChartType_SideBySideBar3DStacked.svg}"
+                                       IsVisible="{Binding OmsCore.GatewayClient.GrantedModules, Converter={StaticResource ModuleGrantedConverter}, ConverterParameter={x:Static models:Module.PortfolioAdjustment}}" />
+                    <dxb:BarItemSeparator />
+                    <dxb:BarButtonItem Command="{Binding OptionChainCommand}"
+                                       Content="Option Chain"
+                                       Glyph="{dx:DXImage SvgImages/RichEdit/FloatingObjectLayoutOptions.svg}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.QuotesAndGreeksBoard}"
+                                       Content="Quotes &amp; Greeks"
+                                       Glyph="{dx:DXImage 'SvgImages/RichEdit/InsertTableOfContents.svg'}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.ImpliedQuoteFeed}"
+                                       Content="Implied Quotes Feed"
+                                       Glyph="{dx:DXImage 'SvgImages/RichEdit/InsertTableOfContents.svg'}" />
+                    <dxb:BarItemSeparator />
+                    <dxb:BarButtonItem Command="{Binding OrderBookCommand}"
+                                       Content="Order Book"
+                                       Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Book.svg}" />
+                    <dxb:BarButtonItem Command="{Binding EmptyOrderBookCommand}"
+                                       Content="Empty Order Book"
+                                       Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Book.svg}" />
+                    <dxb:BarButtonItem Command="{Binding SymbolListManagerCommand}"
+                                       Content="Symbol List Manager"
+                                       Glyph="{dx:DXImage 'SvgImages/Outlook Inspired/List.svg'}" />
+                    <dxb:BarItemSeparator />
+                    <dxb:BarSplitButtonItem Command="{Binding ComplexOrderTicketCommand}"
+                                            Content="Complex Order Ticket"
+                                            Glyph="{dx:DXImage SvgImages/RichEdit/RichEditBookmark.svg}"
+                                            IsVisible="{Binding ComplexOrderTicketModuleGranted}">
+                        <dxb:BarSplitButtonItem.PopupControl>
+                            <dxb:PopupMenu>
+                                <dxb:BarButtonItem Command="{Binding StartBlankModuleCommand}"
+                                                   CommandParameter="{x:Static models:Module.ComplexOrderTicket}"
+                                                   Content="Start Blank Config"
+                                                   Glyph="{dx:DXImage 'SvgImages/Spreadsheet/TopAndBottomBorder.svg'}"
+                                                   IsVisible="{Binding OmsCore.GatewayClient.GrantedModules, Converter={StaticResource ModuleGrantedConverter}, ConverterParameter={x:Static models:Module.BasketTrader}}" />
+                            </dxb:PopupMenu>
+                        </dxb:BarSplitButtonItem.PopupControl>
+                    </dxb:BarSplitButtonItem>
+                    <dxb:BarButtonItem Command="{Binding CombinedOrderTicketCommand}"
+                                       Content="Combined Order Ticket"
+                                       Glyph="{dx:DXImage SvgImages/RichEdit/RichEditBookmark.svg}"
+                                       IsVisible="{Binding CombinedOrderTicketModuleGranted}" />
+                    <dxb:BarButtonItem Command="{Binding OrderTicketCommand}"
+                                       Content="Order Ticket"
+                                       Glyph="{dx:DXImage SvgImages/RichEdit/RichEditBookmark.svg}" />
+                    <dxb:BarButtonItem Command="{Binding DualOrderTicketCommand}"
+                                       Content="Dual Order Ticket"
+                                       Glyph="{dx:DXImage SvgImages/RichEdit/RichEditBookmark.svg}" />
+                    <dxb:BarSplitButtonItem Command="{Binding StartModuleCommand}"
+                                            CommandParameter="{x:Static models:Module.BasketTrader}"
+                                            Content="Basket Trader"
+                                            Glyph="{dx:DXImage SvgImages/RichEdit/RichEditBookmark.svg}"
+                                            IsVisible="{Binding OmsCore.GatewayClient.GrantedModules, Converter={StaticResource ModuleGrantedConverter}, ConverterParameter={x:Static models:Module.BasketTrader}}">
+                        <dxb:BarSplitButtonItem.PopupControl>
+                            <dxb:PopupMenu Name="OpenHangsSubButton">
+                                <dxb:BarButtonItem Command="{Binding StartBlankModuleCommand}"
+                                                   CommandParameter="{x:Static models:Module.BasketTrader}"
+                                                   Content="Start Blank Config"
+                                                   Glyph="{dx:DXImage 'SvgImages/Spreadsheet/TopAndBottomBorder.svg'}"
+                                                   IsVisible="{Binding OmsCore.GatewayClient.GrantedModules, Converter={StaticResource ModuleGrantedConverter}, ConverterParameter={x:Static models:Module.BasketTrader}}" />
+                            </dxb:PopupMenu>
+                        </dxb:BarSplitButtonItem.PopupControl>
+                    </dxb:BarSplitButtonItem>
+                    <dxb:BarButtonItem Command="{Binding LockTraderCommand}"
+                                       Content="Lock Trader"
+                                       Glyph="{dx:DXImage SvgImages/RichEdit/RichEditBookmark.svg}"
+                                       IsVisible="{Binding OmsCore.GatewayClient.GrantedModules, Converter={StaticResource ModuleGrantedConverter}, ConverterParameter={x:Static models:Module.LockTrader}}" />
+                    <dxb:BarButtonItem Command="{Binding VolTraderCommand}"
+                                       Content="Vol Trader"
+                                       Glyph="{dx:DXImage SvgImages/RichEdit/RichEditBookmark.svg}"
+                                       IsVisible="{Binding OmsCore.GatewayClient.GrantedModules, Converter={StaticResource ModuleGrantedConverter}, ConverterParameter={x:Static models:Module.BasketTrader}}" />
+                    <!--<dxb:BarButtonItem
+                                       Command="{Binding DominatorCommand}"
+                                       Content="Dominator"
+                                       Glyph="{dx:DXImage SvgImages/RichEdit/RichEditBookmark.svg}" />-->
+                    <dxb:BarButtonItem Command="{Binding HedgeHouseCommand}"
+                                       Content="Hedge House"
+                                       Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Home.svg}" />
+                    <dxb:BarItemSeparator />
+                    <dxb:BarButtonItem Command="{Binding TradesCommand}"
+                                       Content="Trades"
+                                       Glyph="{dx:DXImage SvgImages/Outlook Inspired/EmployeeTaskList.svg}"
+                                       IsVisible="{Binding OmsCore.GatewayClient.GrantedModules, Converter={StaticResource ModuleGrantedConverter}, ConverterParameter={x:Static models:Module.Trades}}" />
+                    <dxb:BarButtonItem Command="{Binding TradeFeedCommand}"
+                                       Content="Live Trade Feed"
+                                       Glyph="{dx:DXImage SvgImages/Outlook Inspired/EmployeeTaskList.svg}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.CobFeed}"
+                                       Content="COB Feed"
+                                       Glyph="{dx:DXImage SvgImages/Outlook Inspired/EmployeeTaskList.svg}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.CobOrders}"
+                                       Content="COB Orders"
+                                       Glyph="{dx:DXImage SvgImages/Outlook Inspired/EmployeeTaskList.svg}" />
+                    <dxb:BarSplitButtonItem Command="{Binding StartModuleCommand}"
+                                            CommandParameter="{x:Static models:Module.EdgeScanFeed}"
+                                            Content="Edge Scan Feed"
+                                            Glyph="{dx:DXImage SvgImages/Outlook Inspired/EmployeeTaskList.svg}">
+                        <dxb:BarSplitButtonItem.PopupControl>
+                            <dxb:PopupMenu>
+                                <dxb:BarButtonItem Command="{Binding StartBlankModuleCommand}"
+                                                   CommandParameter="{x:Static models:Module.EdgeScanFeed}"
+                                                   Content="Start Blank Config"
+                                                   Glyph="{dx:DXImage 'SvgImages/Spreadsheet/TopAndBottomBorder.svg'}"
+                                                   IsVisible="{Binding OmsCore.GatewayClient.GrantedModules, Converter={StaticResource ModuleGrantedConverter}, ConverterParameter={x:Static models:Module.BasketTrader}}" />
+                            </dxb:PopupMenu>
+                        </dxb:BarSplitButtonItem.PopupControl>
+                    </dxb:BarSplitButtonItem>
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.EdgeScanFeedStatistics}"
+                                       Content="Edge Scan Feed Stats"
+                                       Glyph="{dx:DXImage 'SvgImages/Chart/ChartType_Sunburst.svg'}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.MarketMovers}"
+                                       Content="Market Movers"
+                                       Glyph="{dx:DXImage SvgImages/Spreadsheet/HighLowLines.svg}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.WinningTradesMonitor}"
+                                       Content="Winning Trades Monitor"
+                                       Glyph="{dx:DXImage 'SvgImages/RichEdit/DifferentFirstPage.svg'}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.CloseSubsMonitor}"
+                                       Content="Close Subs Monitor"
+                                       Glyph="{dx:DXImage 'SvgImages/RichEdit/DifferentFirstPage.svg'}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.LiveVolData}"
+                                       Content="LiveVol Data"
+                                       Glyph="{dx:DXImage SvgImages/Outlook Inspired/EmployeeTaskList.svg}" />
+                    <dxb:BarItemSeparator />
+                    <dxb:BarButtonItem Command="{Binding PortfolioCommand}"
+                                       Content="Portfolio"
+                                       Glyph="{dx:DXImage SvgImages/Outlook Inspired/EmployeeTaskList.svg}" />
+                    <dxb:BarButtonItem Command="{Binding PositionAnalyzerCommand}"
+                                       Content="Position Analyzer"
+                                       Glyph="{dx:DXImage SvgImages/Outlook Inspired/EmployeeTaskList.svg}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.UserPosition}"
+                                       Content="User Position"
+                                       Glyph="{dx:DXImage SvgImages/Outlook Inspired/EmployeeTaskList.svg}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.ExecutionTransaction}"
+                                       Content="Execution Transactions"
+                                       Glyph="{dx:DXImage SvgImages/RichEdit/Thai_Distributed.svg}" />
+                    <dxb:BarItemSeparator />
+                    <dxb:BarButtonItem Command="{Binding DeltaHedgingCommand}"
+                                       Content="Delta Hedging"
+                                       Glyph="{dx:DXImage SvgImages/Outlook Inspired/EmployeeTaskList.svg}" />
+                    <dxb:BarButtonItem Command="{Binding GammaScalpingCommand}"
+                                       Content="Gamma Scalp"
+                                       Glyph="{dx:DXImage SvgImages/Outlook Inspired/EmployeeTaskList.svg}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.GammaScalp}"
+                                       Content="Gamma Scalp 2.0"
+                                       Glyph="{dx:DXImage SvgImages/Outlook Inspired/EmployeeTaskList.svg}" />
+                    <dxb:BarButtonItem Command="{Binding ComboTraderCommand}"
+                                       Content="Combo Trader"
+                                       Glyph="{dx:DXImage SvgImages/Outlook Inspired/EmployeeTaskList.svg}" />
+                    <dxb:BarButtonItem Command="{Binding PairTraderCommand}"
+                                       Content="Pair Trader"
+                                       Glyph="{dx:DXImage SvgImages/Outlook Inspired/EmployeeTaskList.svg}" />
+                    <dxb:BarButtonItem Command="{Binding ModelTraderCommand}"
+                                       Content="ML Stock Trader"
+                                       Glyph="{dx:DXImage SvgImages/Outlook Inspired/EmployeeTaskList.svg}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.ScriptTrader}"
+                                       Content="Script Trader"
+                                       Glyph="{dx:DXImage 'SvgImages/RichEdit/ShowAllFieldCodes.svg'}" />
+                    <dxb:BarItemSeparator />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.LowLatencyManager}"
+                                       Content="Low Latency Manager"
+                                       Glyph="{dx:DXImage 'SvgImages/Icon Builder/Weather_Lightning.svg'}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.LowLatencyOrderBook}"
+                                       Content="Low Latency Order Book"
+                                       Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Book.svg}" />
+                    <dxb:BarItemSeparator />
+                    <dxb:BarButtonItem Command="{Binding MlTradersControlCommand}"
+                                       Content="ML Traders Manager"
+                                       Glyph="{dx:DXImage SvgImages/Spreadsheet/ManageRelations.svg}" />
+                    <dxb:BarButtonItem Command="{Binding PairTradersControllerCommand}"
+                                       Content="Pair Traders Manager"
+                                       Glyph="{dx:DXImage SvgImages/Spreadsheet/ManageRelations.svg}" />
+                    <dxb:BarButtonItem Command="{Binding BasketManagerCommand}"
+                                       Content="Basket Manager"
+                                       Glyph="{dx:DXImage SvgImages/Spreadsheet/ManageRelations.svg}"
+                                       IsVisible="{Binding OmsCore.GatewayClient.GrantedModules, Converter={StaticResource ModuleGrantedConverter}, ConverterParameter={x:Static models:Module.BasketManager}}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.BasketGroup}"
+                                       Content="Basket Group"
+                                       Glyph="{dx:DXImage 'SvgImages/Dashboards/ReorderTabs.svg'}"
+                                       IsVisible="{Binding OmsCore.GatewayClient.GrantedModules, Converter={StaticResource ModuleGrantedConverter}, ConverterParameter={x:Static models:Module.BasketManager}}" />
+                    <dxb:BarItemSeparator />
+                    <dxb:BarButtonItem Command="{Binding DominatorsManagerCommand}"
+                                       Content="Doms Manager"
+                                       Glyph="{dx:DXImage SvgImages/Spreadsheet/ManageRelations.svg}"
+                                       IsVisible="{Binding OmsCore.GatewayClient.GrantedModules, Converter={StaticResource ModuleGrantedConverter}, ConverterParameter={x:Static models:Module.DominatorsManager}}" />
+                    <dxb:BarButtonItem Command="{Binding DominatorListRollerCommand}"
+                                       Content="Dominator List Roller"
+                                       Glyph="{dx:DXImage SvgImages/Snap/SectionBreaksList_NextPage.svg}" />
+                    <dxb:BarButtonItem Command="{Binding RequestFishedSymbolsCommand}"
+                                       Content="Request Fished Symbols"
+                                       Glyph="{dx:DXImage SvgImages/Snap/SectionBreaksList_NextPage.svg}" />
+                    <!--<dxb:BarButtonItem
+                                       Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.NewDominatorManager}"
+                                       Content="New Dominator Manager"
+                                       Glyph="{dx:DXImage SvgImages/Spreadsheet/ManageRelations.svg}" />-->
+                    <dxb:BarItemSeparator />
+                    <dxb:BarButtonItem Command="{Binding ChartCommand}"
+                                       Content="Chart"
+                                       Glyph="{dx:DXImage SvgImages/Chart/ChartType_Line.svg}" />
+                    <dxb:BarButtonItem Command="{Binding LiveChartCommand}"
+                                       Content="Live Chart"
+                                       Glyph="{dx:DXImage SvgImages/Chart/ChartType_Line.svg}" />
+                    <dxb:BarButtonItem Command="{Binding EmaChartCommand}"
+                                       Content="Ema Chart"
+                                       Glyph="{dx:DXImage SvgImages/Chart/ChartType_Line.svg}" />
+                    <dxb:BarButtonItem Command="{Binding StartModuleCommand}"
+                                       CommandParameter="{x:Static models:Module.ExplorerWindow}"
+                                       Content="Explorer Window"
+                                       Glyph="{dx:DXImage SvgImages/Chart/ChartType_Line.svg}" />
+                    <dxb:BarButtonItem Command="{Binding SpreadsHeatmapCommand}"
+                                       Content="Heatmap"
+                                       Glyph="{dx:DXImage SvgImages/RichEdit/SplitTableCells.svg}" />
+                    <dxb:BarItemSeparator />
+                    <dxb:BarSplitButtonItem Command="{Binding StartModuleCommand}"
+                                            CommandParameter="{x:Static models:Module.SpreadsGenerator}"
+                                            Content="Spread Generator"
+                                            Glyph="{dx:DXImage SvgImages/XAF/ModelEditor_GenerateContent.svg}"
+                                            IsVisible="{Binding OmsCore.GatewayClient.GrantedModules, Converter={StaticResource ModuleGrantedConverter}, ConverterParameter={x:Static models:Module.SpreadsGenerator}}">
+                        <dxb:BarSplitButtonItem.PopupControl>
+                            <dxb:PopupMenu>
+                                <dxb:BarButtonItem Command="{Binding StartBlankModuleCommand}"
+                                                   CommandParameter="{x:Static models:Module.SpreadsGenerator}"
+                                                   Content="Start Blank Config"
+                                                   Glyph="{dx:DXImage 'SvgImages/Spreadsheet/TopAndBottomBorder.svg'}" />
+                            </dxb:PopupMenu>
+                        </dxb:BarSplitButtonItem.PopupControl>
+                    </dxb:BarSplitButtonItem>
+                    <dxb:BarButtonItem Command="{Binding SpreadTemplateCommand}"
+                                       Content="Spread Template"
+                                       Glyph="{dx:DXImage SvgImages/XAF/ModelEditor_GenerateContent.svg}"
+                                       IsVisible="{Binding OmsCore.GatewayClient.GrantedModules, Converter={StaticResource ModuleGrantedConverter}, ConverterParameter={x:Static models:Module.SpreadTemplate}}" />
+                </dxb:BarSubItem>
+                <dxb:BarSubItem Name="FavoritesMenu"
+                                Content="Favorites"
+                                ItemLinksSource="{Binding Path=FavoriteModules}">
+                    <dxb:BarSubItem.ItemTemplate>
+                        <DataTemplate>
+                            <ContentControl>
+                                <ContentControl.Resources>
+                                    <helper:ModuleIdToGlyphConverter x:Key="ModuleIdToGlyphConverter" />
+                                </ContentControl.Resources>
+                                <dxb:BarSubItem Content="{Binding GroupCaption}"
+                                                Glyph="{Binding ModuleId, Converter={StaticResource ModuleIdToGlyphConverter}}"
+                                                ItemLinksSource="{Binding FavoriteModules}">
+                                    <dxb:BarSubItem.ItemTemplate>
+                                        <DataTemplate>
+                                            <ContentControl>
+                                                <dxb:BarButtonItem Command="{Binding Path=DataContext.OpenFavoriteModuleCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                                                   CommandParameter="{Binding}"
+                                                                   Content="{Binding Caption}"
+                                                                   Glyph="{Binding ModuleId, Converter={StaticResource ModuleIdToGlyphConverter}}" />
+                                            </ContentControl>
+                                        </DataTemplate>
+                                    </dxb:BarSubItem.ItemTemplate>
+                                </dxb:BarSubItem>
+                            </ContentControl>
+                        </DataTemplate>
+                    </dxb:BarSubItem.ItemTemplate>
+                </dxb:BarSubItem>
+                <dxb:BarSubItem x:Name="HelpMenu"
+                                Content="Help">
+                    <dxb:BarButtonItem Command="{Binding CheckForUpdateCommand}"
+                                       Content="Check For Updates"
+                                       Glyph="{dx:DXImage Image=UpdateField_32x32.png}" />
+                    <dxb:BarButtonItem Command="{Binding ChangeLogCommand}"
+                                       Content="Change Logs"
+                                       Glyph="{dx:DXImage SvgImages/Business Objects/BO_Audit_ChangeHistory.svg}" />
+                    <dxb:BarItemSeparator />
+                    <dxb:BarButtonItem Command="{Binding GatherUsageStatsCommand}"
+                                       Content="Gather Usage Stats"
+                                       Glyph="{dx:DXImage 'SvgImages/Reports/GaugeStyleThreeForthCircular.svg'}" />
+                    <dxb:BarButtonItem Command="{Binding GenerateMemoryDumpCommand}"
+                                       Content="Generate Memory Dump"
+                                       Glyph="{dx:DXImage 'SvgImages/Reports/GaugeStyleThreeForthCircular.svg'}" />
+                    <dxb:BarItemSeparator />
+                    <dxb:BarSubItem Content="Quick Links"
+                                    Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_Hyperlink.svg'}">
+                        <dxb:BarSubItem.Items>
+                            <dxb:BarButtonItem Command="{Binding OpenLinkCommand}"
+                                               CommandParameter="https://downloads.corp.zeroplusderivatives.com/oms/setup.exe"
+                                               Content="ZeroPlus OMS"
+                                               Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_Hyperlink.svg'}" />
+                            <dxb:BarButtonItem Command="{Binding OpenLinkCommand}"
+                                               CommandParameter="https://downloads.corp.zeroplusderivatives.com/hud/setup.exe"
+                                               Content="ZeroPlus HUD"
+                                               Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_Hyperlink.svg'}" />
+                            <dxb:BarButtonItem Command="{Binding OpenLinkCommand}"
+                                               CommandParameter="https://downloads.corp.zeroplusderivatives.com/daemon/setup.exe"
+                                               Content="ZeroPlus Daemon"
+                                               Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_Hyperlink.svg'}" />
+                        </dxb:BarSubItem.Items>
+                    </dxb:BarSubItem>
+                </dxb:BarSubItem>
+            </dxb:MainMenuControl>
+
+            <dxe:ComboBoxEdit Width="150"
+                              Margin="5,2,0,0"
+                              DisplayMember="Account"
+                              IsTextEditable="False"
+                              ItemsSource="{Binding OmsCore.Config.AccountConfigs}"
+                              SelectedItem="{Binding OmsCore.Config.AccountConfig}">
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:EventToCommand Command="{Binding InstanceAccountChangingCommand}"
+                                           EventName="EditValueChanging"
+                                           PassEventArgsToCommand="True" />
+                </dxmvvm:Interaction.Behaviors>
+            </dxe:ComboBoxEdit>
+
+            <dxe:ComboBoxEdit Width="110"
+                              Margin="5,2,0,0"
+                              HorizontalAlignment="Left"
+                              ApplyItemTemplateToSelectedItem="True"
+                              EditValue="{Binding OmsCore.Config.InstanceModeV3, UpdateSourceTrigger=PropertyChanged}"
+                              IsTextEditable="False"
+                              ItemsSource="{Binding InstanceModes}">
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:EventToCommand Command="{Binding ApplyInstanceModeChangesCommand}"
+                                           EventName="EditValueChanged" />
+                </dxmvvm:Interaction.Behaviors>
+                <dxe:ComboBoxEdit.ItemTemplate>
+                    <DataTemplate>
+                        <Label Padding="0,0.5"
+                               HorizontalAlignment="Center"
+                               HorizontalContentAlignment="Center"
+                               Content="{Binding Converter={StaticResource EnumToDisplayTextConverter}}" />
+                    </DataTemplate>
+                </dxe:ComboBoxEdit.ItemTemplate>
+            </dxe:ComboBoxEdit>
+
+            <dxe:ComboBoxEdit Width="120"
+                              Margin="5,2,0,0"
+                              EditValue="{Binding OmsCore.Config.DefaultBroker, UpdateSourceTrigger=PropertyChanged}"
+                              IsTextEditable="False"
+                              ItemsSource="{Binding OmsCore.Config.AvailableBrokers}"
+                              NullText="Select broker">
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:EventToCommand Command="{Binding InstanceBrokerChangingCommand}"
+                                           EventName="EditValueChanging"
+                                           PassEventArgsToCommand="True" />
+                    <dxmvvm:EventToCommand Command="{Binding InstanceBrokerChangedCommand}"
+                                           EventName="EditValueChanged" />
+                </dxmvvm:Interaction.Behaviors>
+            </dxe:ComboBoxEdit>
+
+            <dxe:ToggleSwitch Margin="5,2,0,0"
+                              CheckedStateContent="Performance Mode On"
+                              ContentPlacement="Inside"
+                              EnableAnimation="False"
+                              IsChecked="{Binding OmsCore.Config.PerformanceModeEnabled}"
+                              ToggleSwitchWidth="150"
+                              UncheckedStateContent="Performance Mode Off" />
+        </StackPanel>
+    </dx:ThemedWindow.ToolbarItems>
+    <dx:ThemedWindow.HeaderItems>
+        <StackPanel VerticalAlignment="Center"
+                    Orientation="Horizontal">
+            <dx:SimpleButton Width="120"
+                             Height="22"
+                             Padding="0,0,0,1"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Top"
+                             VerticalContentAlignment="Center"
+                             BorderThickness="1.5"
+                             Command="{Binding EmergencyStopCommand}"
+                             Content="EMERGENCY STOP"
+                             FontSize="10"
+                             FontWeight="Bold"
+                             IsTabStop="False">
+                <dx:SimpleButton.Style>
+                    <Style TargetType="dx:SimpleButton">
+                        <Setter Property="Background" Value="#d72813" />
+                        <Setter Property="BorderBrush" Value="#ffbf18" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#D70000" />
+                                <Setter Property="BorderBrush" Value="#ffbf18" />
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="Background" Value="#d72813" />
+                                <Setter Property="BorderBrush" Value="#ffbf18" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#d72813" />
+                                <Setter Property="BorderBrush" Value="#ffbf18" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </dx:SimpleButton.Style>
+            </dx:SimpleButton>
+
+            <dx:SimpleButton x:Name="UserMenu"
+                             Width="22"
+                             Height="22"
+                             Margin="5,0"
+                             BorderThickness="0"
+                             Foreground="#C0C0C0"
+                             Glyph="{dx:DXImage SvgImages/Business Objects/BO_Employee.svg}"
+                             GlyphHeight="15"
+                             ToolTip="{Binding Username}" />
+            <Label x:Name="VersionLabel"
+                   Margin="5,0"
+                   VerticalAlignment="Center"
+                   Foreground="#C0C0C0" />
+            <dx:SimpleButton Height="22"
+                             Margin="5,0"
+                             Padding="5,0"
+                             BorderThickness="0"
+                             Command="{Binding ReportBugCommand}"
+                             Content="Report Bug"
+                             Foreground="#C0C0C0"
+                             Glyph="{dx:DXImage SvgImages/Icon Builder/Security_Bug.svg}"
+                             GlyphHeight="15" />
+            <dx:SimpleButton Margin="5,0"
+                             Padding="6,3"
+                             Background="#1D673F"
+                             Command="{Binding UpdateVersionCommand}"
+                             Content="Update"
+                             Visibility="{Binding UpdateAvailable, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        </StackPanel>
+    </dx:ThemedWindow.HeaderItems>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="46*" />
+            <ColumnDefinition Width="9*" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.ColumnSpan="2">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="3" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="2"
+                  Grid.ColumnSpan="2">
+                <Views:OrderBookView x:Name="OrderBookView" />
+            </Grid>
+
+            <dxb:BarContainerControl Grid.Row="2"
+                                     Grid.Column="0"
+                                     Grid.ColumnSpan="2"
+                                     Margin="0,0,-3,-3"
+                                     HorizontalAlignment="Right"
+                                     VerticalAlignment="Bottom"
+                                     ContainerType="Bottom">
+                <dxb:StatusBarControl Background="Transparent"
+                                      Caption="Status Bar">
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="Quote"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.QuoteClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Label Width="75"
+                                           Padding="5,2"
+                                           HorizontalContentAlignment="Center"
+                                           Background="{Binding QuoteConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                           Content="MARKET DATA"
+                                           FontSize="9" />
+
+                                    <Label Width="75"
+                                           Padding="5,2"
+                                           HorizontalContentAlignment="Center"
+                                           Panel.ZIndex="100"
+                                           Background="#ff4f4f"
+                                           Content="DELAY"
+                                           FontSize="9"
+                                           FontWeight="Bold"
+                                           Foreground="#f4f4f4"
+                                           Visibility="{Binding ShowQuoteAlert, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <Label.Triggers>
+                                            <EventTrigger RoutedEvent="Loaded">
+                                                <BeginStoryboard Storyboard="{StaticResource AnimateFlicker}" />
+                                            </EventTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Grid>
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="Trades"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.RequestClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding TradeRequestConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="TRADES"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="SymbolMap"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.SymbolMapClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding SymbolMapConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="SYMBOL"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="Telemetry"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.TelemetryClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding TelemetryConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="TELEMETRY"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="Hercules"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.TransactionClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding HerculesConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="TRANSACTION"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="Order"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.OrderClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding OrderConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="ORDER"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="OrderGateway"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.AutoTraderClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding OrderGatewayConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="AUTO TRADER"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="AutoTraderDirect"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.AutoTraderDirectClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding AutoTraderDirectConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="AT LOCAL"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="Position"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.PositionClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding PositionConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="POSITION"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="Hanweck"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.HanweckClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding HanweckConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="HANWECK"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="Raptor"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.DerivativesClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding RaptorConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="DERIVATIVE"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="EdgeScanner"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.EdgeScannerClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding EdgeScannerConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="EDGE SCANNER"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="EdgeScanFeedRunner"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.EdgeScanFeedRunnerClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding EdgeScanFeedRunnerConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="E.S.F AGENT"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="FullEma"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.EmaClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding FullEmaConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="EMA"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="EMAServer"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.DaEmaClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding EmaServerConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="DA-EMA"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="Interpolator"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.InterpolatorClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding InterpolatorConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="INTERPOLATOR"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="Theos"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.TheosClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding TheosConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="ZP THEOS"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="HubTron"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.HubTronClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding HubTronConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="HUB-TRON"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="IbGateway"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.IbGatewayClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding IbGatewayConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="IB API"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="Databento"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.DatabentoClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding DatabentoConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="DATABENTO"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="Cob"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.CobClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding CobConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="COB"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="Pricing"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.PricingClientEnabledV2}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding PricingConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="PRICING"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Command="{Binding ReconnectCommand}"
+                                       CommandParameter="LiveVolData"
+                                       Content="{Binding}"
+                                       IsVisible="{Binding OmsCore.Config.LiveVolDataClientEnabled}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <Label Width="75"
+                                       Padding="5,2"
+                                       HorizontalContentAlignment="Center"
+                                       Background="{Binding LiveVolDataConnected, Converter={StaticResource BooleanToStatusColorConverter}}"
+                                       Content="LIVEVOL DATA"
+                                       FontSize="9" />
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
+                    </dxb:BarButtonItem>
+                    <dxb:BarStaticItem>
+                        <dxb:BarStaticItem.ContentTemplate>
+                            <DataTemplate>
+                                <Views:LatencyIndicatorView Margin="0,0,0,-1" />
+                            </DataTemplate>
+                        </dxb:BarStaticItem.ContentTemplate>
+                    </dxb:BarStaticItem>
+                </dxb:StatusBarControl>
+            </dxb:BarContainerControl>
+        </Grid>
+    </Grid>
+</dx:ThemedWindow>

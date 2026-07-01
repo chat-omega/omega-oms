@@ -1,0 +1,72 @@
+<UserControl x:Class="ZeroPlus.Oms.Ui.Views.RouteSelectionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+             d:DataContext="{d:DesignInstance Type=viewModels:RouteSelectionViewModel}"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style x:Key="SelectionBtnStyle"
+               TargetType="dx:SimpleButton">
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Background" Value="#252526" />
+            <Setter Property="ButtonKind" Value="Toggle" />
+            <Setter Property="Width" Value="120" />
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="FontWeight" Value="Bold" />
+                    <Setter Property="Foreground" Value="#79ff82" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <dx:DropDownButton Width="70"
+                           Height="22"
+                           Padding="-22,0,0,0"
+                           HorizontalContentAlignment="Left"
+                           ArrowAlignment="Right"
+                           ArrowPadding="-13,0,-1,0"
+                           Background="#171718"
+                           Content="{Binding DisplayName}"
+                           FontSize="10"
+                           GlyphHeight="20"
+                           GlyphWidth="20"
+                           IsPopupOpen="{Binding IsValid, Converter={StaticResource BooleanNegationConverter}}">
+            <GroupBox MinWidth="140"
+                      MaxHeight="300"
+                      Margin="2,0"
+                      Padding="2,5"
+                      BorderThickness="0,1,0,0"
+                      Header="ROUTES">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                              VerticalScrollBarVisibility="Auto">
+                    <ItemsControl Name="RouteItemsControl"
+                                  ItemsSource="{Binding Routes}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel HorizontalAlignment="Left"
+                                            Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <dx:SimpleButton Command="{Binding ElementName=RouteItemsControl, Path=DataContext.RouteSelectedCommand}"
+                                                 CommandParameter="{Binding}"
+                                                 Content="{Binding Name}"
+                                                 IsChecked="{Binding Selected}"
+                                                 IsEnabled="{Binding Enabled}"
+                                                 Style="{StaticResource SelectionBtnStyle}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </GroupBox>
+        </dx:DropDownButton>
+    </Grid>
+</UserControl>

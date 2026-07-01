@@ -1,0 +1,3 @@
+🎯**AT Auto Perm:** Perm pricing logic updated to set prices using theos at the time of edge acquisition, and uses delta-adjusted values when submitting the perms.  
+🚨**Basket Threshold Alerts:** Added visual notifications to baskets that highlight the *Ask* price whenever values fall below a user-defined threshold.  
+🔄**Spread Generator:** Added *Attempted Spreads* filter that will only generate spreads that have already been submitted by the firm.  

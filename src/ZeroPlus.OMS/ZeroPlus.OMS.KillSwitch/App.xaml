@@ -1,0 +1,7 @@
+﻿<Application x:Class="ZeroPlus.OMS.KillSwitch.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ZeroPlus.OMS.KillSwitch"
+             StartupUri="Views/KillSwitchView.xaml">
+    <Application.Resources />
+</Application>

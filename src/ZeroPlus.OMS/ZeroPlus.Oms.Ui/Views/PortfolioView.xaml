@@ -1,0 +1,916 @@
+<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.PortfolioView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:helper="clr-namespace:ZeroPlus.Oms.Ui.Helper"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:services="clr-namespace:ZeroPlus.Oms.Ui.Services"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 Title="{Binding ModuleTitle}"
+                 Width="1200"
+                 Height="800"
+                 MinWidth="400"
+                 MinHeight="300"
+                 d:DataContext="{d:DesignInstance Type=ViewModels:PortfolioViewModel}"
+                 DataContext="{startuphelpers:DISource Type=ViewModels:PortfolioViewModel}"
+                 WindowStartupLocation="CenterScreen"
+                 mc:Ignorable="d">
+
+    <dxmvvm:Interaction.Behaviors>
+        <services:LoadCustomColumnService />
+        <services:OmsMessageBoxService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Window.Resources>
+        <helper:DoubleFormatter x:Key="DoubleFormatter" />
+        <helper:SignToBrushConverter x:Key="SignToBrushConverter"
+                                     NegativeBrush="#F30005"
+                                     PositiveBrush="#02F302"
+                                     ZeroBrush="#F0E7D8" />
+        <Style x:Key="PositionsRowStyle"
+               TargetType="dxg:RowControl">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=IsSelected}"
+                             Value="True">
+                    <Setter Property="Background" Value="#1d3c52" />
+                </DataTrigger>
+                <Trigger Property="dxg:GridViewBase.IsFocusedRow" Value="True">
+                    <Setter Property="Background" Value="#1d3c52" />
+                </Trigger>
+                <Trigger Property="dxg:GridViewBase.IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#39393A" />
+                </Trigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=IsSelected}" Value="True" />
+                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="#3E596B" />
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <dx:ThemedWindow.HeaderItems>
+        <StackPanel Margin="1,4,2,0"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+
+            <dx:SimpleButton x:Name="ExpandCollapseButton"
+                             Margin="2"
+                             Padding="0"
+                             Click="ExpandCollapseButton_Click"
+                             Glyph="{dx:DXImage SvgImages/Spreadsheet/FillDown.svg}"
+                             GlyphHeight="20" />
+
+            <dx:DropDownButton Width="115"
+                               Margin="2"
+                               Padding="3,1,7,1"
+                               HorizontalAlignment="Right"
+                               Content="Settings"
+                               Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Settings.svg}"
+                               GlyphHeight="15">
+                <ItemsControl>
+                    <StackPanel Orientation="Vertical">
+                        <MenuItem Click="ClearFiltersClick"
+                                  Header="Clear Filters" />
+                        <MenuItem Click="ClearSortingClick"
+                                  Header="Clear Sorting" />
+                        <MenuItem Command="{Binding AddColumnCommand}"
+                                  Header="Add Column" />
+                    </StackPanel>
+                </ItemsControl>
+            </dx:DropDownButton>
+
+            <dx:SimpleButton Width="23"
+                             Margin="2"
+                             HorizontalAlignment="Right"
+                             dxb:BarManager.MenuShowMouseButton="LeftButton"
+                             Glyph="{dx:DXImage SvgImages/DiagramIcons/Orientation/ListOrientationVertical.svg}"
+                             GlyphHeight="17">
+                <dxb:BarManager.DXContextMenu>
+                    <dxb:PopupControlContainer>
+                        <ItemsControl>
+                            <StackPanel>
+                                <MenuItem Height="25"
+                                          Command="{Binding CloneCommand}"
+                                          Header="Clone">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage SvgImages/XAF/Action_CloneMerge_Merge_Object.svg}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Click="ShareLayout"
+                                          Header="Share Layout">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage SvgImages/Icon Builder/Actions_Send.svg}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Click="SaveLayout"
+                                          Header="Save Layout">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage SvgImages/Save/Save.svg}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Command="{Binding BrowseLayoutsCommand}"
+                                          Header="Browse Layout">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage SvgImages/Dashboards/ServerMode.svg}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Height="25"
+                                          Click="LoadLayout"
+                                          Header="Load Layout">
+                                    <MenuItem.Icon>
+                                        <Image Width="15"
+                                               Height="15"
+                                               Source="{dx:DXImage SvgImages/Dashboards/LoadMap.svg}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </StackPanel>
+                        </ItemsControl>
+                    </dxb:PopupControlContainer>
+                </dxb:BarManager.DXContextMenu>
+            </dx:SimpleButton>
+        </StackPanel>
+    </dx:ThemedWindow.HeaderItems>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0"
+              Grid.Column="1"
+              Height="22"
+              Margin="5,2,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0"
+                        Orientation="Horizontal">
+                <Label Content="Account" />
+                <dxe:ComboBoxEdit Width="125"
+                                  Margin="5,0,0,0"
+                                  HorizontalAlignment="Left"
+                                  Background="#171718"
+                                  IsTextEditable="False"
+                                  ItemsSource="{Binding Accounts}"
+                                  SelectedItem="{Binding SelectedAccount}">
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:EventToCommand Command="{Binding AccountChangedCommand}"
+                                               EventName="EditValueChanged" />
+                    </dxmvvm:Interaction.Behaviors>
+                </dxe:ComboBoxEdit>
+
+                <Label Margin="5,0,0,0"
+                       Content="Group by" />
+                <dxe:ComboBoxEdit Width="125"
+                                  Margin="5,0,0,0"
+                                  HorizontalAlignment="Left"
+                                  Background="#171718"
+                                  EditValueChanged="ComboBoxEdit_EditValueChanged"
+                                  IsTextEditable="False">
+                    <dxe:ComboBoxEditItem IsSelected="True">
+                        None
+                    </dxe:ComboBoxEditItem>
+                    <dxe:ComboBoxEditItem>Account</dxe:ComboBoxEditItem>
+                    <dxe:ComboBoxEditItem>Underlying</dxe:ComboBoxEditItem>
+                    <dxe:ComboBoxEditItem>Account &amp; Underlying</dxe:ComboBoxEditItem>
+                    <dxe:ComboBoxEditItem>Description</dxe:ComboBoxEditItem>
+                    <dxe:ComboBoxEditItem>Expiration</dxe:ComboBoxEditItem>
+                    <dxe:ComboBoxEditItem>Expiration &amp; Underlying</dxe:ComboBoxEditItem>
+                    <dxe:ComboBoxEditItem>Underlying &amp; Expiration</dxe:ComboBoxEditItem>
+                </dxe:ComboBoxEdit>
+
+                <Label Margin="5,0,0,0"
+                       Content="Market Data" />
+
+                <dxe:ComboBoxEdit Width="125"
+                                  Margin="5,0,0,0"
+                                  HorizontalAlignment="Left"
+                                  Background="#171718"
+                                  IsTextEditable="False"
+                                  ItemsSource="{Binding PositionUpdateConsumer.MarketDataSubscriptionModes}"
+                                  SelectedItem="{Binding PositionUpdateConsumer.MarketDataSubscriptionMode}">
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:EventToCommand Command="{Binding MarketDataSubscriptionModeChangedCommand}"
+                                               EventName="EditValueChanged" />
+                    </dxmvvm:Interaction.Behaviors>
+                </dxe:ComboBoxEdit>
+            </StackPanel>
+
+            <dx:DropDownButton Grid.Column="2"
+                               Margin="5,0,0,0"
+                               HorizontalAlignment="Left"
+                               Content="{Binding TheoPriceInfoModel.Summary}"
+                               Visibility="Collapsed">
+                <Grid Margin="10,10,10,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+
+                    <Label Grid.Row="0"
+                           Grid.Column="0"
+                           Margin="0,3,0,0"
+                           Content="Date:" />
+                    <DatePicker Grid.Row="0"
+                                Grid.Column="1"
+                                SelectedDate="{Binding TheoPriceInfoModel.Date}" />
+
+                    <Label Grid.Row="1"
+                           Grid.Column="0"
+                           Margin="0,3,0,0"
+                           Content="Int. Rate:" />
+                    <dxe:SpinEdit Grid.Row="1"
+                                  Grid.Column="1"
+                                  Width="70"
+                                  EditValue="{Binding TheoPriceInfoModel.IntRate}"
+                                  EditValueType="{x:Type sys:Double}" />
+
+                    <Label Grid.Row="2"
+                           Grid.Column="0"
+                           Margin="0,3,0,0"
+                           Content="Vol. Adj.:" />
+                    <dxe:SpinEdit Grid.Row="2"
+                                  Grid.Column="1"
+                                  Width="70"
+                                  EditValue="{Binding TheoPriceInfoModel.VolAdj}"
+                                  EditValueType="{x:Type sys:Double}" />
+
+                    <dx:SimpleButton Grid.Row="3"
+                                     Grid.Column="0"
+                                     Grid.ColumnSpan="2"
+                                     Margin="0,3,0,0"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     Content="Reset" />
+                </Grid>
+            </dx:DropDownButton>
+
+        </Grid>
+
+        <Slider x:Name="PositionsGridScale"
+                Grid.Row="1"
+                Grid.Column="0"
+                Maximum="4"
+                Minimum="0.1"
+                Visibility="Hidden"
+                Value="1" />
+
+        <dxg:GridControl x:Name="PositionsGrid"
+                         Grid.Row="1"
+                         Grid.Column="1"
+                         Margin="0,3,0,0"
+                         dx:DXSerializer.StoreLayoutMode="All"
+                         dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                         AllowLiveDataShaping="True"
+                         AutoGenerateColumns="AddNew"
+                         AutoGeneratedColumns="Grid_ColumnsPopulated"
+                         CustomColumnDisplayText="GridControl_CustomColumnsDisplayText"
+                         EnableSmartColumnsGeneration="True"
+                         ItemsSource="{Binding Positions}"
+                         PreviewMouseWheel="OnZoomMouseWheel"
+                         RestoreStateOnSourceChange="True"
+                         SelectionMode="Row">
+            <dxg:GridControl.LayoutTransform>
+                <ScaleTransform CenterX="0" CenterY="0" ScaleX="{Binding ElementName=PositionsGridScale, Path=Value}" ScaleY="{Binding ElementName=PositionsGridScale, Path=Value}" />
+            </dxg:GridControl.LayoutTransform>
+            <dxg:GridControl.Resources>
+                <Style TargetType="dxg:GridColumn">
+                    <Setter Property="Visible" Value="False" />
+                    <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
+                </Style>
+            </dxg:GridControl.Resources>
+            <dxmvvm:Interaction.Behaviors>
+                <services:UiUpdateService />
+            </dxmvvm:Interaction.Behaviors>
+            <dxg:GridControl.View>
+                <dxg:TableView AllowDragDrop="True"
+                               AllowEditing="False"
+                               AutoWidth="True"
+                               CompleteRecordDragDrop="OnCompleteRecordDragDrop"
+                               EnableSelectedRowAppearance="True"
+                               GroupSummaryDisplayMode="AlignByColumns"
+                               NavigationStyle="Row"
+                               RowStyle="{StaticResource PositionsRowStyle}"
+                               ShowGridMenu="TableView_ShowGridMenu"
+                               ShowGroupPanel="False"
+                               ShowTotalSummary="True"
+                               StartRecordDrag="OnStartRecordDrag">
+                    <dxg:TableView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowColumnChooserCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Column Chooser">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'SvgImages/Dashboards/ArrangeInRows.svg'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ClearColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Hide All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Hide_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowAllColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show All Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Actions/Show_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="25"
+                                      Command="{Binding ShowDefaultColumnsCommand}"
+                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      Header="Show Default Columns">
+                                <MenuItem.Icon>
+                                    <Image Width="15"
+                                           Height="15"
+                                           Source="{dx:DXImage 'Images/Function Library/RecentlyUse_16x16.png'}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </dxg:TableView.ContextMenu>
+                    <dxg:TableView.RowCellMenuCustomizations>
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.OpenInComplexOrderTicketCommand}"
+                                           CommandParameter="{Binding Path=SelectedItems, ElementName=PositionsGrid}"
+                                           Content="Open in Complex Order Ticket" />
+                        <dxb:BarItemSeparator />
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.OpenInGammaScalperCommand}"
+                                           CommandParameter="{Binding Path=SelectedItems, ElementName=PositionsGrid}"
+                                           Content="Open in Gamma Scalper" />
+                        <dxb:BarItemSeparator />
+                        <dxb:BarButtonItem Command="{Binding View.DataContext.OpenPositionManagerCommand}"
+                                           CommandParameter="{Binding Path=SelectedItems, ElementName=PositionsGrid}"
+                                           Content="Open in Position Manager"
+                                           IsVisible="{Binding View.DataContext.ShowPositionManager}" />
+                    </dxg:TableView.RowCellMenuCustomizations>
+                    <dxg:TableView.TotalSummaryContentStyle>
+                        <Style TargetType="dx:DataContentPresenter">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </dxg:TableView.TotalSummaryContentStyle>
+                    <dxg:TableView.TotalSummaryItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Padding="2"
+                                       Foreground="{Binding Column.TotalSummaryText, Converter={StaticResource SignToBrushConverter}}"
+                                       Text="{Binding Column.TotalSummaryText, StringFormat='{}{0:C0}'}" />
+                        </DataTemplate>
+                    </dxg:TableView.TotalSummaryItemTemplate>
+                    <dxg:TableView.GroupColumnSummaryItemTemplate>
+                        <DataTemplate>
+                            <TextBlock HorizontalAlignment="Right"
+                                       Foreground="{Binding Value, Converter={StaticResource SignToBrushConverter}}"
+                                       Text="{Binding Value}" />
+                        </DataTemplate>
+                    </dxg:TableView.GroupColumnSummaryItemTemplate>
+                    <dxg:TableView.GroupValueTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="10,0,0,0"
+                                       Text="{Binding Value}" />
+                        </DataTemplate>
+                    </dxg:TableView.GroupValueTemplate>
+                </dxg:TableView>
+            </dxg:GridControl.View>
+
+            <dxg:GridColumn FieldName="Account"
+                            IsSmart="True"
+                            Visible="True" />
+            <dxg:GridColumn FieldName="Symbol"
+                            IsSmart="True"
+                            Visible="True" />
+            <dxg:GridColumn FieldName="NetQty"
+                            Header="Qty"
+                            IsSmart="True"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="+#0;-#0;-"
+                                      Foreground="{Binding RowData.Row.NetQty, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="TradingNetQty"
+                            Header="Trading Qty"
+                            IsSmart="True"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="+#0;-#0;-"
+                                      Foreground="{Binding RowData.Row.TradingNetQty, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="TradingBuyQty"
+                            Header="Trading Buy Qty"
+                            IsSmart="True"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="+#0;-#0;-"
+                                      Foreground="#02F302" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="TradingSellQty"
+                            Header="Trading Sell Qty"
+                            IsSmart="True"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="+#0;-#0;-"
+                                      Foreground="#FF0000" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="OpeningQty"
+                            Header="Opening Qty"
+                            IsSmart="True"
+                            Visible="False">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="+#0;-#0;-"
+                                      Foreground="{Binding RowData.Row.TradingNetQty, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="TradingBuyAvePrice"
+                            Header="Trading Buy AvgPx"
+                            IsSmart="True"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="#.00" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="TradingSellAvePrice"
+                            Header="Trading Sell AvgPx"
+                            IsSmart="True"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="#.00"
+                                      Foreground="#FF0000" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="MarkedCost"
+                            Header="Marked Cost"
+                            IsSmart="True"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="#.00" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="AveCost"
+                            Header="Avg Cost"
+                            IsSmart="True"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="#.00" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="PrevClose"
+                            IsSmart="True"
+                            Visible="False">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="#.00" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="TradingAveCost"
+                            Header="Trading Avg Cost"
+                            IsSmart="True"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="#.00" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="TradingPL"
+                            Header="Trading P&amp;L"
+                            IsSmart="True"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="C0"
+                                      Foreground="{Binding RowData.Row.TradingPL, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="DayPL"
+                            Header="P&amp;L Day"
+                            IsSmart="True"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="C0"
+                                      Foreground="{Binding RowData.Row.DayPL, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="NetPL"
+                            Header="P&amp;L Net"
+                            IsSmart="True"
+                            Visible="True">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="C0"
+                                      Foreground="{Binding RowData.Row.NetPL, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="UnrealizedPL"
+                            Header="Unrealized - P&amp;L"
+                            IsSmart="True"
+                            Visible="False">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="C0"
+                                      Foreground="{Binding RowData.Row.UnrealizedPL, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="RealizedPL"
+                            Header="Realized - P&amp;L"
+                            IsSmart="True"
+                            Visible="False">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="C0"
+                                      Foreground="{Binding RowData.Row.RealizedPL, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="MarketValue"
+                            Header="Mkt Val"
+                            IsSmart="True"
+                            Visible="False">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="N2"
+                                      Foreground="{Binding RowData.Row.MarketValue, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="NotionalValue"
+                            Header="Notional Val"
+                            IsSmart="True"
+                            Visible="False">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="N2"
+                                      Foreground="{Binding RowData.Row.NotionalValue, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="Underlying"
+                            Header="Under"
+                            IsSmart="True"
+                            Visible="False" />
+            <dxg:GridColumn FieldName="Type"
+                            Header="Type"
+                            IsSmart="True"
+                            Visible="False" />
+            <dxg:GridColumn FieldName="Expiration"
+                            Header="Expiration"
+                            IsSmart="True"
+                            Visible="False" />
+            <dxg:GridColumn FieldName="Strike"
+                            Header="Strike"
+                            IsSmart="True"
+                            Visible="False">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="Delta"
+                            Header="Delta"
+                            IsSmart="True"
+                            Visible="False">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="+#0;-#0;"
+                                      Foreground="{Binding RowData.Row.Delta, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="Gamma"
+                            Header="Gamma"
+                            IsSmart="True"
+                            Visible="False">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="+#0;-#0;"
+                                      Foreground="{Binding RowData.Row.Gamma, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="Vega"
+                            Header="Vega"
+                            IsSmart="True"
+                            Visible="False">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="+#0;-#0;"
+                                      Foreground="{Binding RowData.Row.Vega, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="Theta"
+                            Header="Theta"
+                            IsSmart="True"
+                            Visible="False">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="+#0;-#0;"
+                                      Foreground="{Binding RowData.Row.Theta, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="Rho"
+                            Header="Rho"
+                            IsSmart="True"
+                            Visible="False">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="+#0;-#0;"
+                                      Foreground="{Binding RowData.Row.Rho, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="Implied"
+                            Header="Implied"
+                            IsSmart="True"
+                            Visible="False">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="+#0;-#0;"
+                                      Foreground="{Binding RowData.Row.Implied, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn FieldName="Theo"
+                            Header="Theo"
+                            IsSmart="True"
+                            Visible="False">
+                <dxg:GridColumn.CellTemplate>
+                    <DataTemplate>
+                        <dxe:TextEdit Name="PART_Editor"
+                                      HorizontalContentAlignment="Right"
+                                      DisplayFormatString="C0"
+                                      Foreground="{Binding RowData.Row.Theo, Converter={StaticResource SignToBrushConverter}}" />
+                    </DataTemplate>
+                </dxg:GridColumn.CellTemplate>
+            </dxg:GridColumn>
+            <dxg:GridColumn Binding="{Binding RowData.Row.Bid, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="Bid"
+                            IsSmart="True"
+                            Visible="False" />
+            <dxg:GridColumn Binding="{Binding RowData.Row.Mid, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="Mid"
+                            IsSmart="True"
+                            Visible="False" />
+            <dxg:GridColumn Binding="{Binding RowData.Row.Ask, Converter={StaticResource DoubleFormatter}, ConverterParameter={x:Static helper:DoubleFormat.N2}}"
+                            FieldName="Ask"
+                            IsSmart="True"
+                            Visible="False" />
+            <dxg:GridControl.TotalSummary>
+                <dxg:GridSummaryItem DisplayFormat="{}{0:C0}"
+                                     FieldName="TradingPL"
+                                     ShowInColumn="TradingPL"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:C0}"
+                                     FieldName="DayPL"
+                                     ShowInColumn="DayPL"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:C0}"
+                                     FieldName="NetPL"
+                                     ShowInColumn="NetPL"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:C0}"
+                                     FieldName="UnrealizedPL"
+                                     ShowInColumn="UnrealizedPL"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:C0}"
+                                     FieldName="RealizedPL"
+                                     ShowInColumn="RealizedPL"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:C0}"
+                                     FieldName="MarketValue"
+                                     ShowInColumn="MarketValue"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:C0}"
+                                     FieldName="NotionalValue"
+                                     ShowInColumn="NotionalValue"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:#.00}"
+                                     FieldName="Delta"
+                                     ShowInColumn="Delta"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:#.00}"
+                                     FieldName="Gamma"
+                                     ShowInColumn="Gamma"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:#.00}"
+                                     FieldName="Vega"
+                                     ShowInColumn="Vega"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:#.00}"
+                                     FieldName="Theta"
+                                     ShowInColumn="Theta"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:#.00}"
+                                     FieldName="Rho"
+                                     ShowInColumn="Rho"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:#.00}"
+                                     FieldName="Implied"
+                                     ShowInColumn="Implied"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:#.00}"
+                                     FieldName="Theo"
+                                     ShowInColumn="Theo"
+                                     SummaryType="Sum" />
+            </dxg:GridControl.TotalSummary>
+
+            <dxg:GridControl.GroupSummary>
+                <dxg:GridSummaryItem DisplayFormat="{}{0:C0}"
+                                     FieldName="TradingPL"
+                                     ShowInColumn="TradingPL"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:C0}"
+                                     FieldName="DayPL"
+                                     ShowInColumn="DayPL"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:C0}"
+                                     FieldName="NetPL"
+                                     ShowInColumn="NetPL"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:C0}"
+                                     FieldName="UnrealizedPL"
+                                     ShowInColumn="UnrealizedPL"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:C0}"
+                                     FieldName="RealizedPL"
+                                     ShowInColumn="RealizedPL"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:C0}"
+                                     FieldName="MarketValue"
+                                     ShowInColumn="MarketValue"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:C0}"
+                                     FieldName="NotionalValue"
+                                     ShowInColumn="NotionalValue"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:#.00}"
+                                     FieldName="Delta"
+                                     ShowInColumn="Delta"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:#.00}"
+                                     FieldName="Gamma"
+                                     ShowInColumn="Gamma"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:#.00}"
+                                     FieldName="Vega"
+                                     ShowInColumn="Vega"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:#.00}"
+                                     FieldName="Theta"
+                                     ShowInColumn="Theta"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:#.00}"
+                                     FieldName="Rho"
+                                     ShowInColumn="Rho"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:#.00}"
+                                     FieldName="Implied"
+                                     ShowInColumn="Implied"
+                                     SummaryType="Sum" />
+                <dxg:GridSummaryItem DisplayFormat="{}{0:#.00}"
+                                     FieldName="Theo"
+                                     ShowInColumn="Theo"
+                                     SummaryType="Sum" />
+            </dxg:GridControl.GroupSummary>
+
+        </dxg:GridControl>
+
+        <Border Grid.Row="2"
+                Grid.Column="1"
+                Margin="0,2"
+                Background="Transparent"
+                BorderBrush="#9E9E9E"
+                BorderThickness="1">
+            <TextBlock Text="" />
+        </Border>
+
+    </Grid>
+</dx:ThemedWindow>

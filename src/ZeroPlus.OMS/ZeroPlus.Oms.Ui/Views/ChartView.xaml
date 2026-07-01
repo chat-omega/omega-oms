@@ -1,0 +1,84 @@
+﻿<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.ChartView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ViewModels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 Title="{Binding ModuleTitle}"
+                 Width="1200"
+                 Height="800"
+                 MinWidth="400"
+                 MinHeight="300"
+                 DataContext="{startuphelpers:DISource Type=ViewModels:ChartViewModel}"
+                 WindowStartupLocation="CenterScreen">
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:DispatcherService />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="5" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+        </Grid.ColumnDefinitions>
+
+        <dxc:ChartControl Name="PnlChart"
+                          Grid.Row="2"
+                          Grid.Column="1">
+            <dxc:ChartControl.Diagram>
+                <dxc:XYDiagram2D Name="PnlDiagram"
+                                 DependentAxesYRange="True"
+                                 EnableAxisXNavigation="True"
+                                 EnableAxisYNavigation="True">
+                    <dxc:XYDiagram2D.NavigationOptions>
+                        <dxc:NavigationOptions UseKeyboard="True"
+                                               UseMouse="True"
+                                               UseScrollBars="True"
+                                               UseTouchDevice="True" />
+                    </dxc:XYDiagram2D.NavigationOptions>
+                    <dxc:LineSeries2D ArgumentDataMember="Timestamp"
+                                      DataSource="{Binding ChartValues}"
+                                      DisplayName="{Binding Field}"
+                                      ValueDataMember="Value">
+                        <dxc:LineSeries2D.LastPoint>
+                            <dxc:SidePoint LabelDisplayMode="SeriesPoint">
+                                <dxc:SidePoint.Label>
+                                    <dxc:SeriesLabel TextPattern="{}{V:N0}" />
+                                </dxc:SidePoint.Label>
+                            </dxc:SidePoint>
+                        </dxc:LineSeries2D.LastPoint>
+                    </dxc:LineSeries2D>
+                    <dxc:XYDiagram2D.AxisX>
+                        <dxc:AxisX2D>
+                            <dxc:AxisX2D.DateTimeScaleOptions>
+                                <dxc:ContinuousDateTimeScaleOptions />
+                            </dxc:AxisX2D.DateTimeScaleOptions>
+                        </dxc:AxisX2D>
+                    </dxc:XYDiagram2D.AxisX>
+                    <dxc:XYDiagram2D.AxisY>
+                        <dxc:AxisY2D>
+                            <dxc:AxisY2D.WholeRange>
+                                <dxc:Range dxc:AxisY2D.AlwaysShowZeroLevel="False" />
+                            </dxc:AxisY2D.WholeRange>
+                        </dxc:AxisY2D>
+                    </dxc:XYDiagram2D.AxisY>
+                </dxc:XYDiagram2D>
+            </dxc:ChartControl.Diagram>
+            <dxc:ChartControl.Legend>
+                <dxc:Legend />
+            </dxc:ChartControl.Legend>
+        </dxc:ChartControl>
+
+    </Grid>
+</dx:ThemedWindow>

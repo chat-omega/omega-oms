@@ -1,0 +1,32 @@
+﻿<dx:ThemedWindow x:Class="ZeroPlus.Oms.Ui.Views.ScriptEditorView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:startuphelpers="clr-namespace:ZeroPlus.Oms.Ui.StartupHelpers"
+                 xmlns:viewmodels="clr-namespace:ZeroPlus.Oms.Ui.ViewModels"
+                 Title="Script Editor"
+                 Width="950"
+                 Height="1300"
+                 MinWidth="600"
+                 d:DataContext="{d:DesignInstance Type=viewmodels:ScriptEditorViewModel}"
+                 d:Width="950"
+                 DataContext="{startuphelpers:DISource Type=viewmodels:ScriptEditorViewModel}"
+                 Topmost="True"
+                 WindowStartupLocation="CenterScreen"
+                 WindowStyle="ToolWindow"
+                 mc:Ignorable="d">
+
+    <Grid>
+        <avalonEdit:TextEditor Name="scriptEditor"
+                               Document="{Binding Script, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                               FontFamily="Consolas"
+                               FontSize="10pt"
+                               HorizontalScrollBarVisibility="Auto"
+                               ShowLineNumbers="True"
+                               SyntaxHighlighting="Python"
+                               VerticalScrollBarVisibility="Auto" />
+    </Grid>
+</dx:ThemedWindow>
