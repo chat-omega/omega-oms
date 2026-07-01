@@ -95,8 +95,7 @@
         <ProjectReference Include="..\..\SymbolLib\SymbolLib.csproj" />
         <ProjectReference Include="..\..\ZeroPlus.TagCodecLib\ZeroPlus.TagCodecLib.csproj" />
     </ItemGroup>
-    <ItemGroup>
-        <!-- Resources to be copied: Needed for Kill Switch to be deployed -->
+    <!-- Resources to be copied: Needed for Kill Switch to be deployed -->
     <ItemGroup>
         <None Update="Resources\OMS Kill Switch.exe">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
