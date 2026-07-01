@@ -1,3 +1,9 @@
-
 namespace SymbolLib;
-// Stub namespace — SymbolLib types not actually used by OMS at DI level
+
+/// <summary>
+/// Stub for internal ZeroPlus symbol library.
+/// </summary>
+public static class SymbolLibInit
+{
+    public static void Initialize() { }
+}
