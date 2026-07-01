@@ -15,7 +15,7 @@ namespace ZeroPlus.AutoTrader.Client
         public bool IsConnected { get; private set; }
         public List<Account> Accounts { get; private set; } = new()
         {
-            new Account { AccountId = "DEMO001", Description = "Demo Account" }
+            new Account { AccountId = 1, Acronym = "DEMO" }
         };
 
         public async Task StartAsync()
